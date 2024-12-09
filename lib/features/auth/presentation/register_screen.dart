@@ -1,22 +1,24 @@
 import 'package:asset_tracker/common/widgets/social_card.dart';
 import 'package:asset_tracker/common/widgets/text_form_field.dart';
+import 'package:asset_tracker/core/theme/app_styles.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/coin_container_asset.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/custom_email_text_form_field.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/custom_text_form_field.dart';
+import 'package:asset_tracker/features/auth/extractwidgets/custom_username_text_form_field.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/signin_and_signup_row.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/social_card.dart';
 import 'package:flutter/material.dart';
-import 'package:asset_tracker/core/theme/app_styles.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
+  String username = '';
   String email = '';
   String password = '';
 
@@ -24,8 +26,8 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-
     return Scaffold(
       backgroundColor: colorScheme.surface,
       body: Padding(
@@ -36,15 +38,30 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                SizedBox(height: height * 0.1),
+                SizedBox(
+                  height: height * 0.1,
+                ),
                 coinContainerAsset(colorScheme, height),
-                SizedBox(height: height * 0.02),
+                SizedBox(
+                  height: height * 0.02,
+                ),
                 Text(
-                  "Sign In",
+                  "Sign Up",
                   style: textTheme.headlineLarge
                       ?.copyWith(color: colorScheme.primary),
                 ),
-                SizedBox(height: height * 0.05),
+                SizedBox(
+                  height: height * 0.05,
+                ),
+                customUsernameTextFormField((value) {
+                  if (value == null || value.isEmpty) {
+                    return "Username is required";
+                  }
+                  return null;
+                }, (value) {
+                  username = value ?? '';
+                }),
+                SizedBox(height: height * 0.02),
                 customEmailTextFormFeild((value) {
                   if (value == null || value.isEmpty) {
                     return "Email is required";
@@ -71,7 +88,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       _formKey.currentState!.save();
                       _formKey.currentState!.reset();
                       print("Giriş yapıldı");
-                      print(' email :$email password: $password');
+                      print(
+                          ' email :$email password: $password username: $username');
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -81,35 +99,17 @@ class _LoginScreenState extends State<LoginScreen> {
                     minimumSize: const Size(double.infinity, 48),
                     shape: const StadiumBorder(),
                   ),
-                  child: const Text("Sign In"),
+                  child: const Text("Sign Up"),
                 ),
-                SizedBox(height: height * 0.02),
-                _textButton(context),
-                SizedBox(height: height * 0.02),
-                signInAndUpRow(context, colorScheme, "Don’t have an account? ",
-                    "Sign Up", "register"),
+                SizedBox(height: height * 0.04),
+                signInAndUpRow(context, colorScheme,
+                    "Already have an account? ", "Sign In", "login"),
                 SizedBox(height: height * 0.02),
                 socialCardsRow(),
               ],
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _textButton(BuildContext context) {
-    return TextButton(
-      onPressed: () {},
-      child: Text(
-        'Forgot Password?',
-        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-              color: Theme.of(context)
-                  .textTheme
-                  .bodyLarge!
-                  .color!
-                  .withOpacity(0.64),
-            ),
       ),
     );
   }
