@@ -1,12 +1,10 @@
-import 'package:asset_tracker/common/widgets/social_card.dart';
-import 'package:asset_tracker/common/widgets/text_form_field.dart';
+import 'package:asset_tracker/core/constants/paddings/paddings.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/coin_container_asset.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/custom_email_text_form_field.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/custom_text_form_field.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/signin_and_signup_row.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/social_card.dart';
 import 'package:flutter/material.dart';
-import 'package:asset_tracker/core/theme/app_styles.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -29,7 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       body: Padding(
-        padding: AppStyles.defaultPadding,
+        padding: Paddings.defaultPadding,
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,

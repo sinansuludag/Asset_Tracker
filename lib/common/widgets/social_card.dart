@@ -1,4 +1,4 @@
-import 'package:asset_tracker/core/theme/app_styles.dart';
+import 'package:asset_tracker/core/constants/paddings/paddings.dart';
 import 'package:flutter/material.dart';
 
 class SocialCard extends StatelessWidget {
@@ -16,7 +16,7 @@ class SocialCard extends StatelessWidget {
     return GestureDetector(
       onTap: press,
       child: Container(
-        padding: AppStyles.defaultPadding,
+        padding: Paddings.defaultPadding,
         height: 72,
         width: 72,
         decoration: const BoxDecoration(

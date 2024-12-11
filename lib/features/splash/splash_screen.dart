@@ -1,4 +1,4 @@
-import 'package:asset_tracker/core/theme/app_styles.dart';
+import 'package:asset_tracker/core/constants/paddings/paddings.dart';
 import 'package:asset_tracker/core/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 
@@ -97,7 +97,7 @@ class _SplashScreenState extends State<SplashScreen>
       backgroundColor: colorScheme.surface,
       body: Center(
         child: Padding(
-          padding: AppStyles.defaultPadding,
+          padding: Paddings.defaultPadding,
           child: Column(
             children: [
               SizedBox(height: MediaQuery.of(context).size.height * 0.2),

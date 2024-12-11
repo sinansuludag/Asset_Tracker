@@ -1,6 +1,4 @@
-import 'package:asset_tracker/common/widgets/social_card.dart';
-import 'package:asset_tracker/common/widgets/text_form_field.dart';
-import 'package:asset_tracker/core/theme/app_styles.dart';
+import 'package:asset_tracker/core/constants/paddings/paddings.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/coin_container_asset.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/custom_email_text_form_field.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/custom_text_form_field.dart';
@@ -31,7 +29,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       body: Padding(
-        padding: AppStyles.defaultPadding,
+        padding: Paddings.defaultPadding,
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,
