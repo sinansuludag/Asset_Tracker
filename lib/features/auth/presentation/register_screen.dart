@@ -1,5 +1,6 @@
 import 'package:asset_tracker/core/constants/paddings/paddings.dart';
 import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
+import 'package:asset_tracker/core/routing/route_names.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/coin_container_asset.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/custom_email_text_form_field.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/custom_text_form_field.dart';
@@ -102,7 +103,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 SizedBox(height: height * 0.04),
                 signInAndUpRow(context, colorScheme, TrStrings.textForGoToLogin,
-                    TrStrings.signIn, '/login'),
+                    TrStrings.signIn, RouteNames.login),
                 SizedBox(height: height * 0.02),
                 socialCardsRow(),
               ],

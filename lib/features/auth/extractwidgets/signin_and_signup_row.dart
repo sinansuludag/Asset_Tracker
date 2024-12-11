@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/routing/route_names.dart';
 import 'package:flutter/material.dart';
 
 Widget signInAndUpRow(BuildContext context, ColorScheme colorScheme,
