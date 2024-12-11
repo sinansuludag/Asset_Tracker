@@ -1,4 +1,5 @@
 class EngStrings {
+  EngStrings._();
   static const splashTitleText1 = "Asset";
   static const splashTitleText2 = "Tracker";
   static const signIn = "Sign In";

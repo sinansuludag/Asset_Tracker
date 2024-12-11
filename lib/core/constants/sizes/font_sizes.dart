@@ -1,4 +1,5 @@
 class FontSizes {
+  FontSizes._();
   static const double headlineLargeFontSize = 32.0;
   static const double headlinemediumFontSize = 24.0;
   static const double headlineSmallFontSize = 20.0;

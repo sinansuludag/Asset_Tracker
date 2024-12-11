@@ -5,6 +5,7 @@ import 'package:asset_tracker/features/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
 
 class AppRouter {
+  AppRouter._();
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case RouteNames.splash:

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AppBorderRadius {
+  AppBorderRadius._();
+
   static const BorderRadius defaultBorderRadius =
       BorderRadius.all(Radius.circular(16.0));
   static const BorderRadius lowBorderRadius =

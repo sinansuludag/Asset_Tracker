@@ -50,7 +50,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         fillColor: colorScheme.secondary.withOpacity(0.2),
         hintText: widget.hintText,
         prefixIcon: Padding(
-          padding: Paddings.lowPadding,
+          padding: AppPaddings.lowPadding,
           child: Container(
             decoration: BoxDecoration(
               color: colorScheme.secondary,

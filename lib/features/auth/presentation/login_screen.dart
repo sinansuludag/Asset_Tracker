@@ -29,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       body: Padding(
-        padding: Paddings.defaultPadding,
+        padding: AppPaddings.defaultPadding,
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,

@@ -1,4 +1,5 @@
 class TrStrings {
+  TrStrings._();
   static const splashTitleText1 = "Varlık";
   static const splashTitleText2 = "İzleme";
   static const signIn = "Giriş Yap";

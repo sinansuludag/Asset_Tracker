@@ -1,5 +1,6 @@
 import 'package:asset_tracker/core/constants/paddings/paddings.dart';
 import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
+import 'package:asset_tracker/core/routing/route_names.dart';
 import 'package:asset_tracker/core/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 
@@ -19,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen>
   late Animation<double> _imageFadeAnimation; // Görsel için opacity animasyonu
   Animation<Color?>? _textColorAnimation; // Metin rengi animasyonu
   late Animation<double> _shadowBlurAnimation; // Gölgeleme animasyonu
-
+  final int duration = 5;
   @override
   void initState() {
     super.initState();
@@ -79,8 +80,8 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward(); // Animasyonu başlat
 
-    Future.delayed(const Duration(seconds: 5), () {
-      Navigator.pushReplacementNamed(context, '/login');
+    Future.delayed(Duration(seconds: duration), () {
+      Navigator.pushReplacementNamed(context, RouteNames.login);
     });
   }
 
@@ -98,7 +99,7 @@ class _SplashScreenState extends State<SplashScreen>
       backgroundColor: colorScheme.surface,
       body: Center(
         child: Padding(
-          padding: Paddings.defaultPadding,
+          padding: AppPaddings.defaultPadding,
           child: Column(
             children: [
               SizedBox(height: MediaQuery.of(context).size.height * 0.2),
