@@ -1,4 +1,5 @@
 import 'package:asset_tracker/common/widgets/text_form_field.dart';
+import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
 import 'package:flutter/material.dart';
 
 CustomTextFormField customPasswordTextFormField(
@@ -6,8 +7,8 @@ CustomTextFormField customPasswordTextFormField(
     String? Function(String?)? onSaved) {
   return CustomTextFormField(
       prefixIcon: Icon(Icons.key),
-      labelText: "Password",
-      hintText: "Enter the password",
+      labelText: TrStrings.labelPassword,
+      hintText: TrStrings.hintTextPassword,
       keyboardType: TextInputType.text,
       textInputAction: TextInputAction.done,
       isPassword: true,

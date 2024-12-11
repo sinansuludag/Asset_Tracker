@@ -1,4 +1,5 @@
 import 'package:asset_tracker/core/constants/paddings/paddings.dart';
+import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/coin_container_asset.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/custom_email_text_form_field.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/custom_text_form_field.dart';
@@ -44,7 +45,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   height: height * 0.02,
                 ),
                 Text(
-                  "Sign Up",
+                  TrStrings.signUp,
                   style: textTheme.headlineLarge
                       ?.copyWith(color: colorScheme.primary),
                 ),
@@ -53,7 +54,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 customUsernameTextFormField((value) {
                   if (value == null || value.isEmpty) {
-                    return "Username is required";
+                    return TrStrings.requiredUsername;
                   }
                   return null;
                 }, (value) {
@@ -62,7 +63,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 SizedBox(height: height * 0.02),
                 customEmailTextFormFeild((value) {
                   if (value == null || value.isEmpty) {
-                    return "Email is required";
+                    return TrStrings.requiredEmail;
                   }
                   return null;
                 }, (value) {
@@ -71,7 +72,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 SizedBox(height: height * 0.02),
                 customPasswordTextFormField((value) {
                   if (value == null || value.isEmpty) {
-                    return "Password is required";
+                    return TrStrings.requiredPassword;
                   } else if (value.length < 6) {
                     return "Password must be at least 6 characters";
                   }
@@ -97,11 +98,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     minimumSize: const Size(double.infinity, 48),
                     shape: const StadiumBorder(),
                   ),
-                  child: const Text("Sign Up"),
+                  child: const Text(TrStrings.signUp),
                 ),
                 SizedBox(height: height * 0.04),
-                signInAndUpRow(context, colorScheme,
-                    "Already have an account? ", "Sign In", "login"),
+                signInAndUpRow(context, colorScheme, TrStrings.textForGoToLogin,
+                    TrStrings.signIn, '/login'),
                 SizedBox(height: height * 0.02),
                 socialCardsRow(),
               ],

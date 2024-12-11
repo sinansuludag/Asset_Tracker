@@ -1,4 +1,5 @@
 import 'package:asset_tracker/core/constants/paddings/paddings.dart';
+import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/coin_container_asset.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/custom_email_text_form_field.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/custom_text_form_field.dart';
@@ -38,14 +39,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 coinContainerAsset(colorScheme, height),
                 SizedBox(height: height * 0.02),
                 Text(
-                  "Sign In",
+                  TrStrings.signIn,
                   style: textTheme.headlineLarge
                       ?.copyWith(color: colorScheme.primary),
                 ),
                 SizedBox(height: height * 0.05),
                 customEmailTextFormFeild((value) {
                   if (value == null || value.isEmpty) {
-                    return "Email is required";
+                    return TrStrings.requiredEmail;
                   }
                   return null;
                 }, (value) {
@@ -54,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(height: height * 0.02),
                 customPasswordTextFormField((value) {
                   if (value == null || value.isEmpty) {
-                    return "Password is required";
+                    return TrStrings.requiredPassword;
                   } else if (value.length < 6) {
                     return "Password must be at least 6 characters";
                   }
@@ -79,13 +80,17 @@ class _LoginScreenState extends State<LoginScreen> {
                     minimumSize: const Size(double.infinity, 48),
                     shape: const StadiumBorder(),
                   ),
-                  child: const Text("Sign In"),
+                  child: const Text(TrStrings.signIn),
                 ),
                 SizedBox(height: height * 0.02),
                 _textButton(context),
                 SizedBox(height: height * 0.02),
-                signInAndUpRow(context, colorScheme, "Don’t have an account? ",
-                    "Sign Up", "register"),
+                signInAndUpRow(
+                    context,
+                    colorScheme,
+                    TrStrings.textForGoToRegister,
+                    TrStrings.signUp,
+                    '/register'),
                 SizedBox(height: height * 0.02),
                 socialCardsRow(),
               ],
@@ -100,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return TextButton(
       onPressed: () {},
       child: Text(
-        'Forgot Password?',
+        TrStrings.forgetPassword,
         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
               color: Theme.of(context)
                   .textTheme

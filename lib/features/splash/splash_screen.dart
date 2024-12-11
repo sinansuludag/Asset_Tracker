@@ -1,4 +1,5 @@
 import 'package:asset_tracker/core/constants/paddings/paddings.dart';
+import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
 import 'package:asset_tracker/core/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 
@@ -130,7 +131,7 @@ class _SplashScreenState extends State<SplashScreen>
                       animation: _controller,
                       builder: (context, child) {
                         return Text(
-                          'Asset',
+                          TrStrings.splashTitleText1,
                           style: textTheme.headlineLarge?.copyWith(
                             color: _textColorAnimation?.value ?? Colors.black,
                             fontWeight: FontWeight.bold,
@@ -155,7 +156,7 @@ class _SplashScreenState extends State<SplashScreen>
                       animation: _controller,
                       builder: (context, child) {
                         return Text(
-                          'Tracker',
+                          TrStrings.splashTitleText2,
                           style: textTheme.headlineLarge?.copyWith(
                             color: _textColorAnimation?.value ?? Colors.black,
                             fontWeight: FontWeight.bold,

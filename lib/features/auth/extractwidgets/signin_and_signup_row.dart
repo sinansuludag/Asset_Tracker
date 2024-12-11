@@ -17,7 +17,7 @@ Widget signInAndUpRow(BuildContext context, ColorScheme colorScheme,
       ),
       InkWell(
         onTap: () {
-          Navigator.pushNamed(context, '/$route');
+          Navigator.pushNamed(context, route);
         },
         child: Text(
           name,
