@@ -1,6 +1,9 @@
 import 'package:asset_tracker/core/constants/paddings/paddings.dart';
 import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
 import 'package:asset_tracker/core/routing/route_names.dart';
+import 'package:asset_tracker/features/auth/domain/validator/email_validator.dart';
+import 'package:asset_tracker/features/auth/domain/validator/password_validator.dart';
+import 'package:asset_tracker/features/auth/domain/validator/username_validator.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/coin_container_asset.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/custom_email_text_form_field.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/custom_text_form_field.dart';
@@ -53,32 +56,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 SizedBox(
                   height: height * 0.05,
                 ),
-                customUsernameTextFormField((value) {
-                  if (value == null || value.isEmpty) {
-                    return TrStrings.requiredUsername;
-                  }
-                  return null;
-                }, (value) {
+                customUsernameTextFormField(UsernameValidator.usernameValidate,
+                    (value) {
                   username = value ?? '';
                 }),
                 SizedBox(height: height * 0.02),
-                customEmailTextFormFeild((value) {
-                  if (value == null || value.isEmpty) {
-                    return TrStrings.requiredEmail;
-                  }
-                  return null;
-                }, (value) {
+                customEmailTextFormFeild(EmailValidator.validate, (value) {
                   email = value ?? '';
                 }),
                 SizedBox(height: height * 0.02),
-                customPasswordTextFormField((value) {
-                  if (value == null || value.isEmpty) {
-                    return TrStrings.requiredPassword;
-                  } else if (value.length < 6) {
-                    return "Password must be at least 6 characters";
-                  }
-                  return null;
-                }, (value) {
+                customPasswordTextFormField(PasswordValidator.passwordValidate,
+                    (value) {
                   password = value ?? '';
                 }),
                 SizedBox(height: height * 0.02),

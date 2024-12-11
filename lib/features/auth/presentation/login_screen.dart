@@ -1,6 +1,8 @@
 import 'package:asset_tracker/core/constants/paddings/paddings.dart';
 import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
 import 'package:asset_tracker/core/routing/route_names.dart';
+import 'package:asset_tracker/features/auth/domain/validator/email_validator.dart';
+import 'package:asset_tracker/features/auth/domain/validator/password_validator.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/coin_container_asset.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/custom_email_text_form_field.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/custom_text_form_field.dart';
@@ -45,23 +47,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       ?.copyWith(color: colorScheme.primary),
                 ),
                 SizedBox(height: height * 0.05),
-                customEmailTextFormFeild((value) {
-                  if (value == null || value.isEmpty) {
-                    return TrStrings.requiredEmail;
-                  }
-                  return null;
-                }, (value) {
+                customEmailTextFormFeild(EmailValidator.validate, (value) {
                   email = value ?? '';
                 }),
                 SizedBox(height: height * 0.02),
-                customPasswordTextFormField((value) {
-                  if (value == null || value.isEmpty) {
-                    return TrStrings.requiredPassword;
-                  } else if (value.length < 6) {
-                    return "Password must be at least 6 characters";
-                  }
-                  return null;
-                }, (value) {
+                customPasswordTextFormField(PasswordValidator.passwordValidate,
+                    (value) {
                   password = value ?? '';
                 }),
                 SizedBox(height: height * 0.02),
@@ -107,12 +98,12 @@ class _LoginScreenState extends State<LoginScreen> {
       onPressed: () {},
       child: Text(
         TrStrings.forgetPassword,
-        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: Theme.of(context)
                   .textTheme
-                  .bodyLarge!
-                  .color!
-                  .withOpacity(0.64),
+                  .bodyLarge
+                  ?.color
+                  ?.withOpacity(0.64),
             ),
       ),
     );

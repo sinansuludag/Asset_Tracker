@@ -1,4 +1,3 @@
-import 'package:asset_tracker/core/routing/route_names.dart';
 import 'package:flutter/material.dart';
 
 Widget signInAndUpRow(BuildContext context, ColorScheme colorScheme,
@@ -8,12 +7,12 @@ Widget signInAndUpRow(BuildContext context, ColorScheme colorScheme,
     children: [
       Text(
         text,
-        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: Theme.of(context)
                   .textTheme
-                  .bodyLarge!
-                  .color!
-                  .withOpacity(0.64),
+                  .bodyLarge
+                  ?.color
+                  ?.withOpacity(0.64),
             ),
       ),
       InkWell(
