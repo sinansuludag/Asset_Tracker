@@ -1,7 +1,11 @@
 class TrStrings {
   TrStrings._();
+
+  ///Splash screen
   static const String splashTitleText1 = "Varlık";
   static const String splashTitleText2 = "İzleme";
+
+  ///Login and register screen
   static const String signIn = "Giriş Yap";
   static const String signUp = "Kayıt Ol";
   static const String forgetPassword = "Şifremi Unuttum?";

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 CustomTextFormField customUsernameTextFormField(
     String? Function(String?)? validate, String? Function(String?)? onSaved) {
   return CustomTextFormField(
-      prefixIcon: Icon(Icons.person_2_rounded),
+      prefixIcon: const Icon(Icons.person_2_rounded),
       validator: validate,
       onSaved: onSaved,
       labelText: TrStrings.labelUsername,

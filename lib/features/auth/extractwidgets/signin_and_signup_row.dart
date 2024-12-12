@@ -21,7 +21,7 @@ Widget signInAndUpRow(BuildContext context, ColorScheme colorScheme,
         },
         child: Text(
           name,
-          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: colorScheme.secondary,
                 fontWeight: FontWeight.bold,
               ),

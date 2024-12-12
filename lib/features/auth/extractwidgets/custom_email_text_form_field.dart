@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 CustomTextFormField customEmailTextFormFeild(
     String? Function(String?)? validate, String? Function(String?)? onSaved) {
   return CustomTextFormField(
-    prefixIcon: Icon(Icons.email_outlined),
+    prefixIcon: const Icon(Icons.email_outlined),
     labelText: TrStrings.labelEmail,
     hintText: TrStrings.hintTextEmail,
     keyboardType: TextInputType.emailAddress,

@@ -1,5 +1,6 @@
 import 'package:asset_tracker/core/constants/paddings/paddings.dart';
 import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
+import 'package:asset_tracker/core/extensions/assets_path_extension.dart';
 import 'package:asset_tracker/core/routing/route_names.dart';
 import 'package:asset_tracker/core/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
@@ -112,7 +113,7 @@ class _SplashScreenState extends State<SplashScreen>
                   child: Container(
                     height: MediaQuery.of(context).size.height * 0.3,
                     child: Image.asset(
-                      'assets/png/earnings.png',
+                      'earnings'.png,
                     ),
                   ),
                 ),

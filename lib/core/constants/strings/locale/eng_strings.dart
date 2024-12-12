@@ -1,7 +1,11 @@
 class EngStrings {
   EngStrings._();
+
+  ///Splash screen
   static const String splashTitleText1 = "Asset";
   static const String splashTitleText2 = "Tracker";
+
+  ///Login and Register Screen
   static const String signIn = "Sign In";
   static const String signUp = "Sign Up";
   static const String forgetPassword = "Forgot Password?";

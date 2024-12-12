@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   AppColors._();
-  // Ortak renkler
+
   static const Color primaryDark = Color(0xFF212121);
   static const Color white = Color(0xFFFFFFFF);
   static const Color yellow = Color(0xFFFFC107);

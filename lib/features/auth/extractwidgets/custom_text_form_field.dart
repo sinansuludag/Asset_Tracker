@@ -6,7 +6,7 @@ CustomTextFormField customPasswordTextFormField(
     final String? Function(String?)? validate,
     String? Function(String?)? onSaved) {
   return CustomTextFormField(
-      prefixIcon: Icon(Icons.key),
+      prefixIcon: const Icon(Icons.key),
       labelText: TrStrings.labelPassword,
       hintText: TrStrings.hintTextPassword,
       keyboardType: TextInputType.text,
