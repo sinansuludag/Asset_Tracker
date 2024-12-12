@@ -106,79 +106,74 @@ class _SplashScreenState extends State<SplashScreen>
               SizedBox(height: MediaQuery.of(context).size.height * 0.2),
 
               // Görselin opacity ve slide animasyonlarını ekliyoruz
-              FadeTransition(
-                opacity: _imageFadeAnimation,
-                child: SlideTransition(
-                  position: _imageSlideAnimation,
-                  child: Container(
-                    height: MediaQuery.of(context).size.height * 0.3,
-                    child: Image.asset(
-                      'earnings'.png,
-                    ),
-                  ),
-                ),
-              ),
+              buildFadeTransition(context),
 
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.05,
-              ), // Görsel ile animasyon arasına boşluk bırakıyoruz
+              ),
 
               // Animasyonlu metin
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SlideTransition(
-                    position: _animationLeft,
-                    child: AnimatedBuilder(
-                      animation: _controller,
-                      builder: (context, child) {
-                        return Text(
-                          TrStrings.splashTitleText1,
-                          style: textTheme.headlineLarge?.copyWith(
-                            color: _textColorAnimation?.value ?? Colors.black,
-                            fontWeight: FontWeight.bold,
-                            shadows: [
-                              Shadow(
-                                color: AppColorScheme.lightColorScheme.secondary
-                                    .withOpacity(1), // Parlama rengi
-                                blurRadius: _shadowBlurAnimation
-                                    .value, // Gölgeleme yoğunluğu
-                                offset: const Offset(0, 2), // Gölge yönü
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 8), // İki metin arasında boşluk
-                  SlideTransition(
-                    position: _animationRight,
-                    child: AnimatedBuilder(
-                      animation: _controller,
-                      builder: (context, child) {
-                        return Text(
-                          TrStrings.splashTitleText2,
-                          style: textTheme.headlineLarge?.copyWith(
-                            color: _textColorAnimation?.value ?? Colors.black,
-                            fontWeight: FontWeight.bold,
-                            shadows: [
-                              Shadow(
-                                color: AppColorScheme.lightColorScheme.secondary
-                                    .withOpacity(1), // Parlama rengi
-                                blurRadius: _shadowBlurAnimation
-                                    .value, // Gölgeleme yoğunluğu
-                                offset: const Offset(0, 2), // Gölge yönü
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
+              animationText(textTheme),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Row animationText(TextTheme textTheme) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        animationTextSlideTransition(
+            textTheme, _animationLeft, TrStrings.splashTitleText1),
+        const SizedBox(width: 8),
+        animationTextSlideTransition(textTheme, _animationRight,
+            TrStrings.splashTitleText2), // İki metin arasında boşluk
+      ],
+    );
+  }
+
+  SlideTransition animationTextSlideTransition(
+      TextTheme textTheme, Animation<Offset> position, String title) {
+    return SlideTransition(
+      position: position,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return animataTextDecoration(title, textTheme);
+        },
+      ),
+    );
+  }
+
+  Text animataTextDecoration(String title, TextTheme textTheme) {
+    return Text(
+      title,
+      style: textTheme.headlineLarge?.copyWith(
+        color: _textColorAnimation?.value ?? Colors.black,
+        fontWeight: FontWeight.bold,
+        shadows: [
+          Shadow(
+            color: AppColorScheme.lightColorScheme.secondary
+                .withOpacity(1), // Parlama rengi
+            blurRadius: _shadowBlurAnimation.value, // Gölgeleme yoğunluğu
+            offset: const Offset(0, 2), // Gölge yönü
+          ),
+        ],
+      ),
+    );
+  }
+
+  FadeTransition buildFadeTransition(BuildContext context) {
+    return FadeTransition(
+      opacity: _imageFadeAnimation,
+      child: SlideTransition(
+        position: _imageSlideAnimation,
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.3,
+          child: Image.asset(
+            'earnings'.png,
           ),
         ),
       ),
