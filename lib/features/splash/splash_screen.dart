@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/constants/media_query_sizes/media_query_size.dart';
 import 'package:asset_tracker/core/constants/paddings/paddings.dart';
 import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
 import 'package:asset_tracker/core/extensions/assets_path_extension.dart';
@@ -103,13 +104,13 @@ class _SplashScreenState extends State<SplashScreen>
           padding: AppPaddings.defaultPadding,
           child: Column(
             children: [
-              SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+              SizedBox(height: MediaQuerySize(context).percent20Height),
 
               // Görselin opacity ve slide animasyonlarını ekliyoruz
               buildFadeTransition(context),
 
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.05,
+                height: MediaQuerySize(context).percent5Height,
               ),
 
               // Animasyonlu metin
@@ -171,7 +172,7 @@ class _SplashScreenState extends State<SplashScreen>
       child: SlideTransition(
         position: _imageSlideAnimation,
         child: Container(
-          height: MediaQuery.of(context).size.height * 0.3,
+          height: MediaQuerySize(context).percent30Height,
           child: Image.asset(
             'earnings'.png,
           ),

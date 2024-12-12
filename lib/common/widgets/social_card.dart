@@ -22,7 +22,7 @@ class SocialCard extends StatelessWidget {
         height: AppIconSize.socialIconsSize,
         width: AppIconSize.socialIconsSize,
         decoration: BoxDecoration(
-          color: colorSchema.onPrimary,
+          color: colorSchema.surface,
           shape: BoxShape.circle,
         ),
         child: icon,

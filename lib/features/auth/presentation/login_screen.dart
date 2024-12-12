@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/constants/media_query_sizes/media_query_size.dart';
 import 'package:asset_tracker/core/constants/paddings/paddings.dart';
 import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
 import 'package:asset_tracker/core/routing/route_names.dart';
@@ -26,7 +27,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final height = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -38,58 +38,71 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                SizedBox(height: height * 0.1),
-                coinContainerAsset(colorScheme, height),
-                SizedBox(height: height * 0.02),
-                Text(
-                  TrStrings.signIn,
-                  style: textTheme.headlineLarge
-                      ?.copyWith(color: colorScheme.primary),
-                ),
-                SizedBox(height: height * 0.05),
+                buildSizedBox(context, MediaQuerySize(context).percent10Height),
+                coinContainerAsset(colorScheme, context),
+                buildSizedBox(context, MediaQuerySize(context).percent2Height),
+                signInTextTitle(textTheme, colorScheme),
+                buildSizedBox(context, MediaQuerySize(context).percent5Height),
                 customEmailTextFormFeild(EmailValidator.validate, (value) {
                   email = value ?? '';
                 }),
-                SizedBox(height: height * 0.02),
+                buildSizedBox(context, MediaQuerySize(context).percent2Height),
                 customPasswordTextFormField(PasswordValidator.passwordValidate,
                     (value) {
                   password = value ?? '';
                 }),
-                SizedBox(height: height * 0.02),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-                      _formKey.currentState!.reset();
-                      print("Giriş yapıldı");
-                      print(' email :$email password: $password');
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    backgroundColor: colorScheme.secondary,
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(double.infinity, 48),
-                    shape: const StadiumBorder(),
-                  ),
-                  child: const Text(TrStrings.signIn),
-                ),
-                SizedBox(height: height * 0.02),
+                buildSizedBox(context, MediaQuerySize(context).percent2Height),
+                customelevatedButton(colorScheme),
+                buildSizedBox(context, MediaQuerySize(context).percent2Height),
                 _textButton(context),
-                SizedBox(height: height * 0.02),
+                buildSizedBox(context, MediaQuerySize(context).percent2Height),
                 signInAndUpRow(
                     context,
                     colorScheme,
                     TrStrings.textForGoToRegister,
                     TrStrings.signUp,
                     RouteNames.register),
-                SizedBox(height: height * 0.02),
+                buildSizedBox(context, MediaQuerySize(context).percent2Height),
                 socialCardsRow(),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Text signInTextTitle(TextTheme textTheme, ColorScheme colorScheme) {
+    return Text(
+      TrStrings.signIn,
+      style: textTheme.headlineLarge?.copyWith(color: colorScheme.primary),
+    );
+  }
+
+  ElevatedButton customelevatedButton(ColorScheme colorScheme) {
+    return ElevatedButton(
+      onPressed: () {
+        if (_formKey.currentState!.validate()) {
+          _formKey.currentState!.save();
+          _formKey.currentState!.reset();
+          print("Giriş yapıldı");
+          print(' email :$email password: $password');
+        }
+      },
+      style: ElevatedButton.styleFrom(
+        elevation: 0,
+        backgroundColor: colorScheme.secondary,
+        foregroundColor: colorScheme.onPrimary,
+        minimumSize: const Size(double.infinity, 48),
+        shape: const StadiumBorder(),
+      ),
+      child: const Text(TrStrings.signIn),
+    );
+  }
+
+  SizedBox buildSizedBox(BuildContext context, double height) {
+    return SizedBox(
+      height: height,
     );
   }
 
