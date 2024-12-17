@@ -1,6 +1,10 @@
-import 'package:asset_tracker/common/widgets/social_card.dart';
-import 'package:asset_tracker/common/widgets/text_form_field.dart';
-import 'package:asset_tracker/core/theme/app_styles.dart';
+import 'package:asset_tracker/core/constants/media_query_sizes/media_query_size.dart';
+import 'package:asset_tracker/core/constants/paddings/paddings.dart';
+import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
+import 'package:asset_tracker/core/routing/route_names.dart';
+import 'package:asset_tracker/features/auth/domain/validator/email_validator.dart';
+import 'package:asset_tracker/features/auth/domain/validator/password_validator.dart';
+import 'package:asset_tracker/features/auth/domain/validator/username_validator.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/coin_container_asset.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/custom_email_text_form_field.dart';
 import 'package:asset_tracker/features/auth/extractwidgets/custom_text_form_field.dart';
@@ -26,85 +30,64 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: colorScheme.surface,
       body: Padding(
-        padding: AppStyles.defaultPadding,
+        padding: AppPaddings.defaultPadding,
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                SizedBox(
-                  height: height * 0.1,
+                buildSizedBox(
+                  context,
+                  MediaQuerySize(context).percent10Height,
                 ),
-                coinContainerAsset(colorScheme, height),
-                SizedBox(
-                  height: height * 0.02,
+                coinContainerAsset(colorScheme, context),
+                buildSizedBox(
+                  context,
+                  MediaQuerySize(context).percent2Height,
                 ),
-                Text(
-                  "Sign Up",
-                  style: textTheme.headlineLarge
-                      ?.copyWith(color: colorScheme.primary),
+                signUpTextTitle(textTheme, colorScheme),
+                buildSizedBox(
+                  context,
+                  MediaQuerySize(context).percent5Height,
                 ),
-                SizedBox(
-                  height: height * 0.05,
-                ),
-                customUsernameTextFormField((value) {
-                  if (value == null || value.isEmpty) {
-                    return "Username is required";
-                  }
-                  return null;
-                }, (value) {
+                customUsernameTextFormField(UsernameValidator.usernameValidate,
+                    (value) {
                   username = value ?? '';
                 }),
-                SizedBox(height: height * 0.02),
-                customEmailTextFormFeild((value) {
-                  if (value == null || value.isEmpty) {
-                    return "Email is required";
-                  }
-                  return null;
-                }, (value) {
+                buildSizedBox(
+                  context,
+                  MediaQuerySize(context).percent2Height,
+                ),
+                customEmailTextFormFeild(EmailValidator.validate, (value) {
                   email = value ?? '';
                 }),
-                SizedBox(height: height * 0.02),
-                customPasswordTextFormField((value) {
-                  if (value == null || value.isEmpty) {
-                    return "Password is required";
-                  } else if (value.length < 6) {
-                    return "Password must be at least 6 characters";
-                  }
-                  return null;
-                }, (value) {
+                buildSizedBox(
+                  context,
+                  MediaQuerySize(context).percent2Height,
+                ),
+                customPasswordTextFormField(PasswordValidator.passwordValidate,
+                    (value) {
                   password = value ?? '';
                 }),
-                SizedBox(height: height * 0.02),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-                      _formKey.currentState!.reset();
-                      print("Giriş yapıldı");
-                      print(
-                          ' email :$email password: $password username: $username');
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    backgroundColor: colorScheme.secondary,
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(double.infinity, 48),
-                    shape: const StadiumBorder(),
-                  ),
-                  child: const Text("Sign Up"),
+                buildSizedBox(
+                  context,
+                  MediaQuerySize(context).percent2Height,
                 ),
-                SizedBox(height: height * 0.04),
-                signInAndUpRow(context, colorScheme,
-                    "Already have an account? ", "Sign In", "login"),
-                SizedBox(height: height * 0.02),
+                customElevatedButton(colorScheme),
+                buildSizedBox(
+                  context,
+                  MediaQuerySize(context).percent4Height,
+                ),
+                signInAndUpRow(context, colorScheme, TrStrings.textForGoToLogin,
+                    TrStrings.signIn, RouteNames.login),
+                buildSizedBox(
+                  context,
+                  MediaQuerySize(context).percent2Height,
+                ),
                 socialCardsRow(),
               ],
             ),
@@ -112,5 +95,37 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       ),
     );
+  }
+
+  Text signUpTextTitle(TextTheme textTheme, ColorScheme colorScheme) {
+    return Text(
+      TrStrings.signUp,
+      style: textTheme.headlineLarge?.copyWith(color: colorScheme.primary),
+    );
+  }
+
+  ElevatedButton customElevatedButton(ColorScheme colorScheme) {
+    return ElevatedButton(
+      onPressed: () {
+        if (_formKey.currentState!.validate()) {
+          _formKey.currentState!.save();
+          _formKey.currentState!.reset();
+          print("Giriş yapıldı");
+          print(' email :$email password: $password username: $username');
+        }
+      },
+      style: ElevatedButton.styleFrom(
+        elevation: 0,
+        backgroundColor: colorScheme.secondary,
+        foregroundColor: colorScheme.onPrimary,
+        minimumSize: const Size(double.infinity, 48),
+        shape: const StadiumBorder(),
+      ),
+      child: const Text(TrStrings.signUp),
+    );
+  }
+
+  SizedBox buildSizedBox(BuildContext context, double height) {
+    return SizedBox(height: height);
   }
 }

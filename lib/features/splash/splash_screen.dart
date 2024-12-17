@@ -1,4 +1,8 @@
-import 'package:asset_tracker/core/theme/app_styles.dart';
+import 'package:asset_tracker/core/constants/media_query_sizes/media_query_size.dart';
+import 'package:asset_tracker/core/constants/paddings/paddings.dart';
+import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
+import 'package:asset_tracker/core/extensions/assets_path_extension.dart';
+import 'package:asset_tracker/core/routing/route_names.dart';
 import 'package:asset_tracker/core/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen>
   late Animation<double> _imageFadeAnimation; // Görsel için opacity animasyonu
   Animation<Color?>? _textColorAnimation; // Metin rengi animasyonu
   late Animation<double> _shadowBlurAnimation; // Gölgeleme animasyonu
-
+  final int duration = 5;
   @override
   void initState() {
     super.initState();
@@ -78,8 +82,8 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward(); // Animasyonu başlat
 
-    Future.delayed(const Duration(seconds: 5), () {
-      Navigator.pushReplacementNamed(context, '/login');
+    Future.delayed(Duration(seconds: duration), () {
+      Navigator.pushReplacementNamed(context, RouteNames.login);
     });
   }
 
@@ -97,85 +101,80 @@ class _SplashScreenState extends State<SplashScreen>
       backgroundColor: colorScheme.surface,
       body: Center(
         child: Padding(
-          padding: AppStyles.defaultPadding,
+          padding: AppPaddings.defaultPadding,
           child: Column(
             children: [
-              SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+              SizedBox(height: MediaQuerySize(context).percent20Height),
 
               // Görselin opacity ve slide animasyonlarını ekliyoruz
-              FadeTransition(
-                opacity: _imageFadeAnimation,
-                child: SlideTransition(
-                  position: _imageSlideAnimation,
-                  child: Container(
-                    height: MediaQuery.of(context).size.height * 0.3,
-                    child: Image.asset(
-                      'assets/png/earnings.png',
-                    ),
-                  ),
-                ),
-              ),
+              buildFadeTransition(context),
 
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.05,
-              ), // Görsel ile animasyon arasına boşluk bırakıyoruz
+                height: MediaQuerySize(context).percent5Height,
+              ),
 
               // Animasyonlu metin
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SlideTransition(
-                    position: _animationLeft,
-                    child: AnimatedBuilder(
-                      animation: _controller,
-                      builder: (context, child) {
-                        return Text(
-                          'Asset',
-                          style: textTheme.headlineLarge?.copyWith(
-                            color: _textColorAnimation?.value ?? Colors.black,
-                            fontWeight: FontWeight.bold,
-                            shadows: [
-                              Shadow(
-                                color: AppColorScheme.lightColorScheme.secondary
-                                    .withOpacity(1), // Parlama rengi
-                                blurRadius: _shadowBlurAnimation
-                                    .value, // Gölgeleme yoğunluğu
-                                offset: const Offset(0, 2), // Gölge yönü
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 8), // İki metin arasında boşluk
-                  SlideTransition(
-                    position: _animationRight,
-                    child: AnimatedBuilder(
-                      animation: _controller,
-                      builder: (context, child) {
-                        return Text(
-                          'Tracker',
-                          style: textTheme.headlineLarge?.copyWith(
-                            color: _textColorAnimation?.value ?? Colors.black,
-                            fontWeight: FontWeight.bold,
-                            shadows: [
-                              Shadow(
-                                color: AppColorScheme.lightColorScheme.secondary
-                                    .withOpacity(1), // Parlama rengi
-                                blurRadius: _shadowBlurAnimation
-                                    .value, // Gölgeleme yoğunluğu
-                                offset: const Offset(0, 2), // Gölge yönü
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
+              animationText(textTheme),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Row animationText(TextTheme textTheme) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        animationTextSlideTransition(
+            textTheme, _animationLeft, TrStrings.splashTitleText1),
+        const SizedBox(width: 8),
+        animationTextSlideTransition(textTheme, _animationRight,
+            TrStrings.splashTitleText2), // İki metin arasında boşluk
+      ],
+    );
+  }
+
+  SlideTransition animationTextSlideTransition(
+      TextTheme textTheme, Animation<Offset> position, String title) {
+    return SlideTransition(
+      position: position,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return animataTextDecoration(title, textTheme);
+        },
+      ),
+    );
+  }
+
+  Text animataTextDecoration(String title, TextTheme textTheme) {
+    return Text(
+      title,
+      style: textTheme.headlineLarge?.copyWith(
+        color: _textColorAnimation?.value ?? Colors.black,
+        fontWeight: FontWeight.bold,
+        shadows: [
+          Shadow(
+            color: AppColorScheme.lightColorScheme.secondary
+                .withOpacity(1), // Parlama rengi
+            blurRadius: _shadowBlurAnimation.value, // Gölgeleme yoğunluğu
+            offset: const Offset(0, 2), // Gölge yönü
+          ),
+        ],
+      ),
+    );
+  }
+
+  FadeTransition buildFadeTransition(BuildContext context) {
+    return FadeTransition(
+      opacity: _imageFadeAnimation,
+      child: SlideTransition(
+        position: _imageSlideAnimation,
+        child: Container(
+          height: MediaQuerySize(context).percent30Height,
+          child: Image.asset(
+            'earnings'.png,
           ),
         ),
       ),

@@ -1,5 +1,5 @@
-import 'package:asset_tracker/core/theme/app_styles.dart';
-import 'package:asset_tracker/core/theme/color_scheme.dart';
+import 'package:asset_tracker/core/constants/border_radius/border_radius.dart';
+import 'package:asset_tracker/core/constants/paddings/paddings.dart';
 import 'package:flutter/material.dart';
 
 class CustomTextFormField extends StatefulWidget {
@@ -50,11 +50,11 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         fillColor: colorScheme.secondary.withOpacity(0.2),
         hintText: widget.hintText,
         prefixIcon: Padding(
-          padding: AppStyles.lowPadding,
+          padding: AppPaddings.lowPadding,
           child: Container(
             decoration: BoxDecoration(
               color: colorScheme.secondary,
-              borderRadius: AppStyles.lowBorderRadius,
+              borderRadius: AppBorderRadius.lowBorderRadius,
             ),
             child: widget.prefixIcon,
           ),
@@ -73,10 +73,10 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             : null,
         border: const OutlineInputBorder(
           borderSide: BorderSide.none,
-          borderRadius: AppStyles.highBorderRadius,
+          borderRadius: AppBorderRadius.highBorderRadius,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: AppStyles.highBorderRadius,
+          borderRadius: AppBorderRadius.highBorderRadius,
           borderSide: BorderSide.none,
         ),
       ),

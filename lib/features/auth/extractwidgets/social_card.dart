@@ -1,4 +1,5 @@
 import 'package:asset_tracker/common/widgets/social_card.dart';
+import 'package:asset_tracker/core/extensions/assets_path_extension.dart';
 import 'package:flutter/material.dart';
 
 Widget socialCardsRow() {
@@ -7,7 +8,7 @@ Widget socialCardsRow() {
     children: [
       SocialCard(
         icon: Image.asset(
-          'assets/png/search.png',
+          'search'.png,
           fit: BoxFit.cover,
         ),
         press: () {
@@ -16,7 +17,7 @@ Widget socialCardsRow() {
       ),
       SocialCard(
         icon: Image.asset(
-          'assets/png/facebook.png',
+          'facebook'.png,
           fit: BoxFit.cover,
         ),
         press: () {
