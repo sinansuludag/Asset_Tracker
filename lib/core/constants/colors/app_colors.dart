@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  static const Color primaryDark = Color(0xFF212121);
-  static const Color white = Color(0xFFFFFFFF);
-  static const Color yellow = Color(0xFFFFC107);
-  static const Color black = Color(0xFF000000);
-  static const Color lightGrey = Color(0xFFF5F5F5);
-  static const Color darkGreen = Color(0xFF81C784);
-  static const Color paleYellow = Color(0xFFFFE082);
-  static const Color darkGrey = Color(0xFF424242);
-  static const Color red = Color(0xFFD32F2F);
-  static const Color lightRed = Color(0xFFE57373);
+  static const Color appBackground = Color(0xFFFDF9F0); //(arka plan için) +
+  static const Color mainButtonBackground =
+      Color(0xFF00c5a1); // Ana buton arka plan rengi +
+  static const Color mainButtonTextColor =
+      Color(0xFFFFFFFF); // Ana buton metin rengi +
+  static const Color mainTextColor = Color(0xFF4c4637); // Ana metin rengi
+  static const Color secondaryTextColor = Color(0xFFb2ab99); // 2.metin rengi +
+  static const Color secondaryButtonBackground =
+      Color(0xFFc4fcf0); // 2. buton arka plan rengi
+  static const Color secondaryButtonTextColor =
+      Color(0xFF000000); // 2. buton metin rengi
+  static const Color error = Color(0xFFff0000); // Hata rengi
 }

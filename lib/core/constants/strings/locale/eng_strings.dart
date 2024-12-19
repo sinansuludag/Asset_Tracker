@@ -8,7 +8,7 @@ class EngStrings {
   ///Login and Register Screen
   static const String signIn = "Sign In";
   static const String signUp = "Sign Up";
-  static const String forgetPassword = "Forgot Password?";
+  static const String forgetPassword = "Forget Password?";
   static const String textForGoToRegister = "Don’t have an account? ";
   static const String textForGoToLogin = "Already have an account? ";
   static const String requiredEmail = "Email is required";
@@ -23,4 +23,10 @@ class EngStrings {
   static const String warningPasswordLength =
       "Password must be at 6 least characters";
   static const String invalidEmail = "Please enter a valid email address";
+  static const String forgetPasswordScreenTitle = "Forget Password";
+  static const String forgetPasswordScreenText =
+      "Please enter your email and we will send \nyou a link to return to your account";
+  static const String forgetPasswordScreenButtonText = "Continue";
+  static const String fogetPasswordScreenNoAccountText =
+      "Don’t have an account? ";
 }

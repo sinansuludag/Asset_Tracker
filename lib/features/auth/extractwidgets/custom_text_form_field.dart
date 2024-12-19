@@ -4,14 +4,15 @@ import 'package:flutter/material.dart';
 
 CustomTextFormField customPasswordTextFormField(
     final String? Function(String?)? validate,
-    String? Function(String?)? onSaved) {
+    TextEditingController passwordController) {
   return CustomTextFormField(
-      prefixIcon: const Icon(Icons.key),
-      labelText: TrStrings.labelPassword,
-      hintText: TrStrings.hintTextPassword,
-      keyboardType: TextInputType.text,
-      textInputAction: TextInputAction.done,
-      isPassword: true,
-      validator: validate,
-      onSaved: onSaved);
+    controller: passwordController,
+    prefixIcon: const Icon(Icons.key),
+    labelText: TrStrings.labelPassword,
+    hintText: TrStrings.hintTextPassword,
+    keyboardType: TextInputType.text,
+    textInputAction: TextInputAction.done,
+    isPassword: true,
+    validator: validate,
+  );
 }

@@ -1,5 +1,6 @@
 import 'package:asset_tracker/core/constants/paddings/paddings.dart';
 import 'package:asset_tracker/core/constants/sizes/app_icon_size.dart';
+import 'package:asset_tracker/core/extensions/build_context_extension.dart';
 import 'package:flutter/material.dart';
 
 class SocialCard extends StatelessWidget {
@@ -14,15 +15,14 @@ class SocialCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorSchema = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: press,
       child: Container(
-        padding: AppPaddings.defaultPadding,
+        padding: AppPaddings.allDefaultPadding,
         height: AppIconSize.socialIconsSize,
         width: AppIconSize.socialIconsSize,
         decoration: BoxDecoration(
-          color: colorSchema.surface,
+          color: context.colorScheme.surface,
           shape: BoxShape.circle,
         ),
         child: icon,
