@@ -29,4 +29,15 @@ class EngStrings {
   static const String forgetPasswordScreenButtonText = "Continue";
   static const String fogetPasswordScreenNoAccountText =
       "Don’t have an account? ";
+
+  ///Exception messages
+  static const String networkError = "Check your internet connection.";
+  static const String userNotFound = "User not found. Please try again.";
+  static const String wrongPassword = "Incorrect password. Please try again.";
+  static const String emailAlreadyInUse =
+      "This email address is already in use.";
+  static const String accountExistsWithDifferentCredential =
+      "This email address is already in use with a different credential.";
+  static const String unknownError = "An unknown error occurred.";
+  static const String timeout = "Timed out. Please try again.";
 }

@@ -27,4 +27,15 @@ class TrStrings {
       "Lütfen e-postanızı girin ve hesabınıza geri dönmeniz için bir bağlantı göndereceğiz";
   static const String forgetPasswordScreenButtonText = "Devam Et";
   static const String fogetPasswordScreenNoAccountText = "Hesabınız yok mu? ";
+
+  ///Exception messages
+  static const String networkError = "İnternet bağlantınızı kontrol edin.";
+  static const String userNotFound =
+      "Kullanıcı bulunamadı. Lütfen tekrar deneyin.";
+  static const String wrongPassword = "Yanlış şifre. Lütfen tekrar deneyin.";
+  static const String emailAlreadyInUse = "Bu e-posta adresi zaten kullanımda.";
+  static const String accountExistsWithDifferentCredential =
+      "Bu e-posta adresi farklı bir kimlik bilgisi ile zaten kullanımda.";
+  static const String unknownError = "Bilinmeyen bir hata oluştu.";
+  static const String timeout = "Zaman aşımına uğradı. Lütfen tekrar deneyin.";
 }
