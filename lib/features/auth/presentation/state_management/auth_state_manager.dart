@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -9,7 +10,7 @@ enum AuthState {
 }
 
 class AuthNotifier extends StateNotifier<AuthState> {
-  final AuthRepository _repository;
+  final IAuthRepository _repository;
   User? _user;
 
   AuthNotifier(this._repository) : super(AuthState.initial) {
@@ -24,9 +25,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
       _user = await _repository.signIn(email, password);
       state =
           _user != null ? AuthState.authenticated : AuthState.unauthenticated;
+    } on FirebaseAuthException catch (e) {
+      state = AuthState.unauthenticated;
+      rethrow; // FirebaseAuthException'ı dışarıya ilet
     } catch (e) {
       state = AuthState.unauthenticated;
-      print('Sign-in error: $e');
+      rethrow; // Diğer tüm hataları ilet
     }
   }
 
@@ -36,9 +40,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
       _user = await _repository.register(email, password, username);
       state =
           _user != null ? AuthState.authenticated : AuthState.unauthenticated;
+    } on FirebaseAuthException catch (e) {
+      state = AuthState.unauthenticated;
+      rethrow; // FirebaseAuthException'ı dışarıya ilet
     } catch (e) {
       state = AuthState.unauthenticated;
-      print('Registration error: $e');
+      rethrow; // Diğer tüm hataları ilet
     }
   }
 
@@ -48,8 +55,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
       await _repository.signOut();
       _user = null;
       state = AuthState.unauthenticated;
+    } on FirebaseAuthException catch (e) {
+      rethrow; // FirebaseAuthException'ı dışarıya ilet
     } catch (e) {
-      print('Sign-out error: $e');
+      rethrow; // Diğer tüm hataları ilet
     }
   }
 
@@ -67,9 +76,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
       } else {
         state = AuthState.unauthenticated;
       }
+    } on FirebaseAuthException catch (e) {
+      state = AuthState.unauthenticated;
+      rethrow; // FirebaseAuthException'ı dışarıya ilet
     } catch (e) {
       state = AuthState.unauthenticated;
-      print('Check login status error: $e');
+      rethrow; // Diğer tüm hataları ilet
     }
   }
 }

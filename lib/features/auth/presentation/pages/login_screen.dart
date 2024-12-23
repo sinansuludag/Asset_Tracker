@@ -1,4 +1,6 @@
 import 'package:asset_tracker/core/mixins/login_screen_mixin.dart';
+import 'package:asset_tracker/features/auth/presentation/widgets/elevated_button.dart';
+import 'package:asset_tracker/features/auth/presentation/widgets/textTitle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:asset_tracker/core/constants/media_query_sizes/media_query_size.dart';
@@ -34,7 +36,10 @@ class LoginScreen extends ConsumerWidget with LoginScreenMixin {
                   coinContainerAsset(context),
                   buildSizedBox(
                       context, MediaQuerySize(context).percent2Height),
-                  signInTextTitle(context),
+                  textTitle(
+                    context,
+                    title: TrStrings.signIn,
+                  ),
                   buildSizedBox(
                       context, MediaQuerySize(context).percent5Height),
                   customEmailTextFormFeild(
@@ -45,7 +50,15 @@ class LoginScreen extends ConsumerWidget with LoginScreenMixin {
                       PasswordValidator.passwordValidate, passwordController),
                   buildSizedBox(
                       context, MediaQuerySize(context).percent2Height),
-                  customElevatedButton(context, ref),
+                  customElevatedButton(
+                      context: context,
+                      ref: ref,
+                      butonText: TrStrings.signIn,
+                      onPressed: () async {
+                        if (formKey.currentState!.validate()) {
+                          loginButton(context, ref);
+                        }
+                      }),
                   buildSizedBox(
                       context, MediaQuerySize(context).percent2Height),
                   forgetPasswordTextButton(context),
@@ -60,6 +73,24 @@ class LoginScreen extends ConsumerWidget with LoginScreenMixin {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  SizedBox buildSizedBox(BuildContext context, double height) {
+    return SizedBox(height: height);
+  }
+
+  Widget forgetPasswordTextButton(BuildContext context) {
+    return TextButton(
+      onPressed: () {
+        Navigator.pushNamed(context, RouteNames.forgetPassword);
+      },
+      child: Text(
+        TrStrings.forgetPassword,
+        style: context.textTheme.bodyMedium?.copyWith(
+          color: context.colorScheme.onError,
         ),
       ),
     );

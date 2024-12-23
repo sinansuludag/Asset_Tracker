@@ -1,70 +1,36 @@
-import 'package:asset_tracker/core/constants/media_query_sizes/media_query_size.dart';
 import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
-import 'package:asset_tracker/core/extensions/build_context_extension.dart';
+import 'package:asset_tracker/core/exceptions/firebase_auth_exceptions/firebase_error_type.dart';
+import 'package:asset_tracker/core/extensions/firebase_error_extension.dart';
+import 'package:asset_tracker/core/extensions/snack_bar_extension.dart';
 import 'package:asset_tracker/core/routing/route_names.dart';
-import 'package:asset_tracker/features/auth/presentation/pages/forget_password.dart';
+import 'package:asset_tracker/features/auth/presentation/state_management/auth_state_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-mixin ForgetPasswordScreenMixin on State<ForgetPasswordScreen> {
+mixin ForgetPasswordScreenMixin {
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
-  ElevatedButton forgetPasswordElevatedButton(
-    BuildContext context,
-  ) {
-    return ElevatedButton(
-      onPressed: () {
-        if (formKey.currentState!.validate()) {
-          emailController.clear();
-          Navigator.pushNamed(context, RouteNames.login);
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        elevation: 5,
-        backgroundColor: context.colorScheme.primary,
-        foregroundColor: context.colorScheme.onPrimary,
-        minimumSize: Size(MediaQuerySize(context).percent60Width,
-            MediaQuerySize(context).percent12Width),
-        shape: const StadiumBorder(),
-      ),
-      child: const Text(TrStrings.signIn),
-    );
-  }
 
-  Widget noAccountTextButton(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(TrStrings.fogetPasswordScreenNoAccountText,
-            style: context.textTheme.bodyMedium
-                ?.copyWith(color: context.colorScheme.onSecondary)),
-        GestureDetector(
-          onTap: () {
-            Navigator.pushNamed(context, RouteNames.register);
-          },
-          child: Text(
-            TrStrings.signUp,
-            style: TextStyle(
-              color: context.colorScheme.error,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  forgetPasswordButton(BuildContext context, WidgetRef ref) async {
+    var email = emailController.text;
+    var resetPassword = ref.read(firebaseAuthServiceProvider);
+    try {
+      await resetPassword.sendPasswordResetEmail(email);
+    } catch (e) {
+      if (e is FirebaseAuthException) {
+        FirebaseAuthErrorType errorType =
+            FirebaseErrorHandlingExtension.getErrorTypeFromAuthException(e);
 
-  Text bodyText(BuildContext context) {
-    return Text(
-      TrStrings.forgetPasswordScreenText,
-      textAlign: TextAlign.center,
-      style: TextStyle(color: context.colorScheme.onSecondary),
-    );
-  }
+        String errorMessage = errorType.getErrorMessage();
+        context.showSnackBar(errorMessage);
+      } else {
+        // Diğer hata durumları
+        context.showSnackBar(TrStrings.unknownError);
+      }
+    }
 
-  Text titleText(BuildContext context) {
-    return Text(
-      TrStrings.forgetPasswordScreenTitle,
-      style: context.textTheme.headlineMedium
-          ?.copyWith(color: context.colorScheme.onSurface),
-    );
+    emailController.clear();
+    Navigator.pushNamed(context, RouteNames.login);
   }
 }

@@ -1,13 +1,12 @@
+import 'package:asset_tracker/features/auth/data/datasources/local/abstract_local_storage.dart';
+import 'package:asset_tracker/features/auth/data/datasources/remote/abstract_firebase_auth_service.dart';
 import 'package:asset_tracker/features/auth/domain/entities/user.dart';
-
 import '../../domain/repositories/auth_repository.dart';
-import '../datasources/local/local_storage_service.dart';
-import '../datasources/remote/auth_service.dart';
 import '../models/user_model.dart';
 
-class AuthRepositoryImpl implements AuthRepository {
-  final FirebaseAuthService _firebaseAuthService;
-  final LocalStorageService _localStorageService;
+class AuthRepositoryImpl implements IAuthRepository {
+  final IFirebaseAuthService _firebaseAuthService;
+  final ILocalStorageService _localStorageService;
 
   AuthRepositoryImpl(this._firebaseAuthService, this._localStorageService);
 
@@ -44,5 +43,10 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<bool> isLoggedIn() async {
     return await _localStorageService.isLoggedIn();
+  }
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {
+    await _firebaseAuthService.sendPasswordResetEmail(email);
   }
 }

@@ -1,36 +1,57 @@
-import 'package:firebase_auth/firebase_auth.dart';
-
 /// Firebase Hata Tipleri
 enum FirebaseAuthErrorType {
   // Authentication Hataları
-  networkError, // Ağ hatası
-  userNotFound, // Kullanıcı bulunamadı
-  wrongPassword, // Yanlış şifre
-  emailAlreadyInUse, // E-posta zaten kullanımda
 
-  accountExistsWithDifferentCredential, // Hesap farklı kimlik bilgisiyle mevcut
+  /// Ağ hatası
+  networkError('network-request-failed'),
+
+  /// Kullanıcı bulunamadı
+  userNotFound('user-not-found'),
+
+  /// Yanlış şifre
+  wrongPassword('wrong-password'),
+
+  /// E-posta zaten kullanımda
+  emailAlreadyInUse('email-already-in-use'),
+
+  /// Hesap farklı kimlik bilgisiyle mevcut
+  accountExistsWithDifferentCredential(
+      'account-exists-with-different-credential'),
+
+  /// Geçersiz kimlik bilgisi
+  invalidCredential('invalid-credential'),
+
+  /// Kullanıcı hesabı devre dışı
+  userDisabled('user-disabled'),
+
+  /// Zayıf şifre
+  weakPassword('weak-password'),
+
+  /// Son oturum açma gereklidir
+  requiresRecentLogin('requires-recent-login'),
+
+  /// Operasyon izinli değil
+  operationNotAllowed('operation-not-allowed'),
 
   // Genel Hatalar
-  unknownError, // Bilinmeyen hata
-  timeout, // Zaman aşımı
-}
 
-/// FirebaseAuthException İçin Hata Türü Belirleme
-FirebaseAuthErrorType getErrorTypeFromAuthException(FirebaseAuthException e) {
-  switch (e.code) {
-    case 'user-not-found':
-      return FirebaseAuthErrorType.userNotFound;
-    case 'wrong-password':
-      return FirebaseAuthErrorType.wrongPassword;
-    case 'email-already-in-use':
-      return FirebaseAuthErrorType.emailAlreadyInUse;
-    case 'account-exists-with-different-credential':
-      return FirebaseAuthErrorType.accountExistsWithDifferentCredential;
-    case 'network-request-failed':
-      return FirebaseAuthErrorType.networkError;
-    case 'timeout':
-      return FirebaseAuthErrorType.timeout;
-    default:
-      return FirebaseAuthErrorType.unknownError;
+  /// Bilinmeyen hata
+  unknownError('unknown-error'),
+
+  /// Zaman aşımı
+  timeout('timeout');
+
+  // Değerlerin string karşılıklarını tutmak için
+  final String code;
+
+  // Constructor tanımı
+  const FirebaseAuthErrorType(this.code);
+
+  // Firebase hata koduna göre eşleştirme
+  static FirebaseAuthErrorType fromCode(String code) {
+    return FirebaseAuthErrorType.values.firstWhere(
+      (e) => e.code == code,
+      orElse: () => FirebaseAuthErrorType.unknownError,
+    );
   }
 }

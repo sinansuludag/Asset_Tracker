@@ -25,10 +25,14 @@ class EngStrings {
   static const String invalidEmail = "Please enter a valid email address";
   static const String forgetPasswordScreenTitle = "Forget Password";
   static const String forgetPasswordScreenText =
-      "Please enter your email and we will send \nyou a link to return to your account";
+      "Please enter your e-mail and you can create your new password using the link sent to your e-mail.";
   static const String forgetPasswordScreenButtonText = "Continue";
   static const String fogetPasswordScreenNoAccountText =
       "Don’t have an account? ";
+
+  ///SnackBar messages
+  static const String succesLogin = "Login successful.";
+  static const String succesRegister = "Registered successfully.";
 
   ///Exception messages
   static const String networkError = "Check your internet connection.";
@@ -40,4 +44,9 @@ class EngStrings {
       "This email address is already in use with a different credential.";
   static const String unknownError = "An unknown error occurred.";
   static const String timeout = "Timed out. Please try again.";
+  static const String invalidCredential = "Invalid credential.";
+  static const String userDisabled = "User account disabled.";
+  static const String weakPassword = "Weak password.";
+  static const String requiresRecentLogin = "Last login required.";
+  static const String operationNotAllowed = "Operation is not permitted.";
 }

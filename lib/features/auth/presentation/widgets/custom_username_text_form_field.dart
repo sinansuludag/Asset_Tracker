@@ -1,4 +1,4 @@
-import 'package:asset_tracker/common/widgets/text_form_field.dart';
+import 'package:asset_tracker/core/common/widgets/text_form_field.dart';
 import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
 import 'package:flutter/material.dart';
 

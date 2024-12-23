@@ -11,8 +11,10 @@ import 'package:asset_tracker/features/auth/presentation/widgets/coin_container_
 import 'package:asset_tracker/features/auth/presentation/widgets/custom_email_text_form_field.dart';
 import 'package:asset_tracker/features/auth/presentation/widgets/custom_text_form_field.dart';
 import 'package:asset_tracker/features/auth/presentation/widgets/custom_username_text_form_field.dart';
+import 'package:asset_tracker/features/auth/presentation/widgets/elevated_button.dart';
 import 'package:asset_tracker/features/auth/presentation/widgets/signin_and_signup_row.dart';
 import 'package:asset_tracker/features/auth/presentation/widgets/social_card.dart';
+import 'package:asset_tracker/features/auth/presentation/widgets/textTitle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -36,7 +38,7 @@ class RegisterScreen extends ConsumerWidget with RegisterScreenMixin {
                   coinContainerAsset(context),
                   buildSizedBox(
                       context, MediaQuerySize(context).percent2Height),
-                  signUpTextTitle(context),
+                  textTitle(context, title: TrStrings.signUp),
                   buildSizedBox(
                       context, MediaQuerySize(context).percent5Height),
                   customUsernameTextFormField(
@@ -57,7 +59,16 @@ class RegisterScreen extends ConsumerWidget with RegisterScreenMixin {
                   ),
                   buildSizedBox(
                       context, MediaQuerySize(context).percent2Height),
-                  customElevatedButton(context, ref),
+                  customElevatedButton(
+                    context: context,
+                    ref: ref,
+                    butonText: TrStrings.signUp,
+                    onPressed: () async {
+                      if (formKey.currentState!.validate()) {
+                        registerButton(context, ref);
+                      }
+                    },
+                  ),
                   buildSizedBox(
                       context, MediaQuerySize(context).percent4Height),
                   signInAndUpRow(
@@ -76,5 +87,9 @@ class RegisterScreen extends ConsumerWidget with RegisterScreenMixin {
         ),
       ),
     );
+  }
+
+  SizedBox buildSizedBox(BuildContext context, double height) {
+    return SizedBox(height: height);
   }
 }
