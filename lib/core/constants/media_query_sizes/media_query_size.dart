@@ -19,11 +19,23 @@ class MediaQuerySize {
   /// size-> %1
   double get percent1Height => screenHeight * 0.01;
 
+  /// size-> %1,5
+  double get percent1_5Width => screenWidth * 0.015;
+
+  /// size-> %1,5
+  double get percent1_5Height => screenHeight * 0.015;
+
   /// size-> %2
   double get percent2Width => screenWidth * 0.02;
 
   /// size-> %2
   double get percent2Height => screenHeight * 0.02;
+
+  /// size-> %3
+  double get percent3Width => screenWidth * 0.03;
+
+  /// size-> %3
+  double get percent3Height => screenHeight * 0.03;
 
   /// size-> %4
   double get percent4Width => screenWidth * 0.04;
@@ -43,6 +55,18 @@ class MediaQuerySize {
   /// size-> %10
   double get percent10Height => screenHeight * 0.10;
 
+  /// size-> %12
+  double get percent12Width => screenWidth * 0.12;
+
+  /// size-> %10
+  double get percent12Height => screenHeight * 0.12;
+
+  /// size-> %15
+  double get percent15Width => screenWidth * 0.15;
+
+  /// size-> %10
+  double get percent15Height => screenHeight * 0.15;
+
   /// size-> %20
   double get percent20Width => screenWidth * 0.20;
 
@@ -54,4 +78,40 @@ class MediaQuerySize {
 
   /// size-> %30
   double get percent30Height => screenHeight * 0.30;
+
+  /// size-> %35
+  double get percent35Width => screenWidth * 0.35;
+
+  /// size-> %30
+  double get percent35Height => screenHeight * 0.35;
+
+  /// size-> %40
+  double get percent40Width => screenWidth * 0.40;
+
+  /// size-> %40
+  double get percent40Height => screenHeight * 0.40;
+
+  /// size-> %50
+  double get percent50Width => screenWidth * 0.50;
+
+  /// size-> %50
+  double get percent50Height => screenHeight * 0.50;
+
+  /// size-> %60
+  double get percent60Width => screenWidth * 0.60;
+
+  /// size-> %60
+  double get percent60Height => screenHeight * 0.60;
+
+  /// size-> %70
+  double get percent70Width => screenWidth * 0.70;
+
+  /// size-> %60
+  double get percent70Height => screenHeight * 0.70;
+
+  /// size-> %80
+  double get percent80Width => screenWidth * 0.80;
+
+  /// size-> %60
+  double get percent80Height => screenHeight * 0.80;
 }
