@@ -1,15 +1,16 @@
-import 'package:asset_tracker/core/theme/app_styles.dart';
+import 'package:asset_tracker/core/constants/border_radius/border_radius.dart';
+import 'package:asset_tracker/core/constants/media_query_sizes/media_query_size.dart';
+import 'package:asset_tracker/core/extensions/assets_path_extension.dart';
+import 'package:asset_tracker/core/extensions/build_context_extension.dart';
 import 'package:flutter/material.dart';
 
-Widget coinContainerAsset(ColorScheme colorScheme, double height) {
+Widget coinContainerAsset(BuildContext context) {
   return Container(
     decoration: BoxDecoration(
-      borderRadius: AppStyles.highBorderRadius,
-      color: colorScheme.onSurface,
+      borderRadius: AppBorderRadius.highBorderRadius,
+      color: context.colorScheme.onSurface,
     ),
-    height: height * 0.18,
-    child: Image.asset(
-      'assets/png/coin.png',
-    ),
+    height: MediaQuerySize(context).percent20Height,
+    child: Image.asset('coin'.png),
   );
 }

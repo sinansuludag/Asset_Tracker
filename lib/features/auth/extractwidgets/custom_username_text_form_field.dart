@@ -1,14 +1,16 @@
 import 'package:asset_tracker/common/widgets/text_form_field.dart';
+import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
 import 'package:flutter/material.dart';
 
 CustomTextFormField customUsernameTextFormField(
-    String? Function(String?)? validate, String? Function(String?)? onSaved) {
+    String? Function(String?)? validate,
+    TextEditingController usernameController) {
   return CustomTextFormField(
-      prefixIcon: Icon(Icons.person_2_rounded),
+      controller: usernameController,
+      prefixIcon: const Icon(Icons.person_2_rounded),
       validator: validate,
-      onSaved: onSaved,
-      labelText: "Username",
-      hintText: "Enter the username",
+      labelText: TrStrings.labelUsername,
+      hintText: TrStrings.hintTextUsername,
       keyboardType: TextInputType.emailAddress,
       textInputAction: TextInputAction.next);
 }

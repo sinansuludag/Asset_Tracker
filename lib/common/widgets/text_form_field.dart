@@ -1,5 +1,6 @@
-import 'package:asset_tracker/core/theme/app_styles.dart';
-import 'package:asset_tracker/core/theme/color_scheme.dart';
+import 'package:asset_tracker/core/constants/border_radius/border_radius.dart';
+import 'package:asset_tracker/core/constants/paddings/paddings.dart';
+import 'package:asset_tracker/core/extensions/build_context_extension.dart';
 import 'package:flutter/material.dart';
 
 class CustomTextFormField extends StatefulWidget {
@@ -7,8 +8,8 @@ class CustomTextFormField extends StatefulWidget {
   final String hintText;
   final Icon? prefixIcon;
   final Icon? suffixIcon;
+  final TextEditingController controller;
   final String? Function(String?)? validator;
-  final String? Function(String?)? onSaved;
   final TextInputType keyboardType;
   final TextInputAction textInputAction;
   final bool isPassword;
@@ -20,7 +21,7 @@ class CustomTextFormField extends StatefulWidget {
     this.prefixIcon,
     this.suffixIcon,
     this.validator,
-    this.onSaved,
+    required this.controller,
     required this.keyboardType,
     required this.textInputAction,
     this.isPassword = false,
@@ -40,21 +41,19 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return TextFormField(
-      onSaved: widget.onSaved, // Burada onSaved fonksiyonunu geçiriyoruz
+      controller: widget.controller,
       decoration: InputDecoration(
         labelText: widget.labelText,
         filled: true,
-        fillColor: colorScheme.secondary.withOpacity(0.2),
+        fillColor: context.colorScheme.onError.withAlpha(75),
         hintText: widget.hintText,
         prefixIcon: Padding(
-          padding: AppStyles.lowPadding,
+          padding: AppPaddings.allLowPadding,
           child: Container(
             decoration: BoxDecoration(
-              color: colorScheme.secondary,
-              borderRadius: AppStyles.lowBorderRadius,
+              color: context.colorScheme.onPrimary,
+              borderRadius: AppBorderRadius.lowBorderRadius,
             ),
             child: widget.prefixIcon,
           ),
@@ -73,10 +72,10 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             : null,
         border: const OutlineInputBorder(
           borderSide: BorderSide.none,
-          borderRadius: AppStyles.highBorderRadius,
+          borderRadius: AppBorderRadius.highBorderRadius,
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: AppStyles.highBorderRadius,
+        focusedBorder: const OutlineInputBorder(
+          borderRadius: AppBorderRadius.highBorderRadius,
           borderSide: BorderSide.none,
         ),
       ),

@@ -1,27 +1,28 @@
+import 'package:asset_tracker/core/constants/colors/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class AppColorScheme {
   static const lightColorScheme = ColorScheme(
     brightness: Brightness.light,
-    primary: Color(0xFF212121),
-    onPrimary: Color(0xFFFFFFFF),
-    secondary: Color(0xFFFFC107),
-    onSecondary: Color(0xFF000000),
-    surface: Color(0xFFF5F5F5),
-    onSurface: Color(0xFF212121),
-    error: Color(0xFFD32F2F),
-    onError: Color(0xFFFFFFFF),
+    primary: AppColors.mainButtonBackground,
+    onPrimary: AppColors.mainButtonTextColor,
+    secondary: AppColors.secondaryButtonBackground,
+    onSecondary: AppColors.secondaryButtonTextColor,
+    surface: AppColors.appBackground,
+    onSurface: AppColors.mainTextColor,
+    error: AppColors.error,
+    onError: AppColors.secondaryTextColor,
   );
 
   static const darkColorScheme = ColorScheme(
     brightness: Brightness.dark,
-    primary: Color(0xFF81C784),
-    onPrimary: Color(0xFF000000),
-    secondary: Color(0xFFFFE082),
-    onSecondary: Color(0xFF000000),
-    surface: Color(0xFF424242),
-    onSurface: Color(0xFFF5F5F5),
-    error: Color(0xFFE57373),
-    onError: Color(0xFF000000),
+    primary: AppColors.mainButtonBackground, // Ana buton arka planı
+    onPrimary: AppColors.mainButtonTextColor, // Ana buton metin rengi
+    secondary: AppColors.secondaryButtonBackground, // İkinci buton arka planı
+    onSecondary: AppColors.secondaryButtonTextColor, // İkinci buton metin rengi
+    surface: Color(0xFF121212), // Karanlık zemin rengi
+    onSurface: AppColors.mainTextColor, // Karanlık zeminde ana metin rengi
+    error: AppColors.error, // Hata rengi
+    onError: AppColors.mainTextColor, // Hata mesajlarında metin rengi
   );
 }
