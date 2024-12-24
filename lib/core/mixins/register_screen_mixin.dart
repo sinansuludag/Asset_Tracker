@@ -17,6 +17,7 @@ mixin RegisterScreenMixin {
 
   registerButton(BuildContext context, WidgetRef ref) async {
     try {
+      ref.read(isLoadingProvider.notifier).state = true;
       final authNotifier = ref.read(authProvider.notifier);
       await authNotifier.register(
         emailController.text,
@@ -46,6 +47,10 @@ mixin RegisterScreenMixin {
     } catch (e) {
       // Bilinmeyen hata durumu
       context.showSnackBar(TrStrings.unknownError);
+    }
+    // Yükleniyor durumunu pasif et
+    finally {
+      ref.read(isLoadingProvider.notifier).state = false;
     }
   }
 }

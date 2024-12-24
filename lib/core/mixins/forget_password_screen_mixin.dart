@@ -16,6 +16,7 @@ mixin ForgetPasswordScreenMixin {
     var email = emailController.text;
     var resetPassword = ref.read(firebaseAuthServiceProvider);
     try {
+      ref.read(isLoadingProvider.notifier).state = true;
       await resetPassword.sendPasswordResetEmail(email);
     } catch (e) {
       if (e is FirebaseAuthException) {
@@ -28,6 +29,8 @@ mixin ForgetPasswordScreenMixin {
         // Diğer hata durumları
         context.showSnackBar(TrStrings.unknownError);
       }
+    } finally {
+      ref.read(isLoadingProvider.notifier).state = false;
     }
 
     emailController.clear();

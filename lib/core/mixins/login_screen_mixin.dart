@@ -16,6 +16,8 @@ mixin LoginScreenMixin {
 
   loginButton(BuildContext context, WidgetRef ref) async {
     try {
+      // Yükleniyor durumunu aktif et
+      ref.read(isLoadingProvider.notifier).state = true;
       // Auth işlemi
       final authNotifier = ref.read(authProvider.notifier);
       await authNotifier.signIn(
@@ -44,6 +46,9 @@ mixin LoginScreenMixin {
         // Diğer hata durumları
         context.showSnackBar(TrStrings.unknownError);
       }
+    } finally {
+      // Yükleniyor durumunu pasif et
+      ref.read(isLoadingProvider.notifier).state = false;
     }
   }
 }
