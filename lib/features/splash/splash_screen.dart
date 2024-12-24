@@ -1,37 +1,39 @@
-import 'package:asset_tracker/core/constants/media_query_sizes/media_query_size.dart';
-import 'package:asset_tracker/core/constants/paddings/paddings.dart';
-import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
-import 'package:asset_tracker/core/extensions/assets_path_extension.dart';
-import 'package:asset_tracker/core/extensions/build_context_extension.dart';
-import 'package:asset_tracker/core/routing/route_names.dart';
+import 'package:asset_tracker/features/auth/presentation/state_management/auth_state_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/constants/media_query_sizes/media_query_size.dart';
+import '../../core/constants/paddings/paddings.dart';
+import '../../core/constants/strings/locale/tr_strings.dart';
+import '../../core/extensions/assets_path_extension.dart';
+import '../../core/extensions/build_context_extension.dart';
+import '../../core/routing/route_names.dart';
+import '../auth/presentation/state_management/auth_state_manager.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Offset> _animationLeft;
   late Animation<Offset> _animationRight;
-  late Animation<Offset> _imageSlideAnimation; // Görsel için slide animasyonu
-  late Animation<double> _imageFadeAnimation; // Görsel için opacity animasyonu
-  Animation<Color?>? _textColorAnimation; // Metin rengi animasyonu
+  late Animation<Offset> _imageSlideAnimation;
+  late Animation<double> _imageFadeAnimation;
+  Animation<Color?>? _textColorAnimation;
 
   final int duration = 5;
+
   @override
   void initState() {
     super.initState();
 
-    // Animasyon controller'ı başlatıyoruz
     _controller =
         AnimationController(vsync: this, duration: const Duration(seconds: 2));
 
-    // Animasyonlar
     _animationLeft = Tween<Offset>(
       begin: const Offset(-1.5, 0),
       end: Offset.zero,
@@ -46,38 +48,41 @@ class _SplashScreenState extends State<SplashScreen>
       CurvedAnimation(parent: _controller, curve: Curves.easeOut),
     );
 
-    // Görselin yavaşça görünmesi için opacity animasyonu
     _imageFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeIn),
     );
 
-    // Görselin alt taraftan yukarıya hareket etmesi için slide animasyonu
     _imageSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 3), // Başlangıçta ekranın altından
-      end: Offset.zero, // Sonraki animasyon yeri
+      begin: const Offset(0, 3),
+      end: Offset.zero,
     ).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOut),
     );
 
-    // Metin renginin animasyonu (renk geçişi)
-    // `addPostFrameCallback` ile `context` üzerinden renk değerlerini ayarla
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
         _textColorAnimation = ColorTween(
-          begin: context.colorScheme.surface, // Başlangıç rengi
-          end: context.colorScheme.onSecondary.withAlpha(150), // Bitiş rengi
+          begin: context.colorScheme.surface,
+          end: context.colorScheme.onSecondary.withAlpha(150),
         ).animate(
           CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
         );
       });
 
-      _controller.forward(); // Animasyonu başlat
+      _controller.forward();
     });
 
-    _controller.forward(); // Animasyonu başlat
+    _controller.forward();
 
     Future.delayed(Duration(seconds: duration), () {
-      Navigator.pushReplacementNamed(context, RouteNames.login);
+      ref.read(authProvider.notifier).checkLoginStatus().then((_) {
+        final authState = ref.read(authProvider);
+        if (authState == AuthState.authenticated) {
+          Navigator.pushReplacementNamed(context, RouteNames.home);
+        } else {
+          Navigator.pushReplacementNamed(context, RouteNames.login);
+        }
+      });
     });
   }
 
@@ -97,15 +102,8 @@ class _SplashScreenState extends State<SplashScreen>
           child: Column(
             children: [
               SizedBox(height: MediaQuerySize(context).percent20Height),
-
-              // Görselin opacity ve slide animasyonlarını ekliyoruz
               buildFadeTransition(context),
-
-              SizedBox(
-                height: MediaQuerySize(context).percent5Height,
-              ),
-
-              // Animasyonlu metin
+              SizedBox(height: MediaQuerySize(context).percent5Height),
               animationText(context),
             ],
           ),
@@ -121,8 +119,8 @@ class _SplashScreenState extends State<SplashScreen>
         animationTextSlideTransition(
             _animationLeft, TrStrings.splashTitleText1),
         const SizedBox(width: 8),
-        animationTextSlideTransition(_animationRight,
-            TrStrings.splashTitleText2), // İki metin arasında boşluk
+        animationTextSlideTransition(
+            _animationRight, TrStrings.splashTitleText2),
       ],
     );
   }
@@ -155,7 +153,7 @@ class _SplashScreenState extends State<SplashScreen>
       opacity: _imageFadeAnimation,
       child: SlideTransition(
         position: _imageSlideAnimation,
-        child: Container(
+        child: SizedBox(
           height: MediaQuerySize(context).percent30Height,
           child: Image.asset(
             'earnings'.png,
