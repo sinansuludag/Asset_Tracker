@@ -2,7 +2,7 @@ import 'package:asset_tracker/core/constants/media_query_sizes/media_query_size.
 import 'package:asset_tracker/core/constants/paddings/paddings.dart';
 import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
 import 'package:asset_tracker/core/extensions/build_context_extension.dart';
-import 'package:asset_tracker/core/mixins/register_screen_mixin.dart';
+import 'package:asset_tracker/core/mixins/screen_mixin/register_screen_mixin.dart';
 import 'package:asset_tracker/core/routing/route_names.dart';
 import 'package:asset_tracker/core/utils/validator/email_validator.dart';
 import 'package:asset_tracker/core/utils/validator/password_validator.dart';

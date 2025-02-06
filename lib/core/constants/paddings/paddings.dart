@@ -74,4 +74,60 @@ class AppPaddings {
   ///onlySimetriccVerticalpaddingSize ->48
   static const EdgeInsets verticalSimetricHighPadding =
       EdgeInsets.symmetric(vertical: 48.0);
+
+  ///SimetricVerticalAndHorizontalpaddingSize -> (4,4)
+  static const EdgeInsets verticalAndHorizontalVeryLowPadding =
+      EdgeInsets.symmetric(vertical: 4.0, horizontal: 4.0);
+
+  ///SimetricVerticalAndHorizontalpaddingSize -> (8,8)
+  static const EdgeInsets verticalAndHorizontalLowPadding =
+      EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0);
+
+  ///SimetricVerticalAndHorizontalpaddingSize -> (16,16)
+  static const EdgeInsets verticalAndHorizontalDefaultPadding =
+      EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0);
+
+  ///SimetricVerticalAndHorizontalpaddingSize -> (24,24)
+  static const EdgeInsets verticalAndHorizontalNormalPadding =
+      EdgeInsets.symmetric(vertical: 24.0, horizontal: 24.0);
+
+  ///NonSimetricVerticalAndHorizontalpaddingSize -> (4,8)
+  static const EdgeInsets verticalAndHorizontal_4_8 =
+      EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0);
+
+  ///NonSimetricVerticalAndHorizontalpaddingSize -> (8,4)
+  static const EdgeInsets verticalAndHorizontal_8_4 =
+      EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0);
+
+  ///NonSimetricVerticalAndHorizontalpaddingSize -> (8,16)
+  static const EdgeInsets verticalAndHorizontal_8_16 =
+      EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0);
+
+  ///NonSimetricVerticalAndHorizontalpaddingSize -> (16,8)
+  static const EdgeInsets verticalAndHorizontal_16_8 =
+      EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0);
+
+  ///NonSimetricVerticalAndHorizontalpaddingSize -> (16,24)
+  static const EdgeInsets verticalAndHorizontal_16_24 =
+      EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0);
+
+  ///NonSimetricVerticalAndHorizontalpaddingSize -> (24,16)
+  static const EdgeInsets verticalAndHorizontal_24_16 =
+      EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0);
+
+  ///NonSimetricVerticalAndHorizontalpaddingSize -> (4,16)
+  static const EdgeInsets verticalAndHorizontal_4_16 =
+      EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0);
+
+  ///NonSimetricVerticalAndHorizontalpaddingSize -> (16,4)
+  static const EdgeInsets verticalAndHorizontal_16_4 =
+      EdgeInsets.symmetric(vertical: 16.0, horizontal: 4.0);
+
+  ///NonSimetricVerticalAndHorizontalpaddingSize -> (8,24)
+  static const EdgeInsets verticalAndHorizontal_8_24 =
+      EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0);
+
+  ///NonSimetricVerticalAndHorizontalpaddingSize -> (24,8)
+  static const EdgeInsets verticalAndHorizontal_24_8 =
+      EdgeInsets.symmetric(vertical: 24.0, horizontal: 8.0);
 }

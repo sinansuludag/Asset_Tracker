@@ -150,6 +150,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_dotenv:
+    dependency: "direct main"
+    description:
+      name: flutter_dotenv
+      sha256: b7c7be5cd9f6ef7a78429cabd2774d3c4af50e79cb2b7593e3d5d763ef95c61b
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.2.1"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -461,6 +469,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
+  web_socket:
+    dependency: transitive
+    description:
+      name: web_socket
+      sha256: "3c12d96c0c9a4eec095246debcea7b86c0324f22df69893d538fcc6f1b8cce83"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.6"
+  web_socket_channel:
+    dependency: transitive
+    description:
+      name: web_socket_channel
+      sha256: "0b8e2457400d8a859b7b2030786835a28a8e80836ef64402abef392ff4f1d0e5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.2"
+  web_socket_client:
+    dependency: "direct main"
+    description:
+      name: web_socket_client
+      sha256: "0ec5230852349191188c013112e4d2be03e3fc83dbe80139ead9bf3a136e53b5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.5"
   xdg_directories:
     dependency: transitive
     description:

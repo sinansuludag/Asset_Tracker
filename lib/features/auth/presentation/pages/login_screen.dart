@@ -1,4 +1,4 @@
-import 'package:asset_tracker/core/mixins/login_screen_mixin.dart';
+import 'package:asset_tracker/core/mixins/screen_mixin/login_screen_mixin.dart';
 import 'package:asset_tracker/features/auth/presentation/widgets/elevated_button.dart';
 import 'package:asset_tracker/features/auth/presentation/widgets/textTitle.dart';
 import 'package:flutter/material.dart';

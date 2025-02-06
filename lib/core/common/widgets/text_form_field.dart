@@ -6,10 +6,13 @@ import 'package:flutter/material.dart';
 class CustomTextFormField extends StatefulWidget {
   final String labelText;
   final String hintText;
-  final Icon? prefixIcon;
+  final Widget? prefixIcon;
+  final bool? filled;
   final Icon? suffixIcon;
+  final Color? filledColor;
   final TextEditingController controller;
   final String? Function(String?)? validator;
+  final String? Function(String?)? onChanged;
   final TextInputType keyboardType;
   final TextInputAction textInputAction;
   final bool isPassword;
@@ -21,6 +24,9 @@ class CustomTextFormField extends StatefulWidget {
     this.prefixIcon,
     this.suffixIcon,
     this.validator,
+    this.onChanged,
+    this.filledColor,
+    this.filled = true,
     required this.controller,
     required this.keyboardType,
     required this.textInputAction,
@@ -45,8 +51,9 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       controller: widget.controller,
       decoration: InputDecoration(
         labelText: widget.labelText,
-        filled: true,
-        fillColor: context.colorScheme.onError.withAlpha(75),
+        filled: widget.filled,
+        fillColor:
+            widget.filledColor ?? context.colorScheme.onError.withAlpha(75),
         hintText: widget.hintText,
         prefixIcon: Padding(
           padding: AppPaddings.allLowPadding,
@@ -74,15 +81,17 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           borderSide: BorderSide.none,
           borderRadius: AppBorderRadius.highBorderRadius,
         ),
-        focusedBorder: const OutlineInputBorder(
-          borderRadius: AppBorderRadius.highBorderRadius,
-          borderSide: BorderSide.none,
-        ),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: AppBorderRadius.highBorderRadius,
+            borderSide: BorderSide(
+              color: context.colorScheme.primary,
+            )),
       ),
       obscureText: widget.isPassword ? !_isPasswordVisible : false,
       keyboardType: widget.keyboardType,
       textInputAction: widget.textInputAction,
       validator: widget.validator,
+      onChanged: widget.onChanged,
     );
   }
 }

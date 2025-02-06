@@ -1,0 +1,102 @@
+import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
+
+extension CurrencyCodeExtension on String {
+  String getCurrencyName() {
+    switch (this) {
+      case 'ALTIN':
+        return TrStrings.altin;
+      case 'ATA5_ESKI':
+        return TrStrings.ata5Eski;
+      case 'ATA5_YENI':
+        return TrStrings.ata5Yeni;
+      case 'ATA_ESKI':
+        return TrStrings.ataEski;
+      case 'ATA_YENI':
+        return TrStrings.ataYeni;
+      case 'AUDTRY':
+        return TrStrings.audTry;
+      case 'AUDUSD':
+        return TrStrings.audUsd;
+      case 'AYAR14':
+        return TrStrings.ayar14;
+      case 'AYAR22':
+        return TrStrings.ayar22;
+      case 'CADTRY':
+        return TrStrings.cadTry;
+      case 'CEYREK_ESKI':
+        return TrStrings.ceyrekEski;
+      case 'CEYREK_YENI':
+        return TrStrings.ceyrekYeni;
+      case 'CHFTRY':
+        return TrStrings.chfTry;
+      case 'DKKTRY':
+        return TrStrings.dkkTry;
+      case 'EURKG':
+        return TrStrings.eurKg;
+      case 'EURTRY':
+        return TrStrings.eurTry;
+      case 'EURUSD':
+        return TrStrings.eurUsd;
+      case 'GBPTRY':
+        return TrStrings.gbpTry;
+      case 'GBPUSD':
+        return TrStrings.gbpUsd;
+      case 'GREMESE_ESKI':
+        return TrStrings.gremeseEski;
+      case 'GREMESE_YENI':
+        return TrStrings.gremeseYeni;
+      case 'GUMUSTRY':
+        return TrStrings.gumusTry;
+      case 'GUMUSUSD':
+        return TrStrings.gumusUsd;
+      case 'JPYTRY':
+        return TrStrings.jpyTry;
+      case 'KULCEALTIN':
+        return TrStrings.kulceAltin;
+      case 'NOKTRY':
+        return TrStrings.nokTry;
+      case 'ONS':
+        return TrStrings.ons;
+      case 'PALADYUM':
+        return TrStrings.paladyum;
+      case 'PLATIN':
+        return TrStrings.xptUsd;
+      case 'SARTRY':
+        return TrStrings.sarTry;
+      case 'SEKTRY':
+        return TrStrings.sekTry;
+      case 'TEK_ESKI':
+        return TrStrings.tekEski;
+      case 'TEK_YENI':
+        return TrStrings.tekYeni;
+      case 'USDCAD':
+        return TrStrings.usdCad;
+      case 'USDCHF':
+        return TrStrings.usdChf;
+      case 'USDJPY':
+        return TrStrings.usdJpy;
+      case 'USDKG':
+        return TrStrings.usdKg;
+      case 'USDPURE':
+        return TrStrings.usdPure;
+      case 'USDSAR':
+        return TrStrings.usdSar;
+      case 'USDTRY':
+        return TrStrings.usdTry;
+      case 'XAGUSD':
+        return TrStrings.xagUsd;
+      case 'XAUXAG':
+        return TrStrings.xauXag;
+      case 'XPDUSD':
+        return TrStrings.xpdUsd;
+      case 'XPTUSD':
+        return TrStrings.xptUsd;
+      case 'YARIM_ESKI':
+        return TrStrings.yarimEski;
+      case 'YARIM_YENI':
+        return TrStrings.yarimYeni;
+      default:
+        return 'Bilinmeyen Kod';
+    }
+  }
+}
