@@ -49,4 +49,63 @@ class TrStrings {
   static const String weakPassword = "Zayıf şifre";
   static const String requiresRecentLogin = "Son oturum açma gereklidir";
   static const String operationNotAllowed = "Operasyon izinli değil";
+
+  ///Home screen
+  static const String homeScreenTitle = "Varlık İzleme";
+  static const String buying = 'Alış';
+  static const String selling = 'Satış';
+  static const String unknown = 'Bilinmiyor';
+  static const String lowest = 'En Düşük';
+  static const String highest = 'En Yüksek';
+  static const String close = 'Kapanış';
+  static const String homeLabelText = 'Bir para birimi arayın...';
+  static const String homeHintText = 'Bir para birimi arayın...';
+
+  ///Home Screen Currency Names
+  static const altin = 'Altın';
+  static const ata5Eski = "Eski 5'li Ata Altın";
+  static const ata5Yeni = "Yeni 5'li Ata Altın";
+  static const ataEski = 'Eski Ata Altın';
+  static const ataYeni = 'Yeni Ata Altın';
+  static const audTry = 'Avustralya Doları/Türk Lirası';
+  static const audUsd = 'Avustralya Doları/ABD Doları';
+  static const ayar14 = '14 Ayar Altın';
+  static const ayar22 = '22 Ayar Altın';
+  static const cadTry = 'Kanada Doları/Türk Lirası';
+  static const ceyrekEski = 'Eski Çeyrek Altın';
+  static const ceyrekYeni = 'Yeni Çeyrek Altın';
+  static const chfTry = 'İsviçre Frangı/Türk Lirası';
+  static const dkkTry = 'Danimarka Kronu/Türk Lirası';
+  static const eurKg = '1 Kg Altın (Euro)';
+  static const eurTry = 'Euro/Türk Lirası';
+  static const eurUsd = 'Euro/ABD Doları';
+  static const gbpTry = 'İngiliz Sterlini/Türk Lirası';
+  static const gbpUsd = 'İngiliz Sterlini/ABD Doları';
+  static const gremeseEski = 'Eski Gremse Altın';
+  static const gremeseYeni = 'Yeni Gremse Altın';
+  static const gumusTry = 'Gümüş/Türk Lirası';
+  static const gumusUsd = 'Gümüş/ABD Doları';
+  static const jpyTry = 'Japon Yeni/Türk Lirası';
+  static const kulceAltin = 'Külçe Altın';
+  static const nokTry = 'Norveç Kronu/Türk Lirası';
+  static const ons = 'Ons';
+  static const paladyum = 'Paladyum';
+  static const platin = 'Platin';
+  static const sarTry = 'Suudi Arabistan Riyali/Türk Lirası';
+  static const sekTry = 'İsveç Kronu/Türk Lirası';
+  static const tekEski = 'Eski Tam Altın';
+  static const tekYeni = 'Yeni Tam Alt';
+  static const usdCad = 'ABD Doları/Kanada Doları';
+  static const usdChf = 'ABD Doları/İsviçre Frangı';
+  static const usdJpy = 'ABD Doları/Japon Yeni';
+  static const usdKg = '1 Kg Altın (ABD Doları)';
+  static const usdPure = 'Saf Altın (USD)';
+  static const usdTry = 'ABD Doları/Türk Lirası';
+  static const usdSar = 'ABD Doları/Suudi Arabistan Riyali';
+  static const xagUsd = 'Ons Gümüş/ABD Doları';
+  static const xauXag = 'Ons Altın/Ons Gümüş Paritesi';
+  static const xpdUsd = 'Ons Paladyum/ABD Doları';
+  static const xptUsd = 'Ons Platin/ABD Doları';
+  static const yarimEski = 'Eski Yarım Altın';
+  static const yarimYeni = 'Yeni Yarım Altın';
 }

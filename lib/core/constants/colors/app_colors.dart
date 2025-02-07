@@ -15,4 +15,6 @@ class AppColors {
   static const Color secondaryButtonTextColor =
       Color(0xFF000000); // 2. buton metin rengi
   static const Color error = Color(0xFFff0000); // Hata rengi
+  static const Color success = Color(0xFF00ff00); // Başarılı işlem rengi
+  static const Color black = Color(0xFF000000); // Siyah renk
 }

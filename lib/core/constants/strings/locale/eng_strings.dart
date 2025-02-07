@@ -49,4 +49,63 @@ class EngStrings {
   static const String weakPassword = "Weak password.";
   static const String requiresRecentLogin = "Last login required.";
   static const String operationNotAllowed = "Operation is not permitted.";
+
+  ///Home screen
+  static const String homeScreenTitle = "Asset Tracking";
+  static const String buying = 'Buying';
+  static const String selling = 'Selling';
+  static const String unknown = 'Unknown';
+  static const String lowest = 'Lowest';
+  static const String highest = 'Highest';
+  static const String close = 'Close';
+  static const String homeLabelText = 'Search for a currency';
+  static const String homeHintText = 'Search for a currency';
+
+  ///Home Screen Currency Names
+  static const altin = 'Gold';
+  static const ata5Eski = "Old 5'li Ata Gold";
+  static const ata5Yeni = "New 5'li Ata Gold";
+  static const ataEski = 'Old Ata Gold';
+  static const ataYeni = 'New Ata Gold';
+  static const audTry = 'Australian Dollar/Turkish Lira';
+  static const audUsd = 'Australian Dollar/US Dollar';
+  static const ayar14 = '14 Carat Gold';
+  static const ayar22 = '22 Carat Gold';
+  static const cadTry = 'Canadian Dollar/Turkish Lira';
+  static const ceyrekEski = 'Old Quarter Gold';
+  static const ceyrekYeni = 'New Quarter Gold';
+  static const chfTry = 'Swiss Franc/Turkish Lira';
+  static const dkkTry = 'Danish Krone/Turkish Lira';
+  static const eurKg = '1 Kg Gold (Euro)';
+  static const eurTry = 'Euro/Turkish Lira';
+  static const eurUsd = 'Euro/US Dollar';
+  static const gbpTry = 'British Pound/Turkish Lira';
+  static const gbpUsd = 'British Pound/US Dollar';
+  static const gremeseEski = 'Old Gremse Gold';
+  static const gremeseYeni = 'New Gremse Gold';
+  static const gumusTry = 'Silver/Turkish Lira';
+  static const gumusUsd = 'Silver/US Dollar';
+  static const jpyTry = 'Japanese Yen/Turkish Lira';
+  static const kulceAltin = 'Bullion Gold';
+  static const nokTry = 'Norwegian Krone/Turkish Lira';
+  static const ons = 'Ounce';
+  static const paladyum = 'Palladium';
+  static const platin = 'Platinum';
+  static const sarTry = 'Saudi Riyal/Turkish Lira';
+  static const sekTry = 'Swedish Krona/Turkish Lira';
+  static const tekEski = 'Old Full Gold';
+  static const tekYeni = 'New Full Gold';
+  static const usdCad = 'US Dollar/Canadian Dollar';
+  static const usdChf = 'US Dollar/Swiss Franc';
+  static const usdJpy = 'US Dollar/Japanese Yen';
+  static const usdKg = '1 Kg Gold (US Dollar)';
+  static const usdPure = 'Pure Gold (USD)';
+  static const usdTry = 'US Dollar/Turkish Lira';
+  static const usdSar = 'US Dollar/Saudi Riyal';
+  static const xagUsd = 'Ounce Silver/US Dollar';
+  static const xauXag = 'Ounce Gold/Ounce Silver Ratio';
+  static const xpdUsd = 'Ounce Palladium/US Dollar';
+  static const xptUsd = 'Ounce Platinum/US Dollar';
+  static const yarimEski = 'Old Half Gold';
+  static const yarimYeni = 'New Half Gold';
 }
