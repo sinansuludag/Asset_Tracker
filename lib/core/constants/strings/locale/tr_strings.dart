@@ -60,6 +60,8 @@ class TrStrings {
   static const String close = 'Kapanış';
   static const String homeLabelText = 'Bir para birimi arayın...';
   static const String homeHintText = 'Bir para birimi arayın...';
+  static const String bottomNavigationHome = 'Anasayfa';
+  static const String bottomNavigationProfile = 'Profil';
 
   ///Home Screen Currency Names
   static const altin = 'Altın';

@@ -23,6 +23,8 @@ Widget expansionTileSubtitleText(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(currencyPrice.toStringAsFixed(2)),
+          Icon(Icons.currency_lira,
+              color: color, size: FontSizes.bodyLargeFontSize),
           Icon(icon, color: color, size: FontSizes.bodyLargeFontSize),
         ],
       ),

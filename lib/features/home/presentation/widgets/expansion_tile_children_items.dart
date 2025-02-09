@@ -14,9 +14,18 @@ Padding expansionTileChildrenItems(CurrencyData currencyData, String text,
           '$text:',
           style: context.textTheme.bodyMedium,
         ),
-        Text(
-          currencyPrice.toStringAsFixed(2),
-          style: context.textTheme.bodyMedium,
+        Row(
+          children: [
+            Text(
+              currencyPrice.toStringAsFixed(2),
+              style: context.textTheme.bodyMedium,
+            ),
+            Icon(
+              Icons.currency_lira,
+              color: context.colorScheme.onSecondary,
+              size: 16,
+            ),
+          ],
         ),
       ],
     ),
