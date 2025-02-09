@@ -60,6 +60,8 @@ class EngStrings {
   static const String close = 'Close';
   static const String homeLabelText = 'Search for a currency';
   static const String homeHintText = 'Search for a currency';
+  static const String bottomNavigationHome = 'Home';
+  static const String bottomNavigationProfile = 'Profile';
 
   ///Home Screen Currency Names
   static const altin = 'Gold';

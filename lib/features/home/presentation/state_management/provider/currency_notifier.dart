@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/extensions/currency_code_extension.dart';
 import 'package:asset_tracker/features/home/data/models/currency_data_model.dart';
 import 'package:asset_tracker/features/home/data/models/curreny_response_model.dart';
 import 'package:asset_tracker/features/home/domain/repositories/i_currency_repository.dart';
@@ -43,9 +44,10 @@ class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
     } else {
       // Arama doluysa, filtreleme yap
       final filteredCurrencies = allCurrencies
-          .where((currency) =>
-              currency.code != null &&
-              currency.code!.toLowerCase().contains(_searchQuery))
+          .where((currency) => currency.code!
+              .getCurrencyName()
+              .toLowerCase()
+              .contains(_searchQuery))
           .toList();
 
       // Filtrelenmiş yeni bir state oluştur
