@@ -1,6 +1,7 @@
+import 'package:asset_tracker/features/auth/data/models/mock_user_model.dart';
+import 'package:asset_tracker/features/auth/domain/entities/user_entity_model.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
 
 enum AuthState {
@@ -11,13 +12,13 @@ enum AuthState {
 
 class AuthNotifier extends StateNotifier<AuthState> {
   final IAuthRepository _repository;
-  User? _user;
+  UserEntity? _user;
 
   AuthNotifier(this._repository) : super(AuthState.initial) {
     checkLoginStatus(); // Başlangıçta login durumunu kontrol et
   }
 
-  User? get user => _user;
+  UserEntity? get user => _user;
 
   // Giriş yapma
   Future<void> signIn(String email, String password) async {
@@ -67,7 +68,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       bool isLoggedIn = await _repository.isLoggedIn();
       if (isLoggedIn) {
-        _user = User(
+        _user = const UserEntity(
             id: 'dummy_id',
             email: 'dummy_email',
             password: 'dummy_email',

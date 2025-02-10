@@ -24,7 +24,8 @@ Widget expansionTileSubtitleText(
         children: [
           Text(currencyPrice.toStringAsFixed(2)),
           Icon(Icons.currency_lira,
-              color: color, size: FontSizes.bodyLargeFontSize),
+              color: context.colorScheme.onSecondary,
+              size: FontSizes.bodyLargeFontSize),
           Icon(icon, color: color, size: FontSizes.bodyLargeFontSize),
         ],
       ),
