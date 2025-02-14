@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:asset_tracker/core/extensions/currency_code_extension.dart';
 import 'package:asset_tracker/features/home/data/models/currency_data_model.dart';
 import 'package:asset_tracker/features/home/data/models/curreny_response_model.dart';
@@ -8,6 +10,8 @@ class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
   final ICurrencyRepository _repository;
   String _searchQuery = ''; // Arama filtresi
   CurrencyResponse? _originalResponse; // Orijinal veriyi sakla
+  Timer? _debounceTimer; // Debounce için timer
+  bool isConnected = true; // Bağlantı durumu
 
   CurrencyNotifier(this._repository) : super([]) {
     _listenToCurrencyUpdates();
@@ -18,12 +22,40 @@ class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
     _repository.getCurrencyUpdates().listen(
       (currencyResponse) {
         _originalResponse = currencyResponse; // Orijinal veriyi kaydet
-        _filterCurrencies(); // Gelen yeni veriye göre filtreleme işlemi yap
+        _debounceUpdate(); // Gelen yeni veriye göre filtreleme işlemi yap
+        isConnected = true;
       },
       onError: (error) {
         print('Error: $error');
       },
+      onDone: () {
+        // Akış tamamlandığında yapılacak işlemler
+        print('Stream closed');
+        if (!isConnected) {
+          // Bağlantı kaybolduysa, önceki veriyi kullan
+          _usePreviousData();
+        }
+      },
     );
+  }
+
+  void _usePreviousData() {
+    if (_originalResponse != null) {
+      state = [_originalResponse!];
+    } else {
+      // Önceki veri yoksa, boş bir liste göster
+      state = [];
+    }
+  }
+
+  // Gelen verileri debounce etmek için
+  void _debounceUpdate() {
+    // Eğer daha önce bir timer varsa iptal et
+
+    _debounceTimer = Timer(const Duration(seconds: 5), () {
+      _filterCurrencies();
+      _debounceTimer?.cancel();
+    });
   }
 
   // Arama filtresini güncelle
@@ -32,12 +64,16 @@ class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
     _filterCurrencies(); // Filtreleme işlemini çağır
   }
 
+  String lastUpdateTimeDate() {
+    final date = _originalResponse == null ? '' : _originalResponse!.metaDate;
+    return date;
+  }
+
   // Tüm verileri getir veya filtrele
   void _filterCurrencies() {
     if (_originalResponse == null) return;
 
     final allCurrencies = _originalResponse!.currencies.values.toList();
-
     if (_searchQuery.isEmpty) {
       // Arama boşsa, tüm verileri göster
       state = [_originalResponse!];
@@ -65,5 +101,11 @@ class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
   List<CurrencyData> get filteredCurrencies {
     if (state.isEmpty) return [];
     return state.first.currencies.values.toList();
+  }
+
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    super.dispose();
   }
 }

@@ -41,8 +41,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final currencies = ref.watch(currencyNotifierProvider);
     final currencyNotifier = ref.read(currencyNotifierProvider.notifier);
 
+    final updateTimeDate = currencyNotifier.lastUpdateTimeDate();
     return Scaffold(
-      appBar: (_currentIndex == 1) ? null : appBarWidget(),
+      appBar: (_currentIndex == 1) ? null : appBarWidget(updateTimeDate),
       body: _currentIndex == 1
           ? const ProfileScreen()
           : GestureDetector(

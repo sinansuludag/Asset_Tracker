@@ -1,23 +1,36 @@
-import 'package:asset_tracker/features/auth/data/datasources/remote/abstract_firebase_auth_service.dart';
+import 'package:asset_tracker/features/auth/data/datasources/remote/abstract_auth_service.dart';
+import 'package:asset_tracker/features/auth/data/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class FirebaseAuthServiceImpl implements IFirebaseAuthService {
+class FirebaseAuthServiceImpl implements IAuthService<UserModel> {
   final FirebaseAuth _firebaseAuth;
 
   FirebaseAuthServiceImpl(this._firebaseAuth);
 
   @override
-  Future<User?> register(String email, String password, String username) async {
+  Future<UserModel?> register(
+      String email, String password, String username) async {
     UserCredential result = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: password);
-    return result.user;
+    Map<String, dynamic> json = {
+      'id': result.user?.uid ?? '',
+      'email': result.user?.email ?? '',
+      'password': password,
+      'username': username,
+    };
+    return UserModel.fromJson(json);
   }
 
   @override
-  Future<User?> signIn(String email, String password) async {
+  Future<UserModel?> signIn(String email, String password) async {
     UserCredential result = await _firebaseAuth.signInWithEmailAndPassword(
         email: email, password: password);
-    return result.user;
+    Map<String, dynamic> json = {
+      'id': result.user?.uid ?? '',
+      'email': result.user?.email ?? '',
+      'password': password,
+    };
+    return UserModel.fromJson(json);
   }
 
   @override
