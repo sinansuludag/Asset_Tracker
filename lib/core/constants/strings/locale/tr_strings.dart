@@ -61,7 +61,19 @@ class TrStrings {
   static const String homeLabelText = 'Bir para birimi arayın...';
   static const String homeHintText = 'Bir para birimi arayın...';
   static const String bottomNavigationHome = 'Anasayfa';
+  static const String bottomNavigationCurrency = 'Varlıklar';
   static const String bottomNavigationProfile = 'Profil';
+
+  ///BuyingAsset screen
+  static const String buyingAssetScreenTitle = "Varlık Satın Al";
+  static const String chooseAssetType = "  Varlık Türünü Seçin";
+  static const String buyinPrice = 'Alış Fiyatı';
+  static const String enterBuyingPrice = 'Alış Fiyatı Giriniz';
+  static const String buyingScreenButtonText = 'Ekle';
+  static const String buyingScreenEnterQuantity = 'Miktar Giriniz';
+  static const String showDialogTitleText = 'Tarih Seç';
+  static const String showDialogButtonText = 'Tamam';
+  static const String dataPickerText = 'Tarih Seç';
 
   ///Home Screen Currency Names
   static const altin = 'Altın';

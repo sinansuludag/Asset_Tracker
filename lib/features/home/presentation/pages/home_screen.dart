@@ -1,4 +1,6 @@
 import 'package:asset_tracker/core/constants/paddings/paddings.dart';
+import 'package:asset_tracker/core/utils/bottom_navigation_router.dart';
+import 'package:asset_tracker/features/currencyAssets/presentation/pages/currency_asset_screen.dart';
 import 'package:asset_tracker/features/home/presentation/state_management/provider/all_providers.dart';
 import 'package:asset_tracker/features/home/presentation/widgets/appbar_widget.dart';
 import 'package:asset_tracker/features/home/presentation/widgets/bottom_navigation_bar.dart';
@@ -36,16 +38,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     });
   }
 
+  final List<Widget> _pages = [
+    const HomeScreen(), // Ana sayfa içeriğini buraya koy
+    const CurrencyAssetScreen(),
+    const ProfileScreen(),
+  ];
+
   @override
   Widget build(BuildContext context) {
     final currencies = ref.watch(currencyNotifierProvider);
     final currencyNotifier = ref.read(currencyNotifierProvider.notifier);
 
-    final updateTimeDate = currencyNotifier.lastUpdateTimeDate();
     return Scaffold(
-      appBar: (_currentIndex == 1) ? null : appBarWidget(updateTimeDate),
-      body: _currentIndex == 1
-          ? const ProfileScreen()
+      appBar: (_currentIndex == 0) ? appBarWidget(context) : null,
+      body: (_currentIndex != 0)
+          ? bottomNavigationBarRouter(_currentIndex)
           : GestureDetector(
               behavior: HitTestBehavior.opaque, // Tüm alanı algılar
               onPanDown: (_) => FocusScope.of(context).unfocus(),

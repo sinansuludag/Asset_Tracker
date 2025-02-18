@@ -58,8 +58,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         prefixIcon: Padding(
           padding: AppPaddings.allLowPadding,
           child: Container(
-            decoration: BoxDecoration(
-              color: context.colorScheme.onPrimary,
+            decoration: const BoxDecoration(
               borderRadius: AppBorderRadius.lowBorderRadius,
             ),
             child: widget.prefixIcon,

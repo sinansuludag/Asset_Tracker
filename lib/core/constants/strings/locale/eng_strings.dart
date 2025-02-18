@@ -61,7 +61,19 @@ class EngStrings {
   static const String homeLabelText = 'Search for a currency';
   static const String homeHintText = 'Search for a currency';
   static const String bottomNavigationHome = 'Home';
+  static const String bottomNavigationCurrency = 'Assets';
   static const String bottomNavigationProfile = 'Profile';
+
+  ///Buying Assets Screen
+  static const String buyingAssetsScreenTitle = 'Buying Assets';
+  static const String chooseAssetType = "  Choose Asset Type";
+  static const String buyinPrice = 'Buying Price';
+  static const String enterBuyingPrice = 'Enter Buying Price';
+  static const String buyingScreenButtonText = 'Ekle';
+  static const String buyingScreenEnterQuantity = 'Enter Quantity';
+  static const String showDialogTitleText = 'Choose Date';
+  static const String showDialogButtonText = 'OK';
+  static const String dataPickerText = 'Choose Date';
 
   ///Home Screen Currency Names
   static const altin = 'Gold';

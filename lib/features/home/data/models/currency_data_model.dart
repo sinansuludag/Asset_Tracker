@@ -30,8 +30,8 @@ class CurrencyData {
       high: double.tryParse(json['yuksek'].toString()) ?? 0.0,
       close: double.tryParse(json['kapanis'].toString()) ?? 0.0,
       date: json['tarih'],
-      buyingDir: json['dir']?['alis_dir'] ?? 'Unknown',
-      sellingDir: json['dir']?['satis_dir'] ?? 'Unknown',
+      buyingDir: json['dir']?['alis_dir'] ?? '',
+      sellingDir: json['dir']?['satis_dir'] ?? '',
     );
   }
 
