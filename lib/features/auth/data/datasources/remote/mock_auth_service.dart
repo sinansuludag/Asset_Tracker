@@ -1,7 +1,7 @@
 import 'package:asset_tracker/features/auth/data/datasources/remote/abstract_auth_service.dart';
 import 'package:asset_tracker/features/auth/data/models/mock_user_model.dart';
 
-class MockAuthServiceImpl implements IAuthService<MockUserModel> {
+class MockAuthServiceImpl implements IAuthService {
   final List<Map<String, dynamic>> _mockUsers = [
     {
       'id': '1',

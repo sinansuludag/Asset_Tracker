@@ -19,8 +19,6 @@ class _BuyingAssetsScreenState extends State<BuyingAssetsScreen> {
   final buyingAssetController = TextEditingController();
   final quantityAssetController = TextEditingController();
   DateTime? selectedDate;
-
-  // Seçilen varlık türü
   String? selectedAsset;
 
   @override
@@ -47,7 +45,7 @@ class _BuyingAssetsScreenState extends State<BuyingAssetsScreen> {
               }),
               customBuyingAssetTextFormField(buyingAssetController),
               quantityTextFormField(context, quantityAssetController),
-              datePickerButtonWidget(context, selectedDate, (DateTime date) {
+              datePickerButtonWidget(context, selectedDate, (DateTime? date) {
                 setState(() {
                   selectedDate = date;
                 });
@@ -55,7 +53,7 @@ class _BuyingAssetsScreenState extends State<BuyingAssetsScreen> {
               SizedBox(
                 height: MediaQuerySize(context).percent1Height,
               ),
-              const elevatedButton(),
+              elevatedButton(),
             ],
           ),
         ),

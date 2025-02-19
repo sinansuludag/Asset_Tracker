@@ -3,14 +3,14 @@ import 'package:asset_tracker/features/auth/data/datasources/remote/abstract_aut
 import 'package:asset_tracker/features/auth/domain/entities/user_entity_model.dart';
 import '../../domain/repositories/auth_repository.dart';
 
-class AuthRepositoryImpl<T extends UserEntity> implements IAuthRepository<T> {
-  final IAuthService<T> authService;
+class AuthRepositoryImpl implements IAuthRepository {
+  final IAuthService authService;
   final ILocalStorageService _localStorageService;
 
   AuthRepositoryImpl(this.authService, this._localStorageService);
 
   @override
-  Future<T?> signIn(String email, String password) async {
+  Future<UserEntity?> signIn(String email, String password) async {
     final user = await authService.signIn(email, password);
     if (user != null) {
       await _localStorageService.setLoggedIn(true);
@@ -20,7 +20,8 @@ class AuthRepositoryImpl<T extends UserEntity> implements IAuthRepository<T> {
   }
 
   @override
-  Future<T?> register(String email, String password, String username) async {
+  Future<UserEntity?> register(
+      String email, String password, String username) async {
     final user = await authService.register(email, password, username);
     if (user != null) {
       await _localStorageService.setLoggedIn(true);

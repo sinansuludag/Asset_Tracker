@@ -5,8 +5,8 @@ import 'package:asset_tracker/core/extensions/build_context_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
-void showCustomDatePicker(
-    BuildContext context, DateTime? selectedDate, Function setState) {
+void showCustomDatePicker(BuildContext context, DateTime? selectedDate,
+    ValueChanged<DateTime?> onChanged) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -24,7 +24,9 @@ void showCustomDatePicker(
             borderRadius: AppBorderRadius.defaultBorderRadius,
             child: SfDateRangePicker(
               onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
-                setState();
+                if (args.value is DateTime) {
+                  onChanged(args.value);
+                }
               },
               selectionMode: DateRangePickerSelectionMode.single,
               maxDate: DateTime.now(),

@@ -7,6 +7,8 @@ class BuyingAssetModel extends AssetModel {
     required super.buyingDate,
     required super.buyingPrice,
     required super.quantity,
+    required super.userId,
+    required super.userName,
   });
 
   // JSON'dan nesne oluşturma (Firestore'dan boş veri durumu)
@@ -21,6 +23,8 @@ class BuyingAssetModel extends AssetModel {
           ? (json['buyingPrice'] as num).toDouble()
           : 0.0,
       quantity: json['quantity'] ?? 0,
+      userId: json['userId'] ?? '', // Kullanıcı ID'sini de alıyoruz
+      userName: json['userName'] ?? '',
     );
   }
 
@@ -32,6 +36,8 @@ class BuyingAssetModel extends AssetModel {
       'buyingDate': buyingDate.toIso8601String(),
       'buyingPrice': buyingPrice,
       'quantity': quantity,
+      'userId': userId, // Kullanıcı bilgilerini ekliyoruz
+      'userName': userName, // Kullanıcı adı
     };
   }
 }

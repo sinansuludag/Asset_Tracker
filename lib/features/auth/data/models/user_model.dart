@@ -25,4 +25,13 @@ class UserModel extends UserEntity {
       'username': username ?? '',
     };
   }
+
+  UserModel copyWith({String? id, String? email, String? username}) {
+    return UserModel(
+      id: id ?? this.id,
+      email: email ?? this.email,
+      username: username ?? this.username,
+      password: '',
+    );
+  }
 }
