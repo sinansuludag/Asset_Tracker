@@ -8,8 +8,8 @@ import 'package:asset_tracker/core/constants/paddings/paddings.dart';
 import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
 import 'package:asset_tracker/core/extensions/build_context_extension.dart';
 import 'package:asset_tracker/core/routing/route_names.dart';
-import 'package:asset_tracker/core/utils/validator/email_validator.dart';
-import 'package:asset_tracker/core/utils/validator/password_validator.dart';
+import 'package:asset_tracker/core/utils/validator/auth_validator/email_validator.dart';
+import 'package:asset_tracker/core/utils/validator/auth_validator/password_validator.dart';
 import 'package:asset_tracker/features/auth/presentation/widgets/coin_container_asset.dart';
 import 'package:asset_tracker/features/auth/presentation/widgets/custom_email_text_form_field.dart';
 import 'package:asset_tracker/features/auth/presentation/widgets/custom_text_form_field.dart';
@@ -43,7 +43,7 @@ class LoginScreen extends ConsumerWidget with LoginScreenMixin {
                   buildSizedBox(
                       context, MediaQuerySize(context).percent5Height),
                   customEmailTextFormFeild(
-                      EmailValidator.validate, emailController),
+                      EmailValidator.emailValidate, emailController),
                   buildSizedBox(
                       context, MediaQuerySize(context).percent2Height),
                   customPasswordTextFormField(

@@ -74,6 +74,11 @@ class TrStrings {
   static const String showDialogTitleText = 'Tarih Seç';
   static const String showDialogButtonText = 'Tamam';
   static const String dataPickerText = 'Tarih Seç';
+  static const String requiredBuyingPrice = "Alış fiyatını giriniz";
+  static const String requiredQuantityAmount = "Miktarı giriniz";
+  static const String succesBuyingAsset =
+      "Varlık başarılı bir şekilde eklendi.";
+  static const String errorBuyingAsset = "Varlık eklenirken bir hata oluştu.";
 
   ///Home Screen Currency Names
   static const altin = 'Altın';

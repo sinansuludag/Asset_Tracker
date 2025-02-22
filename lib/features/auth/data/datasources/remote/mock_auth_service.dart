@@ -2,21 +2,6 @@ import 'package:asset_tracker/features/auth/data/datasources/remote/abstract_aut
 import 'package:asset_tracker/features/auth/data/models/mock_user_model.dart';
 
 class MockAuthServiceImpl implements IAuthService {
-  final List<Map<String, dynamic>> _mockUsers = [
-    {
-      'id': '1',
-      'name': 'test1',
-      'password': '123456',
-      'email': 'test1@gmail.com',
-    },
-    {
-      'id': '2',
-      'name': 'test2',
-      'password': '123456',
-      'email': 'test2@gmail.com',
-    }
-  ];
-
   @override
   Future<MockUserModel?> register(
       String email, String password, String username) async {
@@ -55,6 +40,21 @@ class MockAuthServiceImpl implements IAuthService {
       return throw Exception("Bir hata oluştu");
     }
   }
+
+  final List<Map<String, dynamic>> _mockUsers = [
+    {
+      'id': '1',
+      'name': 'test1',
+      'password': '123456',
+      'email': 'test1@gmail.com',
+    },
+    {
+      'id': '2',
+      'name': 'test2',
+      'password': '123456',
+      'email': 'test2@gmail.com',
+    }
+  ];
 
   @override
   Future<void> signOut() async {

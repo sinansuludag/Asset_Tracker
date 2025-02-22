@@ -6,7 +6,9 @@ import 'package:asset_tracker/core/extensions/build_context_extension.dart';
 import 'package:flutter/material.dart';
 
 Center quantityTextFormField(
-    BuildContext context, TextEditingController quantityAssetController) {
+    BuildContext context,
+    TextEditingController quantityAssetController,
+    String? Function(String?)? validate) {
   return Center(
     child: Row(
       mainAxisAlignment: MainAxisAlignment.center,

@@ -1,6 +1,6 @@
 import 'package:asset_tracker/features/buying_asset/domain/entities/asset_model.dart';
 
-class BuyingAssetModel extends AssetModel {
+class BuyingAssetModel extends AssetEntity {
   BuyingAssetModel({
     required super.id,
     required super.assetType,
@@ -8,7 +8,6 @@ class BuyingAssetModel extends AssetModel {
     required super.buyingPrice,
     required super.quantity,
     required super.userId,
-    required super.userName,
   });
 
   // JSON'dan nesne oluşturma (Firestore'dan boş veri durumu)
@@ -24,7 +23,6 @@ class BuyingAssetModel extends AssetModel {
           : 0.0,
       quantity: json['quantity'] ?? 0,
       userId: json['userId'] ?? '', // Kullanıcı ID'sini de alıyoruz
-      userName: json['userName'] ?? '',
     );
   }
 
@@ -37,7 +35,6 @@ class BuyingAssetModel extends AssetModel {
       'buyingPrice': buyingPrice,
       'quantity': quantity,
       'userId': userId, // Kullanıcı bilgilerini ekliyoruz
-      'userName': userName, // Kullanıcı adı
     };
   }
 }

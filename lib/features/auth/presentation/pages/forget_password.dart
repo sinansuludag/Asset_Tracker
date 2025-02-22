@@ -4,7 +4,7 @@ import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
 import 'package:asset_tracker/core/extensions/build_context_extension.dart';
 import 'package:asset_tracker/core/mixins/screen_mixin/forget_password_screen_mixin.dart';
 import 'package:asset_tracker/core/routing/route_names.dart';
-import 'package:asset_tracker/core/utils/validator/email_validator.dart';
+import 'package:asset_tracker/core/utils/validator/auth_validator/email_validator.dart';
 import 'package:asset_tracker/features/auth/presentation/widgets/custom_email_text_form_field.dart';
 import 'package:asset_tracker/features/auth/presentation/widgets/elevated_button.dart';
 import 'package:asset_tracker/features/auth/presentation/widgets/textTitle.dart';
@@ -44,7 +44,7 @@ class ForgetPasswordScreen extends ConsumerWidget
                   bodyText(context),
                   SizedBox(height: MediaQuerySize(context).percent10Height),
                   customEmailTextFormFeild(
-                      EmailValidator.validate, emailController),
+                      EmailValidator.emailValidate, emailController),
                   SizedBox(height: MediaQuerySize(context).percent10Height),
                   customElevatedButton(
                       context: context,

@@ -74,6 +74,11 @@ class EngStrings {
   static const String showDialogTitleText = 'Choose Date';
   static const String showDialogButtonText = 'OK';
   static const String dataPickerText = 'Choose Date';
+  static const String requiredBuyingPrice = "Enter the buying price";
+  static const String requiredQuantityAmount = "Enter the quantity";
+  static const String succesBuyingAsset = "Asset added successfully.";
+  static const String errorBuyingAsset =
+      "An error occurred while adding the asset.";
 
   ///Home Screen Currency Names
   static const altin = 'Gold';

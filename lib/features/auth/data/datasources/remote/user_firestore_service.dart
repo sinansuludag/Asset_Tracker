@@ -27,8 +27,6 @@ class UserFirestoreServiceImpl implements IUserFirestoreService {
   @override
   Future<bool> saveUserToFirestore(UserEntity user) async {
     try {
-      // String docId = _firestore.collection('users').doc().id;
-
       await _firestore.collection('users').doc(user.id).set({
         'id': user.id,
         'email': user.email,

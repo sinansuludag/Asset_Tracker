@@ -3,6 +3,7 @@ import 'package:asset_tracker/features/auth/presentation/pages/forget_password.d
 import 'package:asset_tracker/features/auth/presentation/pages/login_screen.dart';
 import 'package:asset_tracker/features/auth/presentation/pages/register_screen.dart';
 import 'package:asset_tracker/features/buying_asset/presentation/pages/buying_assets_screen.dart';
+import 'package:asset_tracker/features/currencyAssets/presentation/pages/currency_asset_screen.dart';
 import 'package:asset_tracker/features/home/presentation/pages/home_screen.dart';
 import 'package:asset_tracker/features/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => HomeScreen());
       case RouteNames.buyingAssets:
         return MaterialPageRoute(builder: (_) => BuyingAssetsScreen());
+      case RouteNames.currencyAssets:
+        return MaterialPageRoute(builder: (_) => CurrencyAssetScreen());
       default:
         return MaterialPageRoute(builder: (_) => LoginScreen());
     }

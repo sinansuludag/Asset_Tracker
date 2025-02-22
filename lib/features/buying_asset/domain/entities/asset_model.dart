@@ -1,24 +1,40 @@
-class AssetModel {
+class AssetEntity {
   final String id;
   final String assetType;
   final DateTime buyingDate;
   final double buyingPrice;
   final int quantity;
   final String userId;
-  final String userName;
 
-  AssetModel({
+  AssetEntity({
     required this.id,
     required this.assetType,
     required this.buyingDate,
     required this.buyingPrice,
     required this.quantity,
     required this.userId,
-    required this.userName,
   });
 
-  factory AssetModel.fromJson(Map<String, dynamic> json) {
-    return AssetModel(
+  AssetEntity copyWith({
+    String? id,
+    String? assetType,
+    DateTime? buyingDate,
+    double? buyingPrice,
+    int? quantity,
+    String? userId,
+  }) {
+    return AssetEntity(
+      id: id ?? this.id,
+      assetType: assetType ?? this.assetType,
+      buyingDate: buyingDate ?? this.buyingDate,
+      buyingPrice: buyingPrice ?? this.buyingPrice,
+      quantity: quantity ?? this.quantity,
+      userId: userId ?? this.userId,
+    );
+  }
+
+  factory AssetEntity.fromJson(Map<String, dynamic> json) {
+    return AssetEntity(
       id: json['id'] ?? '',
       assetType: json['assetType'] ?? '',
       buyingDate: json['buyingDate'] != null
@@ -29,7 +45,6 @@ class AssetModel {
           : 0.0,
       quantity: json['quantity'] ?? 0,
       userId: json['userId'] ?? '',
-      userName: json['userName'] ?? '',
     );
   }
 
@@ -40,7 +55,6 @@ class AssetModel {
       'buyingPrice': buyingPrice,
       'quantity': quantity,
       'userId': userId,
-      'userName': userName,
     };
   }
 }

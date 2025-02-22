@@ -3,7 +3,7 @@ import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
 import 'package:flutter/material.dart';
 
 CustomTextFormField customPasswordTextFormField(
-    final String? Function(String?)? validate,
+    String? Function(String?)? validate,
     TextEditingController passwordController) {
   return CustomTextFormField(
     controller: passwordController,
