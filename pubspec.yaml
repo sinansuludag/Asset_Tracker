@@ -46,6 +46,7 @@ dependencies:
   json_annotation: ^4.8.1
   cloud_firestore: ^5.6.4
   syncfusion_flutter_datepicker: ^28.2.5
+  intl: ^0.20.2
   
  
 

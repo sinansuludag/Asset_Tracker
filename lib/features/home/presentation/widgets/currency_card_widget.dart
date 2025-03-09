@@ -16,6 +16,7 @@ Card currencyCardWidget(
     Color satisColor) {
   return Card(
     shadowColor: context.colorScheme.primary,
+    color: context.colorScheme.onPrimary,
     elevation: 4,
     margin: AppPaddings.verticalAndHorizontal_4_8,
     child: ClipRRect(

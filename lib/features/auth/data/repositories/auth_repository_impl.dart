@@ -14,6 +14,12 @@ class AuthRepositoryImpl implements IAuthRepository {
     final user = await authService.signIn(email, password);
     if (user != null) {
       await _localStorageService.setLoggedIn(true);
+      final storedUserId = await _localStorageService.getUserId();
+
+      // Eğer kayıtlı bir userId yoksa, yeni userId'yi kaydet
+      if (storedUserId == '') {
+        await _localStorageService.setUserId(user.id);
+      }
       return user;
     }
     return null;

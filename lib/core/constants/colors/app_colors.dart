@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  static const Color appBackground = Color(0xFFFDF9F0); //(arka plan için)
+  static const Color appBackground = Color(0xFFE6F9F5); //(arka plan için)
   static const Color mainButtonBackground =
       Color(0xFF00c5a1); // Ana buton arka plan rengi
   static const Color mainButtonTextColor =

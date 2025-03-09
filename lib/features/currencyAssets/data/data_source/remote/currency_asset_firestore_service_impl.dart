@@ -15,23 +15,31 @@ class CurrencyAssetFirestoreServiceImpl implements ICurrencyAssetService {
   }
 
   @override
-  Future<CurrencyAssetEntity?> getCurrencyAsset(String assetId) {
-    return _firestore.collection('assets').doc(assetId).get().then((assetDoc) {
-      if (assetDoc.exists) {
+  Future<List<CurrencyAssetEntity>> getCurrencyAssets(String userId) async {
+    try {
+      final snapshot = await _firestore
+          .collection('assets')
+          .where('userId', isEqualTo: userId) // userId'ye göre filtreleme
+          .get();
+
+      // Filtrelenmiş verileri döndürüyoruz
+      return snapshot.docs.map((assetDoc) {
         final data = assetDoc.data();
         return CurrencyAssetModel(
-          id: assetId,
-          assetType: data?['assetType'] ?? '',
-          buyingDate:
-              (data?['buyingDate'] as Timestamp?)?.toDate() ?? DateTime.now(),
-          buyingPrice: data?['buyingPrice'] ?? 0.0,
-          quantity: data?['quantity'] ?? 0,
-          userId: data?['userId'] ?? '',
+          id: assetDoc.id, // Firestore'dan gelen belge id'sini kullanıyoruz
+          assetType: data['assetType'] ?? '',
+          buyingDate: data['buyingDate'] is String
+              ? DateTime.parse(data['buyingDate'])
+              : DateTime.now(),
+          buyingPrice: (data['buyingPrice'] as num?)?.toDouble() ?? 0.0,
+          quantity: (data['quantity'] as num?)?.toDouble() ?? 0.0,
+          userId: data['userId'] ?? '',
         );
-      } else {
-        return null;
-      }
-    });
+      }).toList();
+    } catch (error) {
+      // Hata durumunda boş liste döndürebiliriz
+      return [];
+    }
   }
 
   @override

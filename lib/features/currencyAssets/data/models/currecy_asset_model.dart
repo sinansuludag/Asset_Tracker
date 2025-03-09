@@ -33,13 +33,14 @@ class CurrencyAssetModel extends CurrencyAssetEntity {
     return CurrencyAssetModel(
       id: json['id'] ?? '',
       assetType: json['assetType'] ?? '',
-      buyingDate: json['buyingDate'] != null
+      buyingDate: json['buyingDate'] is String
           ? DateTime.parse(json['buyingDate'])
           : DateTime.now(),
       buyingPrice: json['buyingPrice'] != null
           ? (json['buyingPrice'] as num).toDouble()
           : 0.0,
-      quantity: json['quantity'] ?? 0.0,
+      quantity:
+          json['quantity'] != null ? (json['quantity'] as num).toDouble() : 0.0,
       userId: json['userId'] ?? '',
     );
   }
