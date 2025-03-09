@@ -14,6 +14,8 @@ class _CurrencyAssetScreenState extends State<CurrencyAssetScreen> {
       appBar: AppBar(
         title: Text('Varlıklarım'),
         centerTitle: true,
+        automaticallyImplyLeading: false,
+        scrolledUnderElevation: 0,
       ),
       body: Center(
         child: Text('Varlıklarım'),

@@ -1,6 +1,7 @@
 import 'package:asset_tracker/core/constants/paddings/paddings.dart';
 import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
 import 'package:asset_tracker/core/routing/route_names.dart';
+import 'package:asset_tracker/features/home/presentation/widgets/show_buying_assets.dart';
 import 'package:flutter/material.dart';
 
 AppBar appBarWidget(BuildContext context) {
@@ -13,7 +14,8 @@ AppBar appBarWidget(BuildContext context) {
         padding: AppPaddings.horizontalSimetricLowPadding,
         child: IconButton(
             onPressed: () {
-              Navigator.pushNamed(context, RouteNames.buyingAssets);
+              //Navigator.pushNamed(context, RouteNames.buyingAssets);
+              showBuyingAssets(context);
             },
             icon: const Icon(Icons.add)),
       ),

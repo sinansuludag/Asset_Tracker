@@ -13,8 +13,6 @@ class UserFirestoreNotifier extends StateNotifier<UserState> {
 
   UserEntity? _user;
 
-  UserEntity? get user => _user;
-
   Future<void> getUserFromFirestore(String userId) async {
     state = UserState.loading;
     _user = await _userFirestoreRepository.getUserFromFirestore(userId);

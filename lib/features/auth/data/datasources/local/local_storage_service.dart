@@ -15,4 +15,16 @@ class LocalStorageServiceImpl implements ILocalStorageService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_isLoggedInKey, value);
   }
+
+  @override
+  Future<String?> getUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('userId') ?? '';
+  }
+
+  @override
+  Future<void> setUserId(String userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('userId', userId);
+  }
 }

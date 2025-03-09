@@ -5,6 +5,5 @@ class RouteNames {
   static const String register = '/register';
   static const String forgetPassword = 'forgetPassword';
   static const String home = 'home';
-  static const String buyingAssets = 'buyingAssets';
   static const String currencyAssets = 'currencyAssets';
 }

@@ -25,6 +25,7 @@ class AuthRepositoryImpl implements IAuthRepository {
     final user = await authService.register(email, password, username);
     if (user != null) {
       await _localStorageService.setLoggedIn(true);
+      await _localStorageService.setUserId(user.id);
       return user;
     }
     return null;
@@ -34,6 +35,7 @@ class AuthRepositoryImpl implements IAuthRepository {
   Future<void> signOut() async {
     await authService.signOut();
     await _localStorageService.setLoggedIn(false);
+    await _localStorageService.setUserId('');
   }
 
   @override
