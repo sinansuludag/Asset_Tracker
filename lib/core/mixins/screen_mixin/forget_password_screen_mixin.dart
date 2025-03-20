@@ -14,7 +14,7 @@ mixin ForgetPasswordScreenMixin {
 
   forgetPasswordButton(BuildContext context, WidgetRef ref) async {
     var email = emailController.text;
-    var resetPassword = ref.read(authServiceProvider);
+    var resetPassword = ref.read(authProvider.notifier);
     try {
       ref.read(isLoadingProvider.notifier).state = true;
       await resetPassword.sendPasswordResetEmail(email);

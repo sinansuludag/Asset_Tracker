@@ -3,8 +3,11 @@ import 'package:asset_tracker/core/exceptions/firebase_auth_exceptions/firebase_
 import 'package:asset_tracker/core/extensions/firebase_error_extension.dart';
 import 'package:asset_tracker/core/extensions/snack_bar_extension.dart';
 import 'package:asset_tracker/core/routing/route_names.dart';
+import 'package:asset_tracker/features/auth/data/models/user_model.dart';
 import 'package:asset_tracker/features/auth/presentation/state_management/auth_state_manager.dart';
 import 'package:asset_tracker/features/auth/presentation/state_management/auth_state_provider.dart';
+import 'package:asset_tracker/features/auth/presentation/state_management/user_firestore_manager.dart';
+import 'package:asset_tracker/features/auth/presentation/state_management/user_firestore_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,13 +22,23 @@ mixin RegisterScreenMixin {
     try {
       ref.read(isLoadingProvider.notifier).state = true;
       final authNotifier = ref.read(authProvider.notifier);
+      final userFirestoreNotifier = ref.read(userProvider.notifier);
       await authNotifier.register(
         emailController.text,
         passwordController.text,
         usernameController.text,
       );
+      String id = authNotifier.user!.id;
 
-      if (ref.watch(authProvider) == AuthState.authenticated) {
+      final user = UserModel(
+          id: id,
+          email: emailController.text,
+          password: passwordController.text,
+          username: usernameController.text);
+      await userFirestoreNotifier.saveUserToFirestore(user);
+
+      if (ref.watch(authProvider) == AuthState.authenticated &&
+          ref.watch(userProvider) == UserState.succes) {
         usernameController.clear();
         emailController.clear();
         passwordController.clear();
@@ -44,6 +57,9 @@ mixin RegisterScreenMixin {
 
       // Kullanıcıya mesaj göster
       context.showSnackBar(errorMessage);
+    } on FirebaseException catch (e) {
+      // **Firestore spesifik hataları yakala**
+      context.showSnackBar("Firestore Hatası: ${e.message}");
     } catch (e) {
       // Bilinmeyen hata durumu
       context.showSnackBar(TrStrings.unknownError);

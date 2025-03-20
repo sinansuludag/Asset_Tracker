@@ -20,7 +20,7 @@ class CurrencyResponse {
     return CurrencyResponse(
       currencies: currencyMap,
       metaTime: json['meta']['time'].toString(),
-      metaDate: json['meta']['tarih'] ?? 'Unknown Date',
+      metaDate: json['meta']['tarih'] ?? '',
     );
   }
 

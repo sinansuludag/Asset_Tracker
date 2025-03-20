@@ -61,7 +61,27 @@ class TrStrings {
   static const String homeLabelText = 'Bir para birimi arayın...';
   static const String homeHintText = 'Bir para birimi arayın...';
   static const String bottomNavigationHome = 'Anasayfa';
+  static const String bottomNavigationCurrency = 'Varlıklar';
   static const String bottomNavigationProfile = 'Profil';
+  static const String buyingAssetScreenTitle = "Varlık Satın Al";
+  static const String chooseAssetType = "  Varlık Türünü Seçin";
+  static const String buyinPrice = 'Alış Fiyatı';
+  static const String enterBuyingPrice = 'Alış Fiyatı Giriniz';
+  static const String buyingScreenButtonText = 'Ekle';
+  static const String buyingScreenEnterQuantity = 'Miktar Giriniz';
+  static const String showDialogTitleText = 'Uyarı';
+  static const String showDialogButtonText = 'Tamam';
+  static const String dataPickerText = 'Tarih Seç';
+  static const String quantityAssetEmpty = "Miktar boş olamaz";
+  static const String requiredBuyingPrice = "Alış fiyatını giriniz";
+  static const String requiredQuantityAmount = "Miktarı giriniz";
+  static const String succesBuyingAsset =
+      "Varlık başarılı bir şekilde eklendi.";
+  static const String errorBuyingAsset = "Varlık eklenirken bir hata oluştu.";
+  static const String warningBuyingAsset = "Miktar 0'dan küçük olamaz";
+  static const String buyingAssetDialogTitleText = "Uyarı";
+  static const String buyingAssetDialogButtonText = "Tamam";
+  static const String cancelButtonText = 'İptal';
 
   ///Home Screen Currency Names
   static const altin = 'Altın';

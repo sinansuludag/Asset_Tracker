@@ -61,7 +61,27 @@ class EngStrings {
   static const String homeLabelText = 'Search for a currency';
   static const String homeHintText = 'Search for a currency';
   static const String bottomNavigationHome = 'Home';
+  static const String bottomNavigationCurrency = 'Assets';
   static const String bottomNavigationProfile = 'Profile';
+  static const String buyingAssetsScreenTitle = 'Buying Assets';
+  static const String chooseAssetType = "  Choose Asset Type";
+  static const String buyinPrice = 'Buying Price';
+  static const String enterBuyingPrice = 'Enter Buying Price';
+  static const String buyingScreenButtonText = 'Ekle';
+  static const String buyingScreenEnterQuantity = 'Enter Quantity';
+  static const String showDialogTitleText = 'Choose Date';
+  static const String showDialogButtonText = 'OK';
+  static const String dataPickerText = 'Choose Date';
+  static const String quantityAssetEmpty = 'Quantity cannot be empty';
+  static const String requiredBuyingPrice = "Enter the buying price";
+  static const String requiredQuantityAmount = "Enter the quantity";
+  static const String succesBuyingAsset = "Asset added successfully.";
+  static const String errorBuyingAsset =
+      "An error occurred while adding the asset.";
+  static const String warningBuyingAsset = 'Quantity cannot be less than 0';
+  static const String buyingAssetDialogTitleText = "Warning";
+  static const String buyingAssetDialogButtonText = "OK";
+  static const String cancelButtonText = 'Cancel';
 
   ///Home Screen Currency Names
   static const altin = 'Gold';

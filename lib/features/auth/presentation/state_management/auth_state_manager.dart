@@ -1,4 +1,4 @@
-import 'package:asset_tracker/features/auth/data/models/mock_user_model.dart';
+import 'package:asset_tracker/features/auth/data/models/user_model.dart';
 import 'package:asset_tracker/features/auth/domain/entities/user_entity_model.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -63,12 +63,22 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      await _repository.sendPasswordResetEmail(email);
+    } on FirebaseAuthException catch (e) {
+      rethrow; // FirebaseAuthException'ı dışarıya ilet
+    } catch (e) {
+      rethrow; // Diğer tüm hataları ilet
+    }
+  }
+
   // Giriş durumunu kontrol etme
   Future<void> checkLoginStatus() async {
     try {
       bool isLoggedIn = await _repository.isLoggedIn();
       if (isLoggedIn) {
-        _user = const UserEntity(
+        _user = UserModel(
             id: 'dummy_id',
             email: 'dummy_email',
             password: 'dummy_email',

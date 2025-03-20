@@ -22,6 +22,9 @@ class CustomBottomNavigationBar extends StatelessWidget {
       style: TabStyle.react,
       items: const [
         TabItem(icon: Icons.home, title: TrStrings.bottomNavigationHome),
+        TabItem(
+            icon: Icons.currency_exchange,
+            title: TrStrings.bottomNavigationCurrency),
         TabItem(icon: Icons.search, title: TrStrings.bottomNavigationProfile),
       ],
       initialActiveIndex: currentIndex,

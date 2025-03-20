@@ -4,7 +4,7 @@ class EmailValidator {
   EmailValidator._();
 
   // E-posta geçerliliği kontrolü
-  static String? validate(String? value) {
+  static String? emailValidate(String? value) {
     if (value == null || value.isEmpty) {
       return TrStrings.requiredEmail;
     } else if (!_isValidEmail(value)) {

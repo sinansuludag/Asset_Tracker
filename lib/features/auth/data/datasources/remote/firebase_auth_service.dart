@@ -2,7 +2,7 @@ import 'package:asset_tracker/features/auth/data/datasources/remote/abstract_aut
 import 'package:asset_tracker/features/auth/data/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class FirebaseAuthServiceImpl implements IAuthService<UserModel> {
+class FirebaseAuthServiceImpl implements IAuthService {
   final FirebaseAuth _firebaseAuth;
 
   FirebaseAuthServiceImpl(this._firebaseAuth);

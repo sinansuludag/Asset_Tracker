@@ -64,11 +64,6 @@ class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
     _filterCurrencies(); // Filtreleme işlemini çağır
   }
 
-  String lastUpdateTimeDate() {
-    final date = _originalResponse == null ? '' : _originalResponse!.metaDate;
-    return date;
-  }
-
   // Tüm verileri getir veya filtrele
   void _filterCurrencies() {
     if (_originalResponse == null) return;
