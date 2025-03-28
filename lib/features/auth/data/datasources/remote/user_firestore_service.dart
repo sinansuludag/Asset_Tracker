@@ -2,6 +2,7 @@ import 'package:asset_tracker/features/auth/data/datasources/remote/abstract_use
 import 'package:asset_tracker/features/auth/data/models/user_model.dart';
 import 'package:asset_tracker/features/auth/domain/entities/user_entity_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class UserFirestoreServiceImpl implements IUserFirestoreService {
   final FirebaseFirestore _firestore;
@@ -9,7 +10,11 @@ class UserFirestoreServiceImpl implements IUserFirestoreService {
   UserFirestoreServiceImpl(this._firestore);
 
   @override
-  Future<UserEntity?> getUserFromFirestore(String userId) async {
+  Future<UserEntity?> getUserFromFirestore() async {
+    final userId = FirebaseAuth.instance.currentUser?.uid ?? '';
+    if (userId.isEmpty) {
+      return null;
+    }
     final userDoc = await _firestore.collection('users').doc(userId).get();
     if (userDoc.exists) {
       final data = userDoc.data();

@@ -12,32 +12,60 @@ Center dropDownButtonwidget(BuildContext context, String? selectedAsset,
     child: Padding(
       padding: AppPaddings.horizontalSimetricDefaultPadding,
       child: Container(
+        height: MediaQuerySize(context).percent6Height,
+        padding: AppPaddings.horizontalSimetricLowPadding,
         decoration: BoxDecoration(
           border: Border.all(color: context.colorScheme.onError),
           borderRadius: AppBorderRadius.lowBorderRadius,
+          color: context.colorScheme.surface,
         ),
-        child: DropdownButton<String>(
-          value: selectedAsset,
-          style: context.textTheme.bodyLarge?.copyWith(
-            color: context.colorScheme.onSecondary,
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<String>(
+            value: selectedAsset,
+            style: context.textTheme.bodyLarge?.copyWith(
+              color: context.colorScheme.onSecondary,
+            ),
+            dropdownColor: context.colorScheme.secondary,
+            isExpanded: true, // Açılır menünün tam genişlikte olmasını sağlar
+            alignment: Alignment.center, // Açılan menünün ortalanmasını sağlar
+            hint: Row(
+              children: [
+                Icon(Icons.attach_money, color: context.colorScheme.primary),
+                const Text(TrStrings.chooseAssetType),
+              ],
+            ),
+            items: Currency.currencyNames.map((item) {
+              return DropdownMenuItem<String>(
+                value: item,
+                child: Row(
+                  children: [
+                    const Icon(Icons.monetization_on,
+                        color: Colors.green), // Seçilen öğelerde ikon görünür
+                    SizedBox(
+                      width: MediaQuerySize(context).percent2Width,
+                    ),
+                    Text(item),
+                  ],
+                ),
+              );
+            }).toList(),
+            onChanged: onChanged,
+            selectedItemBuilder: (BuildContext context) {
+              return Currency.currencyNames.map((item) {
+                return Row(
+                  children: [
+                    Icon(Icons.attach_money,
+                        color: context.colorScheme
+                            .primary), // Seçili öğede ikon ekliyoruz
+                    SizedBox(
+                      width: MediaQuerySize(context).percent2Width,
+                    ),
+                    Text(item, style: context.textTheme.bodyLarge),
+                  ],
+                );
+              }).toList();
+            },
           ),
-          dropdownColor: context.colorScheme.secondary,
-          menuWidth: MediaQuerySize(context).percent90Width,
-          hint: const Text(
-            TrStrings.chooseAssetType,
-          ),
-          items: Currency.currencyNames.map((item) {
-            return DropdownMenuItem<String>(
-              value: item,
-              child: Padding(
-                padding: AppPaddings.horizontalSimetricLowPadding,
-                child: Text(item),
-              ),
-            );
-          }).toList(),
-          onChanged: onChanged,
-          underline: const SizedBox(),
-          isExpanded: true,
         ),
       ),
     ),

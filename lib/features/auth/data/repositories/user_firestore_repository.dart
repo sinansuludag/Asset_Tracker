@@ -9,8 +9,8 @@ class UserFirestoreRepository implements IUserFirestoreRepository {
       : _userFirestoreService = userFirestoreService;
 
   @override
-  Future<UserEntity?> getUserFromFirestore(String userId) async {
-    final user = await _userFirestoreService.getUserFromFirestore(userId);
+  Future<UserEntity?> getUserFromFirestore() async {
+    final user = await _userFirestoreService.getUserFromFirestore();
     return user;
   }
 

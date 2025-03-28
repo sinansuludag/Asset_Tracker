@@ -1,5 +1,4 @@
 import 'package:asset_tracker/features/home/data/datasources/firebase_store/abstract_asset_service.dart';
-import 'package:asset_tracker/features/home/data/models/buying_asset_model.dart';
 import 'package:asset_tracker/features/home/domain/entities/asset_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 

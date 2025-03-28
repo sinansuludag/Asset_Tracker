@@ -116,7 +116,7 @@ class TrStrings {
   static const sarTry = 'Suudi Arabistan Riyali/Türk Lirası';
   static const sekTry = 'İsveç Kronu/Türk Lirası';
   static const tekEski = 'Eski Tam Altın';
-  static const tekYeni = 'Yeni Tam Alt';
+  static const tekYeni = 'Yeni Tam Altın';
   static const usdCad = 'ABD Doları/Kanada Doları';
   static const usdChf = 'ABD Doları/İsviçre Frangı';
   static const usdJpy = 'ABD Doları/Japon Yeni';

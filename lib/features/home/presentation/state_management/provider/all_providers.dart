@@ -18,13 +18,13 @@ final currencyWebSocketServiceProvider =
 });
 
 final currencyRepositoryProvider = Provider<ICurrencyRepository>((ref) {
-  final webSocketService = ref.read(currencyWebSocketServiceProvider);
+  final webSocketService = ref.watch(currencyWebSocketServiceProvider);
   return CurrencyRepositoryImpl(webSocketService);
 });
 
 final currencyNotifierProvider =
     StateNotifierProvider<CurrencyNotifier, List<CurrencyResponse>>((ref) {
-  final repository = ref.read(currencyRepositoryProvider);
+  final repository = ref.watch(currencyRepositoryProvider);
   return CurrencyNotifier(repository);
 });
 
