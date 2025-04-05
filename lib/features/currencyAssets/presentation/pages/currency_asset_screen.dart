@@ -1,16 +1,11 @@
 import 'package:asset_tracker/core/constants/border_radius/border_radius.dart';
-import 'package:asset_tracker/core/constants/paddings/paddings.dart';
-import 'package:asset_tracker/core/constants/sizes/app_icon_size.dart';
-import 'package:asset_tracker/core/extensions/assets_path_extension.dart';
 import 'package:asset_tracker/core/extensions/build_context_extension.dart';
 import 'package:asset_tracker/core/extensions/reverse_to_currency_code_extension.dart';
 import 'package:asset_tracker/features/auth/presentation/state_management/user_firestore_provider.dart';
 import 'package:asset_tracker/features/currencyAssets/presentation/state_management/riverpod/all_provider.dart';
 import 'package:asset_tracker/features/home/presentation/state_management/provider/all_providers.dart';
-import 'package:asset_tracker/core/extensions/currency_code_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class CurrencyAssetScreen extends ConsumerStatefulWidget {
@@ -23,15 +18,18 @@ class CurrencyAssetScreen extends ConsumerStatefulWidget {
 
 class _CurrencyAssetScreenState extends ConsumerState<CurrencyAssetScreen> {
   String? userId;
-  String? selectedAssetType;
-  final ScrollController _scrollController = ScrollController();
+  String?
+      selectedAssetType; // Seçilen varlık türü (PieChart'ta büyütülen dilim)
+  final ScrollController _scrollController =
+      ScrollController(); // Listeyi kaydırmak için
 
   @override
   void initState() {
     super.initState();
-    _initializeStream();
+    _initializeStream(); // Sayfa açılınca veri dinlemeyi başlat
   }
 
+  // Kullanıcı bilgisi alınıp ona ait varlıklar dinleniyor
   Future<void> _initializeStream() async {
     final getUser =
         await ref.read(userProvider.notifier).getUserFromFirestore();
@@ -42,17 +40,22 @@ class _CurrencyAssetScreenState extends ConsumerState<CurrencyAssetScreen> {
     }
   }
 
+  // PieChart ve toplam değer bilgilerini içeren kart
   Widget buildPortfolioCard(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(currencyAssetProvider);
-    final currencyResponses = ref.watch(currencyNotifierProvider);
+    final state = ref.watch(currencyAssetProvider); // Kullanıcının varlıkları
+    final currencyResponses =
+        ref.watch(currencyNotifierProvider); // Güncel döviz kurları
 
-    if (currencyResponses.isEmpty || state.assets.isEmpty)
+    // Veri yoksa boş widget dön
+    if (currencyResponses.isEmpty || state.assets.isEmpty) {
       return const SizedBox();
+    }
 
     final currentMap = <String, double>{};
-    double totalBuy = 0.0;
-    double totalCurrent = 0.0;
+    double totalBuy = 0.0; // Toplam alış değeri
+    double totalCurrent = 0.0; // Güncel toplam değer
 
+    // Her bir varlık için alış ve güncel değerler hesaplanıyor
     for (var asset in state.assets) {
       if (asset == null) continue;
       totalBuy += asset.buyingPrice * asset.quantity;
@@ -65,10 +68,12 @@ class _CurrencyAssetScreenState extends ConsumerState<CurrencyAssetScreen> {
       }
     }
 
+    // Kar/zarar oranı ve miktarı hesaplanıyor
     final profitRate =
         totalBuy > 0 ? ((totalCurrent - totalBuy) / totalBuy) * 100 : 0.0;
     final profitAmount = totalCurrent - totalBuy;
 
+    // PieChart için dilimler hazırlanıyor (her bir varlık oranına göre)
     final entriesList = currentMap.entries.toList();
     final List<Color> sliceColors = [
       Colors.teal,
@@ -79,17 +84,21 @@ class _CurrencyAssetScreenState extends ConsumerState<CurrencyAssetScreen> {
       Colors.deepPurple
     ];
 
+    // Her bir varlık için PieChart dilimi oluşturuluyor
     final sections = entriesList.asMap().entries.map((entry) {
       final index = entry.key;
       final e = entry.value;
       final percent = totalCurrent > 0
-          ? (e.value / totalCurrent * 100).toStringAsFixed(1)
+          ? (e.value / totalCurrent * 100)
+              .toStringAsFixed(1) // yüzde hesaplanıyor
           : '0';
       return PieChartSectionData(
-        value: e.value,
-        title: "$percent%",
-        color: sliceColors[index % sliceColors.length],
-        radius: selectedAssetType == e.key ? 70 : 55,
+        value: e.value, // dilimin boyutu (varlığın TL karşılığı)
+        title: "$percent%", // ortasında gösterilecek oran
+        color:
+            sliceColors[index % sliceColors.length], // renk dizisine göre renk
+        radius:
+            selectedAssetType == e.key ? 70 : 55, // tıklanınca büyüme efekti
         titleStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
@@ -98,10 +107,11 @@ class _CurrencyAssetScreenState extends ConsumerState<CurrencyAssetScreen> {
       );
     }).toList();
 
+    // Görsel olarak kart dönüyor
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Card(
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
           borderRadius: AppBorderRadius.defaultBorderRadius,
         ),
         elevation: 6,
@@ -116,6 +126,7 @@ class _CurrencyAssetScreenState extends ConsumerState<CurrencyAssetScreen> {
                   style: context.textTheme.headlineSmall
                       ?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
+              // Alış, K/Z, Oran bilgileri
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -151,28 +162,32 @@ class _CurrencyAssetScreenState extends ConsumerState<CurrencyAssetScreen> {
                 ],
               ),
               const SizedBox(height: 12),
+              // Grafik alanı (PieChart)
               AspectRatio(
-                aspectRatio: 1.4,
+                aspectRatio: 1.4, // oranı koru
                 child: PieChart(
                   PieChartData(
-                    sections: sections,
-                    centerSpaceRadius: 40,
-                    sectionsSpace: 2,
+                    sections: sections, // yukarıda oluşturulan dilimler
+                    centerSpaceRadius: 40, // ortası boş görünüm için radius
+                    sectionsSpace: 2, // dilimler arası boşluk
                     pieTouchData: PieTouchData(
                       touchCallback: (event, response) {
+                        // Kullanıcı bir dilime tıklarsa
                         final touchedIndex =
                             response?.touchedSection?.touchedSectionIndex;
                         if (touchedIndex != null &&
                             touchedIndex >= 0 &&
                             touchedIndex < entriesList.length) {
                           setState(() {
-                            selectedAssetType = entriesList[touchedIndex].key;
+                            selectedAssetType =
+                                entriesList[touchedIndex].key; // seçilen varlık
                           });
-                          final targetIndex = state.assets.indexWhere(
-                              (a) => a?.assetType == selectedAssetType);
+                          final targetIndex = state.assets.indexWhere((a) =>
+                              a?.assetType ==
+                              selectedAssetType); // o varlık listede kaçıncı sırada
                           if (targetIndex != -1) {
                             _scrollController.animateTo(
-                              (targetIndex + 1) * 180.0,
+                              (targetIndex + 1) * 180.0, // ilgili karta kaydır
                               duration: const Duration(milliseconds: 500),
                               curve: Curves.easeInOut,
                             );
@@ -184,6 +199,7 @@ class _CurrencyAssetScreenState extends ConsumerState<CurrencyAssetScreen> {
                 ),
               ),
               const SizedBox(height: 16),
+              // PieChart altında renkli etiketler (legend)
               Wrap(
                 spacing: 12,
                 runSpacing: 8,
@@ -191,7 +207,8 @@ class _CurrencyAssetScreenState extends ConsumerState<CurrencyAssetScreen> {
                   final index = entry.key;
                   final assetName = entry.value.key;
                   return InkWell(
-                    onTap: () => setState(() => selectedAssetType = assetName),
+                    onTap: () => setState(() => selectedAssetType =
+                        assetName), // etikete tıklayınca dilim seçilsin
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -223,12 +240,18 @@ class _CurrencyAssetScreenState extends ConsumerState<CurrencyAssetScreen> {
     final currencyResponses = ref.watch(currencyNotifierProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Varlıklarım")),
+      appBar: AppBar(
+        title: const Text("Varlıklarım"),
+        centerTitle: true,
+      ),
       body: ListView.builder(
         controller: _scrollController,
-        itemCount: state.assets.length + 1,
+        itemCount: state.assets.length +
+            1, // İlk öğe grafik kartı, sonra varlık kartları
         itemBuilder: (context, index) {
-          if (index == 0) return buildPortfolioCard(context, ref);
+          if (index == 0)
+            return buildPortfolioCard(
+                context, ref); // ilk sıraya grafik kartı gelir
           final asset = state.assets[index - 1];
           if (asset == null) return const SizedBox();
 
