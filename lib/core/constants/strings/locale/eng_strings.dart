@@ -58,8 +58,8 @@ class EngStrings {
   static const String lowest = 'Lowest';
   static const String highest = 'Highest';
   static const String close = 'Close';
-  static const String homeLabelText = 'Search for a currency';
-  static const String homeHintText = 'Search for a currency';
+  static const String homeLabelText = 'Search for a asset...';
+  static const String homeHintText = 'Search for a asset...';
   static const String bottomNavigationHome = 'Home';
   static const String bottomNavigationCurrency = 'Assets';
   static const String bottomNavigationProfile = 'Profile';

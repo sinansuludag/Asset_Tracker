@@ -16,19 +16,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 void showBuyingAssets(BuildContext context) {
   showModalBottomSheet(
     context: context,
-    //backgroundColor: context.colorScheme.secondary,
-    isScrollControlled: false,
+    isScrollControlled: true,
     isDismissible: false,
-    enableDrag: false,
-
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-    ),
-    builder: (context) => BuyingAssetDialog(),
+    enableDrag: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) => const BuyingAssetDialog(),
   );
 }
 
 class BuyingAssetDialog extends ConsumerStatefulWidget {
+  const BuyingAssetDialog({super.key});
+
   @override
   _BuyingAssetDialogState createState() => _BuyingAssetDialogState();
 }
@@ -45,68 +43,68 @@ class _BuyingAssetDialogState extends ConsumerState<BuyingAssetDialog> {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onPanDown: (_) => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        resizeToAvoidBottomInset:
-            true, // Klavye açıldığında alttaki alanı boşaltır
-        body: Padding(
-          padding: AppPaddings.allDefaultPadding,
-          child: Container(
-            padding: AppPaddings.allLowPadding,
-            child: SingleChildScrollView(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    dropDownButtonwidget(context, selectedAsset,
-                        (String? asset) {
-                      setState(() {
-                        selectedAsset = asset;
-                      });
-                    }),
-                    SizedBox(height: MediaQuerySize(context).percent1_5Height),
-                    customBuyingAssetTextFormField(_buyingAssetController,
-                        BuyingPriceValidator.buyingPriceValidate, context),
-                    SizedBox(height: MediaQuerySize(context).percent1_5Height),
-                    quantityTextFormField(context, _quantityAssetController,
-                        QuantityAmountValidator.quantityAmountValidate, ref),
-                    SizedBox(height: MediaQuerySize(context).percent1_5Height),
-                    datePickerButtonWidget(context, _selectedDate,
-                        (DateTime? date) {
-                      setState(() {
-                        _selectedDate = date;
-                      });
-                    }),
-                    SizedBox(height: MediaQuerySize(context).percent1Height),
-                    Row(
-                      spacing: MediaQuerySize(context).percent2Width,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            ref.read(assetAmountProvider.notifier).state = 0.0;
-                            Navigator.of(context).pop(); // Modal'ı iptal et
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: context.colorScheme.secondary,
-                            foregroundColor: context.colorScheme.onSecondary,
-                            fixedSize: Size(
-                              MediaQuerySize(context).percent30Width,
-                              MediaQuerySize(context).percent6Height,
-                            ),
+      child: Container(
+        padding: MediaQuery.of(context).viewInsets,
+        decoration: BoxDecoration(
+          color: context.colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(24)), // 🔸 Sadece üst kısım oval
+        ),
+        child: Padding(
+          padding: AppPaddings.allNormalPadding,
+          child: SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  dropDownButtonwidget(context, selectedAsset, (String? asset) {
+                    setState(() {
+                      selectedAsset = asset;
+                    });
+                  }),
+                  SizedBox(height: MediaQuerySize(context).percent1_5Height),
+                  customBuyingAssetTextFormField(_buyingAssetController,
+                      BuyingPriceValidator.buyingPriceValidate, context),
+                  SizedBox(height: MediaQuerySize(context).percent1_5Height),
+                  quantityTextFormField(context, _quantityAssetController,
+                      QuantityAmountValidator.quantityAmountValidate, ref),
+                  SizedBox(height: MediaQuerySize(context).percent1_5Height),
+                  datePickerButtonWidget(context, _selectedDate,
+                      (DateTime? date) {
+                    setState(() {
+                      _selectedDate = date;
+                    });
+                  }),
+                  SizedBox(height: MediaQuerySize(context).percent1Height),
+                  Row(
+                    spacing: MediaQuerySize(context).percent2Width,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          ref.read(assetAmountProvider.notifier).state = 0.0;
+                          Navigator.of(context).pop();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: context.colorScheme.secondary,
+                          foregroundColor: context.colorScheme.onSecondary,
+                          fixedSize: Size(
+                            MediaQuerySize(context).percent30Width,
+                            MediaQuerySize(context).percent6Height,
                           ),
-                          child: const Text(TrStrings.cancelButtonText),
                         ),
-                        ElevatedButtonWidget(
-                          formKey: _formKey,
-                          selectedDate: _selectedDate,
-                          selectedAsset: selectedAsset,
-                          buyingAssetController: _buyingAssetController,
-                          quantityAssetController: _quantityAssetController,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                        child: const Text(TrStrings.cancelButtonText),
+                      ),
+                      ElevatedButtonWidget(
+                        formKey: _formKey,
+                        selectedDate: _selectedDate,
+                        selectedAsset: selectedAsset,
+                        buyingAssetController: _buyingAssetController,
+                        quantityAssetController: _quantityAssetController,
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),

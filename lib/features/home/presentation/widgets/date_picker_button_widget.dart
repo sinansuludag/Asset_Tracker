@@ -19,7 +19,7 @@ SizedBox datePickerButtonWidget(BuildContext context, DateTime? selectedDate,
         spacing: MediaQuerySize(context).percent1Width,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.calendar_month_outlined),
+          const Icon(Icons.calendar_month_outlined),
           Text(
             selectedDate != null
                 ? "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}"

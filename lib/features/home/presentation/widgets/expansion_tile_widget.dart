@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/constants/paddings/paddings.dart';
 import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
 import 'package:asset_tracker/core/extensions/build_context_extension.dart';
 import 'package:asset_tracker/features/home/data/models/currency_data_model.dart';
@@ -34,8 +35,26 @@ ExpansionTile expansionTileWidget(
               currencyData, TrStrings.highest, currencyData.high ?? 0, context),
           expansionTileChildrenItems(
               currencyData, TrStrings.close, currencyData.close ?? 0, context),
+          lastUpdateTimeRowWidget(context, currencyData),
         ],
       )
     ],
+  );
+}
+
+Padding lastUpdateTimeRowWidget(
+    BuildContext context, CurrencyData currencyData) {
+  return Padding(
+    padding: AppPaddings.verticalAndHorizontal_8_16,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Text('Son güncellenme saati:', style: context.textTheme.bodyMedium),
+        Text(
+          currencyData.date?.split(' ')[1] ?? '---',
+          style: context.textTheme.bodyMedium,
+        ),
+      ],
+    ),
   );
 }

@@ -58,8 +58,8 @@ class TrStrings {
   static const String lowest = 'En Düşük';
   static const String highest = 'En Yüksek';
   static const String close = 'Kapanış';
-  static const String homeLabelText = 'Bir para birimi arayın...';
-  static const String homeHintText = 'Bir para birimi arayın...';
+  static const String homeLabelText = 'Bir varlık arayın...';
+  static const String homeHintText = 'Bir varlık arayın...';
   static const String bottomNavigationHome = 'Anasayfa';
   static const String bottomNavigationCurrency = 'Varlıklar';
   static const String bottomNavigationProfile = 'Profil';

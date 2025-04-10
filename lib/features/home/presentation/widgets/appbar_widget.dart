@@ -14,7 +14,6 @@ AppBar appBarWidget(BuildContext context) {
         padding: AppPaddings.horizontalSimetricLowPadding,
         child: IconButton(
             onPressed: () {
-              //Navigator.pushNamed(context, RouteNames.buyingAssets);
               showBuyingAssets(context);
             },
             icon: const Icon(Icons.add)),

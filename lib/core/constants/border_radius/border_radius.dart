@@ -15,6 +15,11 @@ class AppBorderRadius {
   static const BorderRadius normalBorderRadius =
       BorderRadius.all(Radius.circular(24.0));
 
+  ///Size->24
+  static const BorderRadius onlyTopNormalBorderRadius = BorderRadius.vertical(
+    top: Radius.circular(24.0),
+  );
+
   ///Size->48
   static const BorderRadius highBorderRadius =
       BorderRadius.all(Radius.circular(48.0));
