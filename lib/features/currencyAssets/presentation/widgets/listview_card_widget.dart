@@ -15,8 +15,8 @@ Padding listviewCardWidget(BuildContext context, CurrencyAssetEntity asset,
       shape: const RoundedRectangleBorder(
         borderRadius: AppBorderRadius.defaultBorderRadius,
       ),
-      elevation: 4,
-      color: context.colorScheme.surface,
+      shadowColor: context.colorScheme.onSurface.withAlpha(10),
+      color: context.colorScheme.onSurface.withAlpha(30),
       child: Padding(
         padding: AppPaddings.allDefaultPadding,
         child: Row(
@@ -30,11 +30,11 @@ Padding listviewCardWidget(BuildContext context, CurrencyAssetEntity asset,
                           ?.copyWith(fontWeight: FontWeight.bold)),
                   SizedBox(height: MediaQuerySize(context).percent1Height),
                   Text(
-                    "Alış: ₺${asset.buyingPrice}  -  Miktar: ${asset.quantity}",
+                    "Alış: ₺${asset.buyingPrice.toStringAsFixed(2)}  -  Miktar: ${asset.quantity}",
                     style: context.textTheme.bodyMedium,
                   ),
                   Text(
-                    "Anlık Değer: ₺${currentValue.toStringAsFixed(2)}",
+                    "Anlık Değer: ₺${(currentValue / asset.quantity).toStringAsFixed(2)}",
                     style: context.textTheme.bodyMedium?.copyWith(
                       color: diff >= 0 ? Colors.green : Colors.red,
                     ),

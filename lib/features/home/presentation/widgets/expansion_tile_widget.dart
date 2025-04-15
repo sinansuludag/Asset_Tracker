@@ -44,15 +44,28 @@ ExpansionTile expansionTileWidget(
 
 Padding lastUpdateTimeRowWidget(
     BuildContext context, CurrencyData currencyData) {
+  final date = currencyData.date;
+  final dateTimeParts = date?.split(' ');
+
+  final formattedDateTime = (dateTimeParts != null && dateTimeParts.length >= 2)
+      ? '${dateTimeParts[0]} ${dateTimeParts[1]}'
+      : '---';
+
   return Padding(
     padding: AppPaddings.verticalAndHorizontal_8_16,
     child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text('Son güncellenme saati:', style: context.textTheme.bodyMedium),
         Text(
-          currencyData.date?.split(' ')[1] ?? '---',
+          'Son güncellenme zamanı:',
           style: context.textTheme.bodyMedium,
+        ),
+        Text(
+          formattedDateTime,
+          style: context.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.w500,
+            color: context.colorScheme.primary,
+          ),
         ),
       ],
     ),

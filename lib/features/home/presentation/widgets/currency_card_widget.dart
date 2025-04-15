@@ -15,9 +15,8 @@ Card currencyCardWidget(
     IconData satisIcon,
     Color satisColor) {
   return Card(
-    shadowColor: context.colorScheme.primary,
-    color: context.colorScheme.onPrimary,
-    elevation: 4,
+    shadowColor: context.colorScheme.onSurface.withAlpha(10),
+    color: context.colorScheme.onSurface.withAlpha(30),
     margin: AppPaddings.verticalAndHorizontal_4_8,
     child: ClipRRect(
       borderRadius: AppBorderRadius.lowBorderRadius,

@@ -25,8 +25,8 @@ Card cardPortfolioInfoWidget(
     shape: const RoundedRectangleBorder(
       borderRadius: AppBorderRadius.defaultBorderRadius,
     ),
-    elevation: 6,
-    color: context.colorScheme.surface,
+    color: context.colorScheme.onSurface.withAlpha(30),
+    shadowColor: context.colorScheme.onSurface.withAlpha(10),
     child: Padding(
       padding: AppPaddings.allDefaultPadding,
       child: Column(
