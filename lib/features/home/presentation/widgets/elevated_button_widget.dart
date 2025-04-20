@@ -3,6 +3,7 @@ import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
 import 'package:asset_tracker/core/extensions/build_context_extension.dart';
 import 'package:asset_tracker/core/extensions/show_dialog_extension.dart';
 import 'package:asset_tracker/core/extensions/snack_bar_extension.dart';
+import 'package:asset_tracker/features/auth/presentation/state_management/user_firestore_provider.dart';
 import 'package:asset_tracker/features/home/data/models/buying_asset_model.dart';
 import 'package:asset_tracker/features/home/presentation/state_management/provider/all_providers.dart';
 import 'package:asset_tracker/features/home/presentation/state_management/provider/buying_asset_notifier.dart';
@@ -46,10 +47,10 @@ class ElevatedButtonWidget extends ConsumerWidget {
                 return;
               }
 
-              final prefs = await SharedPreferences.getInstance();
-              final userId = prefs.getString('userId');
+              final userId =
+                  await ref.read(userProvider.notifier).getUserFromFirestore();
 
-              if (userId == null || userId.isEmpty) {
+              if (userId.isEmpty) {
                 context.showDialogFonk(context, TrStrings.userNotFound);
                 return;
               }

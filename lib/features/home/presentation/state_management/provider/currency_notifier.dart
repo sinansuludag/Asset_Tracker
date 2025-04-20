@@ -8,31 +8,42 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
   final ICurrencyRepository _repository;
-  String _searchQuery = ''; // Arama filtresi
-  CurrencyResponse? _originalResponse; // Orijinal veriyi sakla
-  Timer? _debounceTimer; // Debounce için timer
-  bool isConnected = true; // Bağlantı durumu
+
+  String _searchQuery = '';
+  CurrencyResponse? _originalResponse;
+  bool isConnected = true;
+
+  DateTime _lastUpdate = DateTime.fromMillisecondsSinceEpoch(0);
+  late StreamSubscription<CurrencyResponse> _subscription;
 
   CurrencyNotifier(this._repository) : super([]) {
     _listenToCurrencyUpdates();
   }
 
-  // Anlık veri güncellemeleri
+  CurrencyResponse? get fullCurrencyResponse => _originalResponse;
+
   void _listenToCurrencyUpdates() {
-    _repository.getCurrencyUpdates().listen(
+    _subscription = _repository.getCurrencyUpdates().listen(
       (currencyResponse) {
-        _originalResponse = currencyResponse; // Orijinal veriyi kaydet
-        _debounceUpdate(); // Gelen yeni veriye göre filtreleme işlemi yap
-        isConnected = true;
+        final now = DateTime.now();
+        final difference = now.difference(_lastUpdate);
+
+        // 30 saniyede bir güncelle
+        if (difference.inSeconds >= 30) {
+          _originalResponse = currencyResponse;
+          _filterCurrencies();
+          _lastUpdate = now;
+          isConnected = true;
+        } else {
+          // Güncelleme aralığı geçmediği için yok say
+        }
       },
       onError: (error) {
-        print('Error: $error');
+        print('WebSocket Error: $error');
       },
       onDone: () {
-        // Akış tamamlandığında yapılacak işlemler
-        print('Stream closed');
+        print('WebSocket Stream closed');
         if (!isConnected) {
-          // Bağlantı kaybolduysa, önceki veriyi kullan
           _usePreviousData();
         }
       },
@@ -43,56 +54,38 @@ class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
     if (_originalResponse != null) {
       state = [_originalResponse!];
     } else {
-      // Önceki veri yoksa, boş bir liste göster
       state = [];
     }
   }
 
-  // Gelen verileri debounce etmek için
-  void _debounceUpdate() {
-    // Eğer daha önce bir timer varsa iptal et
-
-    _debounceTimer = Timer(const Duration(seconds: 5), () {
-      _filterCurrencies();
-      _debounceTimer?.cancel();
-    });
-  }
-
-  // Arama filtresini güncelle
   void updateSearchQuery(String query) {
     _searchQuery = query.toLowerCase();
-    _filterCurrencies(); // Filtreleme işlemini çağır
+    _filterCurrencies();
   }
 
-  // Tüm verileri getir veya filtrele
   void _filterCurrencies() {
     if (_originalResponse == null) return;
 
     final allCurrencies = _originalResponse!.currencies.values.toList();
+
     if (_searchQuery.isEmpty) {
-      // Arama boşsa, tüm verileri göster
       state = [_originalResponse!];
     } else {
-      // Arama doluysa, filtreleme yap
-      final filteredCurrencies = allCurrencies
+      final filtered = allCurrencies
           .where((currency) => currency.code!
               .getCurrencyName()
               .toLowerCase()
               .contains(_searchQuery))
           .toList();
 
-      // Filtrelenmiş yeni bir state oluştur
       state = [
         _originalResponse!.copyWith(
-          currencies: {
-            for (var currency in filteredCurrencies) currency.code!: currency
-          },
+          currencies: {for (var currency in filtered) currency.code!: currency},
         )
       ];
     }
   }
 
-  // 🔹 Ekranda gösterilecek filtrelenmiş liste
   List<CurrencyData> get filteredCurrencies {
     if (state.isEmpty) return [];
     return state.first.currencies.values.toList();
@@ -100,7 +93,7 @@ class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
 
   @override
   void dispose() {
-    _debounceTimer?.cancel();
+    _subscription.cancel();
     super.dispose();
   }
 }

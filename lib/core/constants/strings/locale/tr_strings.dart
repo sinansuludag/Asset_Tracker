@@ -58,8 +58,8 @@ class TrStrings {
   static const String lowest = 'En Düşük';
   static const String highest = 'En Yüksek';
   static const String close = 'Kapanış';
-  static const String homeLabelText = 'Bir para birimi arayın...';
-  static const String homeHintText = 'Bir para birimi arayın...';
+  static const String homeLabelText = 'Bir varlık arayın...';
+  static const String homeHintText = 'Bir varlık arayın...';
   static const String bottomNavigationHome = 'Anasayfa';
   static const String bottomNavigationCurrency = 'Varlıklar';
   static const String bottomNavigationProfile = 'Profil';
@@ -116,7 +116,7 @@ class TrStrings {
   static const sarTry = 'Suudi Arabistan Riyali/Türk Lirası';
   static const sekTry = 'İsveç Kronu/Türk Lirası';
   static const tekEski = 'Eski Tam Altın';
-  static const tekYeni = 'Yeni Tam Alt';
+  static const tekYeni = 'Yeni Tam Altın';
   static const usdCad = 'ABD Doları/Kanada Doları';
   static const usdChf = 'ABD Doları/İsviçre Frangı';
   static const usdJpy = 'ABD Doları/Japon Yeni';

@@ -75,15 +75,15 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     _controller.forward();
 
     Future.delayed(Duration(seconds: duration), () {
-      // ref.read(authProvider.notifier).checkLoginStatus().then((_) {
-      //   final authState = ref.read(authProvider);
-      //   if (authState == AuthState.authenticated) {
-      //     Navigator.pushReplacementNamed(context, RouteNames.home);
-      //   } else {
-      //     Navigator.pushReplacementNamed(context, RouteNames.login);
-      //   }
-      // });
-      Navigator.pushReplacementNamed(context, RouteNames.login);
+      ref.read(authProvider.notifier).checkLoginStatus().then((_) {
+        final authState = ref.read(authProvider);
+        if (authState == AuthState.authenticated) {
+          Navigator.pushReplacementNamed(context, RouteNames.home);
+        } else {
+          Navigator.pushReplacementNamed(context, RouteNames.login);
+        }
+      });
+      //Navigator.pushReplacementNamed(context, RouteNames.login);
     });
   }
 

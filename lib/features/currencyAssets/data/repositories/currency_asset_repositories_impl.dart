@@ -15,10 +15,8 @@ class CurrencyAssetRepositoriesImpl implements ICurrencyAssetRepository {
   }
 
   @override
-  Future<List<CurrencyAssetEntity?>> getCurrencyAssetRepository(
-      String userId) async {
-    final result = await _currencyAssetService.getCurrencyAssets(userId);
-    return result;
+  Stream<List<CurrencyAssetEntity?>> streamCurrencyAssets(String userId) {
+    return _currencyAssetService.streamCurrencyAssets(userId);
   }
 
   @override

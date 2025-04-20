@@ -1,14 +1,13 @@
-import 'package:asset_tracker/core/constants/border_radius/border_radius.dart';
-import 'package:asset_tracker/core/constants/paddings/paddings.dart';
-import 'package:asset_tracker/core/constants/sizes/app_icon_size.dart';
-import 'package:asset_tracker/core/extensions/assets_path_extension.dart';
-import 'package:asset_tracker/core/extensions/build_context_extension.dart';
-import 'package:asset_tracker/features/currencyAssets/domain/entities/currency_asset_entity.dart';
+import 'package:asset_tracker/features/auth/presentation/state_management/user_firestore_provider.dart';
 import 'package:asset_tracker/features/currencyAssets/presentation/state_management/riverpod/all_provider.dart';
+import 'package:asset_tracker/features/currencyAssets/presentation/widgets/app_bar_widget.dart';
+import 'package:asset_tracker/features/currencyAssets/presentation/widgets/list_view_builder_widget.dart';
+import 'package:asset_tracker/features/currencyAssets/presentation/widgets/text_and_floating_button_column_widget.dart';
+import 'package:asset_tracker/features/home/data/models/currency_data_model.dart';
+import 'package:asset_tracker/features/home/presentation/state_management/provider/all_providers.dart';
+import 'package:asset_tracker/features/home/presentation/widgets/appbar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class CurrencyAssetScreen extends ConsumerStatefulWidget {
   const CurrencyAssetScreen({super.key});
@@ -19,102 +18,67 @@ class CurrencyAssetScreen extends ConsumerStatefulWidget {
 }
 
 class _CurrencyAssetScreenState extends ConsumerState<CurrencyAssetScreen> {
-  Future<void>? _initFuture;
   String? userId;
+  String? selectedAssetType;
+  final ScrollController _scrollController = ScrollController();
+
+  // 🔥 Son bilinen fiyatlar burada tutuluyor
+  final Map<String, double> _lastKnownPrices = {};
 
   @override
   void initState() {
     super.initState();
-    _initFuture = _initializeData();
+    _initializeStream();
   }
 
-  Future<void> _initializeData() async {
-    final prefs = await SharedPreferences.getInstance();
-    userId = prefs.getString('userId') ?? ''; // userId alınıyor
+  Future<void> _initializeStream() async {
+    final getUser =
+        await ref.read(userProvider.notifier).getUserFromFirestore();
+    userId = getUser;
 
-    if (userId!.isNotEmpty) {
-      await ref.read(currencyAssetProvider.notifier).getCurrencyAsset(userId!);
+    if (userId != null && userId!.isNotEmpty) {
+      ref.read(currencyAssetProvider.notifier).listenCurrencyAssets(userId!);
+    }
+  }
+
+  // 🔁 Her yeni kur geldiğinde bu fonksiyon ile son bilinen değerler güncelleniyor
+  void _updateLastKnownPrices(Map<String, CurrencyData> currencies) {
+    for (final entry in currencies.entries) {
+      _lastKnownPrices[entry.key] = entry.value.buying ?? 0.0;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(currencyAssetProvider);
+    final currencyNotifier = ref.watch(currencyNotifierProvider.notifier);
+    final fullCurrencyResponse = currencyNotifier.fullCurrencyResponse;
+
+// Güvenli null kontrolü ve isNotEmpty kontrolü
+    final isDataReady = state.assets.isNotEmpty &&
+        fullCurrencyResponse != null &&
+        fullCurrencyResponse.currencies.isNotEmpty;
+
+    if (isDataReady) {
+      _updateLastKnownPrices(fullCurrencyResponse.currencies);
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Varlıklarım'),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        scrolledUnderElevation: 0,
-      ),
-      body: FutureBuilder(
-          future: _initFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else {
-              return currencyAssetListViewBuilder();
-            }
-          }),
+      appBar: currencyAppBarWidget(),
+      body: isDataReady
+          ? listviewBuilderWidget(
+              state,
+              fullCurrencyResponse.currencies,
+              _scrollController,
+              selectedAssetType,
+              _lastKnownPrices,
+              _updateLastKnownPrices,
+              ref, (assetName) {
+              setState(() {
+                selectedAssetType = assetName;
+              });
+            })
+          : textAndFloatingButtonColumnWidget(context),
     );
-  }
-
-  Widget currencyAssetListViewBuilder() {
-    final currencyAssets =
-        ref.read(currencyAssetProvider.notifier); // Listenin güncel halini al
-
-    return (currencyAssets.currencyAssetList.isNotEmpty)
-        ? ListView.builder(
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Card(
-                  elevation: 4, // Daha yüksek gölge efekti
-                  shape: const RoundedRectangleBorder(
-                    borderRadius:
-                        AppBorderRadius.defaultBorderRadius, // Yuvarlak köşeler
-                  ),
-                  color: context.colorScheme.secondary,
-                  child: ListTile(
-                    contentPadding: AppPaddings
-                        .allDefaultPadding, // İçeriğe padding ekleniyor
-                    leading: CircleAvatar(
-                      child: Image.asset('chart'.png),
-                    ),
-                    title: Text(
-                      currencyAssets.currencyAssetList[index]!.assetType,
-                      style: context.textTheme.bodyLarge?.copyWith(
-                        color: context.colorScheme.onSecondary,
-                      ),
-                    ),
-                    subtitle: Text(
-                      DateFormat('dd/MM/yyyy').format(
-                          currencyAssets.currencyAssetList[index]!.buyingDate),
-                      style: context.textTheme.bodyMedium?.copyWith(
-                          color:
-                              context.colorScheme.onSecondary.withAlpha(100)),
-                    ),
-                    trailing: IconButton(
-                      onPressed: () async {
-                        final assetId = currencyAssets.currencyAssetList[index]!
-                            .id; // Silinecek varlığın ID'si
-                        await ref
-                            .read(currencyAssetProvider.notifier)
-                            .deleteCurrencyAsset(assetId);
-                      },
-                      icon: Icon(
-                        Icons.delete,
-                        size: AppIconSize.listTileTrailingIconSize,
-                        color: context.colorScheme.onSurface,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-            itemCount: currencyAssets.currencyAssetList.length,
-          )
-        : Center(
-            child: Text('Varlık bulunamadı'),
-          );
   }
 }

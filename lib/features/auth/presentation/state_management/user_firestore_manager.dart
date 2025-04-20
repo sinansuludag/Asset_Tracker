@@ -13,10 +13,11 @@ class UserFirestoreNotifier extends StateNotifier<UserState> {
 
   UserEntity? _user;
 
-  Future<void> getUserFromFirestore(String userId) async {
+  Future<String> getUserFromFirestore() async {
     state = UserState.loading;
-    _user = await _userFirestoreRepository.getUserFromFirestore(userId);
+    _user = await _userFirestoreRepository.getUserFromFirestore();
     state = _user != null ? UserState.succes : UserState.error;
+    return _user?.id ?? '';
   }
 
   Future<void> saveUserToFirestore(UserEntity user) async {

@@ -15,18 +15,16 @@ class CurrencyAssetFirestoreServiceImpl implements ICurrencyAssetService {
   }
 
   @override
-  Future<List<CurrencyAssetEntity>> getCurrencyAssets(String userId) async {
-    try {
-      final snapshot = await _firestore
-          .collection('assets')
-          .where('userId', isEqualTo: userId) // userId'ye göre filtreleme
-          .get();
-
-      // Filtrelenmiş verileri döndürüyoruz
-      return snapshot.docs.map((assetDoc) {
-        final data = assetDoc.data();
+  Stream<List<CurrencyAssetEntity?>> streamCurrencyAssets(String userId) {
+    return _firestore
+        .collection('assets')
+        .where('userId', isEqualTo: userId)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data();
         return CurrencyAssetModel(
-          id: assetDoc.id, // Firestore'dan gelen belge id'sini kullanıyoruz
+          id: doc.id,
           assetType: data['assetType'] ?? '',
           buyingDate: data['buyingDate'] is String
               ? DateTime.parse(data['buyingDate'])
@@ -36,10 +34,7 @@ class CurrencyAssetFirestoreServiceImpl implements ICurrencyAssetService {
           userId: data['userId'] ?? '',
         );
       }).toList();
-    } catch (error) {
-      // Hata durumunda boş liste döndürebiliriz
-      return [];
-    }
+    });
   }
 
   @override

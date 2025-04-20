@@ -8,16 +8,24 @@ SizedBox datePickerButtonWidget(BuildContext context, DateTime? selectedDate,
     ValueChanged<DateTime?> onChanged) {
   return SizedBox(
     width: MediaQuerySize(context).percent80Width,
+    height: MediaQuerySize(context).percent6Height,
     child: ElevatedButton(
       onPressed: () => showCustomDatePicker(context, selectedDate, onChanged),
       style: ElevatedButton.styleFrom(
         backgroundColor: context.colorScheme.onError,
         foregroundColor: context.colorScheme.onPrimary,
       ),
-      child: Text(
-        selectedDate != null
-            ? "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}"
-            : TrStrings.dataPickerText,
+      child: Row(
+        spacing: MediaQuerySize(context).percent1Width,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.calendar_month_outlined),
+          Text(
+            selectedDate != null
+                ? "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}"
+                : TrStrings.dataPickerText,
+          ),
+        ],
       ),
     ),
   );

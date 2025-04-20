@@ -2,5 +2,5 @@ import 'package:asset_tracker/features/auth/domain/entities/user_entity_model.da
 
 abstract class IUserFirestoreRepository {
   Future<bool> saveUserToFirestore(UserEntity user);
-  Future<UserEntity?> getUserFromFirestore(String userId);
+  Future<UserEntity?> getUserFromFirestore();
 }

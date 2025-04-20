@@ -53,6 +53,7 @@ Center quantityTextFormField(
               filled: true,
               fillColor: context.colorScheme.onError.withAlpha(75),
             ),
+            textInputAction: TextInputAction.done,
             onChanged: (value) {
               final newValue = double.tryParse(value) ?? 0;
               if (newValue < 0) {
