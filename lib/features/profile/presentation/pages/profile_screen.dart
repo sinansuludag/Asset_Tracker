@@ -4,16 +4,31 @@ import 'package:asset_tracker/core/constants/paddings/paddings.dart';
 import 'package:asset_tracker/core/extensions/assets_path_extension.dart';
 import 'package:asset_tracker/core/extensions/build_context_extension.dart';
 import 'package:asset_tracker/core/margins/margins.dart';
-import 'package:asset_tracker/core/routing/app_router.dart';
-import 'package:asset_tracker/core/routing/route_names.dart';
+import 'package:asset_tracker/core/services/user_service/state_management/riverpod/all_providers.dart';
 import 'package:asset_tracker/core/utils/profile_screen_features/setting_info_list.dart';
+import 'package:asset_tracker/features/auth/presentation/state_management/user_firestore_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+class ProfileScreen extends ConsumerStatefulWidget {
+  const ProfileScreen({super.key});
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      ref.read(commonUserProvider.notifier).getUser();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(commonUserProvider);
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
@@ -39,14 +54,14 @@ class ProfileScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Sinan Suludağ',
+                              user.user.username ?? 'Username',
                               style: context.textTheme.bodyLarge?.copyWith(
                                 color: context.colorScheme.onSecondary,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             Text(
-                              'sinan.sldg@gmail.com',
+                              user.user.email ?? 'Email',
                               style: context.textTheme.bodyMedium?.copyWith(
                                 color: context.colorScheme.onSecondary,
                               ),
@@ -68,7 +83,7 @@ class ProfileScreen extends StatelessWidget {
                   context, 'Hesap Ayarları', accountSettings(context)),
               SizedBox(height: MediaQuerySize(context).percent2Height),
               settingContainerComponentWidget(
-                  context, 'Uygulama Ayarları', appSettings(context)),
+                  context, 'Uygulama Ayarları', appSettings(context, ref)),
               SizedBox(height: MediaQuerySize(context).percent2Height),
               settingContainerComponentWidget(context,
                   'Destek ve Yasal Bilgiler', supportSettings(context)),

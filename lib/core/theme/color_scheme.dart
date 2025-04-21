@@ -16,13 +16,20 @@ class AppColorScheme {
 
   static const darkColorScheme = ColorScheme(
     brightness: Brightness.dark,
-    primary: AppColors.mainButtonBackground, // Ana buton arka planı
-    onPrimary: AppColors.mainButtonTextColor, // Ana buton metin rengi
-    secondary: AppColors.secondaryButtonBackground, // İkinci buton arka planı
-    onSecondary: AppColors.secondaryButtonTextColor, // İkinci buton metin rengi
-    surface: Color(0xFF121212), // Karanlık zemin rengi
-    onSurface: AppColors.mainTextColor, // Karanlık zeminde ana metin rengi
-    error: AppColors.error, // Hata rengi
-    onError: AppColors.mainTextColor, // Hata mesajlarında metin rengi
+
+    // Buton ve vurgu renkleri (senin renklerinle uyumlu)
+    primary: AppColors.mainButtonTextColor, // Ana yeşil buton
+    onPrimary: AppColors.mainButtonBackground,
+
+    secondary: AppColors
+        .secondaryButtonTextColor, // Vurgulu ikinci buton (uyumlu parlak yeşil ton)
+    onSecondary: AppColors.secondaryButtonBackground,
+
+    surface: Color(0xFF2C2C2E), // Kart, AppBar, bottomsheet gibi yüzeyler
+    onSurface: Color(0xFFEDEDED), // Kart içi metinler
+
+    // Hata renkleri
+    error: AppColors.error,
+    onError: Colors.white,
   );
 }
