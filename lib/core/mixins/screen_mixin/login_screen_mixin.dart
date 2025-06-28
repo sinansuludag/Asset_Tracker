@@ -1,8 +1,11 @@
+import 'package:asset_tracker/core/constants/colors/app_colors.dart';
 import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
 import 'package:asset_tracker/core/exceptions/firebase_auth_exceptions/firebase_error_type.dart';
+import 'package:asset_tracker/core/extensions/build_context_extension.dart';
 import 'package:asset_tracker/core/extensions/firebase_error_extension.dart';
 import 'package:asset_tracker/core/extensions/snack_bar_extension.dart';
 import 'package:asset_tracker/core/routing/route_names.dart';
+import 'package:asset_tracker/core/theme/color_scheme.dart';
 import 'package:asset_tracker/features/auth/presentation/state_management/auth_state_manager.dart';
 import 'package:asset_tracker/features/auth/presentation/state_management/auth_state_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,7 +32,8 @@ mixin LoginScreenMixin {
       if (ref.watch(authProvider) == AuthState.authenticated) {
         emailController.clear();
         passwordController.clear();
-        context.showSnackBar(TrStrings.succesLogin);
+        context.showSnackBar(TrStrings.succesLogin, Icons.check_circle_outline,
+            AppColors.success);
         Navigator.pushReplacementNamed(context, RouteNames.home);
       } else {
         throw Exception();
@@ -41,10 +45,12 @@ mixin LoginScreenMixin {
             FirebaseErrorHandlingExtension.getErrorTypeFromAuthException(e);
 
         String errorMessage = errorType.getErrorMessage();
-        context.showSnackBar(errorMessage);
+        context.showSnackBar(
+            errorMessage, Icons.error_outline, AppColors.error);
       } else {
         // Diğer hata durumları
-        context.showSnackBar(TrStrings.unknownError);
+        context.showSnackBar(
+            TrStrings.unknownError, Icons.error_outline, AppColors.error);
       }
     } finally {
       // Yükleniyor durumunu pasif et

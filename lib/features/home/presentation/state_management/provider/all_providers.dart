@@ -25,7 +25,7 @@ final currencyRepositoryProvider = Provider<ICurrencyRepository>((ref) {
 final currencyNotifierProvider =
     StateNotifierProvider<CurrencyNotifier, List<CurrencyResponse>>((ref) {
   final repository = ref.watch(currencyRepositoryProvider);
-  return CurrencyNotifier(repository);
+  return CurrencyNotifier(repository, ref);
 });
 
 //////////////////////

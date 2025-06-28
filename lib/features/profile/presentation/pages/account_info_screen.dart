@@ -1,4 +1,5 @@
 import 'package:asset_tracker/core/constants/border_radius/border_radius.dart';
+import 'package:asset_tracker/core/constants/colors/app_colors.dart';
 import 'package:asset_tracker/core/constants/media_query_sizes/media_query_size.dart';
 import 'package:asset_tracker/core/constants/paddings/paddings.dart';
 import 'package:asset_tracker/core/extensions/assets_path_extension.dart';
@@ -110,12 +111,16 @@ class _AccountInfoScreenState extends ConsumerState<AccountInfoScreen> {
                             if (ref.watch(commonUserProvider).hasError) {
                               if (context.mounted) {
                                 context.showSnackBar(
-                                    'Hata oluştu. Lütfen tekrar deneyin.');
+                                    'Hata oluştu. Lütfen tekrar deneyin.',
+                                    Icons.error_outline,
+                                    AppColors.error);
                               }
                             } else {
                               if (context.mounted) {
                                 context.showSnackBar(
-                                    'Hesap bilgileri başarıyla güncellendi!');
+                                    'Hesap bilgileri başarıyla güncellendi!',
+                                    Icons.check_circle_outline,
+                                    AppColors.success);
                               }
                             }
                           },

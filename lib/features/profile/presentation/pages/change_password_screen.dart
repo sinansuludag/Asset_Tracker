@@ -1,4 +1,5 @@
 import 'package:asset_tracker/core/constants/border_radius/border_radius.dart';
+import 'package:asset_tracker/core/constants/colors/app_colors.dart';
 import 'package:asset_tracker/core/constants/media_query_sizes/media_query_size.dart';
 import 'package:asset_tracker/core/constants/paddings/paddings.dart';
 import 'package:asset_tracker/core/extensions/build_context_extension.dart';
@@ -120,19 +121,25 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
 
                             if (!isVerified) {
                               context.showSnackBar(
-                                  'Mevcut şifreniz yanlış. Lütfen kontrol edin.');
+                                  'Mevcut şifreniz yanlış. Lütfen kontrol edin.',
+                                  Icons.error_outline,
+                                  AppColors.error);
                               return;
                             }
 
                             if (current == newPass) {
                               context.showSnackBar(
-                                  'Yeni şifre mevcut şifreyle aynı olamaz.');
+                                  'Yeni şifre mevcut şifreyle aynı olamaz.',
+                                  Icons.error_outline,
+                                  AppColors.error);
                               return;
                             }
 
                             if (newPass != confirm) {
                               context.showSnackBar(
-                                  'Yeni şifreler eşleşmiyor, lütfen kontrol edin.');
+                                  'Yeni şifreler eşleşmiyor, lütfen kontrol edin.',
+                                  Icons.error_outline,
+                                  AppColors.error);
                               return;
                             }
 
@@ -141,10 +148,14 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
 
                             if (ref.read(commonUserProvider).hasError) {
                               context.showSnackBar(
-                                  'Şifre güncellenirken bir hata oluştu.');
+                                  'Şifre güncellenirken bir hata oluştu.',
+                                  Icons.error_outline,
+                                  AppColors.error);
                             } else {
-                              context
-                                  .showSnackBar('Şifre başarıyla güncellendi.');
+                              context.showSnackBar(
+                                  'Şifre başarıyla güncellendi!',
+                                  Icons.check_circle_outline,
+                                  AppColors.success);
                             }
                           },
                     child: isLoading

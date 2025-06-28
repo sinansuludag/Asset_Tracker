@@ -19,7 +19,9 @@ class CommonUserState {
 }
 
 class UserManagerNotifier extends StateNotifier<CommonUserState> {
-  UserManagerNotifier(this._repository) : super(CommonUserState.initial());
+  UserManagerNotifier(this._repository) : super(CommonUserState.initial()) {
+    getUser(); // ✅ Sayfa açıldığında veri otomatik çekilir
+  }
   final ICommonUserRepository _repository;
 
   UserEntity? _user;

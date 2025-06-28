@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/constants/colors/app_colors.dart';
 import 'package:asset_tracker/core/constants/media_query_sizes/media_query_size.dart';
 import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
 import 'package:asset_tracker/core/extensions/build_context_extension.dart';
@@ -67,7 +68,8 @@ class ElevatedButtonWidget extends ConsumerWidget {
               await buyingAssetNotifier.saveBuyingAsset(assetEntityModel);
 
               if (ref.watch(buyingAssetProvider) == BuyingAssetState.loaded) {
-                context.showSnackBar(TrStrings.succesBuyingAsset);
+                context.showSnackBar(TrStrings.succesBuyingAsset,
+                    Icons.check_circle_outline, AppColors.success);
                 buyingAssetController.clear();
                 quantityAssetController.clear();
                 selectedAsset = '';
@@ -76,10 +78,12 @@ class ElevatedButtonWidget extends ConsumerWidget {
                 Navigator.pop(context);
               } else if (ref.watch(buyingAssetProvider) ==
                   BuyingAssetState.error) {
-                context.showSnackBar(TrStrings.errorBuyingAsset);
+                context.showSnackBar(TrStrings.errorBuyingAsset,
+                    Icons.error_outline, AppColors.error);
                 ref.read(assetAmountProvider.notifier).state = 0.0;
               } else {
-                context.showSnackBar(TrStrings.unknownError);
+                context.showSnackBar(TrStrings.unknownError,
+                    Icons.error_outline, AppColors.error);
                 ref.read(assetAmountProvider.notifier).state = 0.0;
               }
             },

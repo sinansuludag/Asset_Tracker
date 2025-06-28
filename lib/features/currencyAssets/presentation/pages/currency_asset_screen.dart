@@ -54,31 +54,38 @@ class _CurrencyAssetScreenState extends ConsumerState<CurrencyAssetScreen> {
     final currencyNotifier = ref.watch(currencyNotifierProvider.notifier);
     final fullCurrencyResponse = currencyNotifier.fullCurrencyResponse;
 
-// Güvenli null kontrolü ve isNotEmpty kontrolü
-    final isDataReady = state.assets.isNotEmpty &&
-        fullCurrencyResponse != null &&
+    final hasCurrencyData = fullCurrencyResponse != null &&
         fullCurrencyResponse.currencies.isNotEmpty;
 
-    if (isDataReady) {
-      _updateLastKnownPrices(fullCurrencyResponse.currencies);
+    final hasAssetData = state.assets.isNotEmpty;
+
+    final isLoading =
+        !hasCurrencyData || (!hasAssetData && state.assets.isEmpty);
+
+    if (hasCurrencyData && hasAssetData) {
+      _updateLastKnownPrices(fullCurrencyResponse!.currencies);
     }
 
     return Scaffold(
       appBar: currencyAppBarWidget(),
-      body: isDataReady
-          ? listviewBuilderWidget(
-              state,
-              fullCurrencyResponse.currencies,
-              _scrollController,
-              selectedAssetType,
-              _lastKnownPrices,
-              _updateLastKnownPrices,
-              ref, (assetName) {
-              setState(() {
-                selectedAssetType = assetName;
-              });
-            })
-          : textAndFloatingButtonColumnWidget(context),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : hasAssetData
+              ? listviewBuilderWidget(
+                  state,
+                  fullCurrencyResponse!.currencies,
+                  _scrollController,
+                  selectedAssetType,
+                  _lastKnownPrices,
+                  _updateLastKnownPrices,
+                  ref,
+                  (assetName) {
+                    setState(() {
+                      selectedAssetType = assetName;
+                    });
+                  },
+                )
+              : textAndFloatingButtonColumnWidget(context),
     );
   }
 }

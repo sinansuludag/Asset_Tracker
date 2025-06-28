@@ -1,11 +1,16 @@
 import 'package:asset_tracker/core/constants/border_radius/border_radius.dart';
+import 'package:asset_tracker/core/constants/colors/app_colors.dart';
 import 'package:asset_tracker/core/constants/media_query_sizes/media_query_size.dart';
 import 'package:asset_tracker/core/constants/paddings/paddings.dart';
 import 'package:asset_tracker/core/extensions/assets_path_extension.dart';
 import 'package:asset_tracker/core/extensions/build_context_extension.dart';
+import 'package:asset_tracker/core/extensions/show_dialog_extension.dart';
+import 'package:asset_tracker/core/extensions/snack_bar_extension.dart';
 import 'package:asset_tracker/core/margins/margins.dart';
+import 'package:asset_tracker/core/routing/route_names.dart';
 import 'package:asset_tracker/core/services/user_service/state_management/riverpod/all_providers.dart';
 import 'package:asset_tracker/core/utils/profile_screen_features/setting_info_list.dart';
+import 'package:asset_tracker/features/auth/presentation/state_management/auth_state_provider.dart';
 import 'package:asset_tracker/features/auth/presentation/state_management/user_firestore_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,14 +26,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      ref.read(commonUserProvider.notifier).getUser();
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(commonUserProvider);
+    final userState = ref.watch(commonUserProvider);
+
+    if (userState.isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
@@ -54,14 +63,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              user.user.username ?? 'Username',
+                              userState.user.username ?? 'Username',
                               style: context.textTheme.bodyLarge?.copyWith(
                                 color: context.colorScheme.onSecondary,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             Text(
-                              user.user.email ?? 'Email',
+                              userState.user.email ?? 'Email',
                               style: context.textTheme.bodyMedium?.copyWith(
                                 color: context.colorScheme.onSecondary,
                               ),
@@ -70,7 +79,41 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ),
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          try {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Çıkış Yap'),
+                                content: const Text(
+                                    'Çıkış yapmak istediğinize emin misiniz?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text('İptal'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      await ref
+                                          .read(authProvider.notifier)
+                                          .signOut();
+                                      context.showSnackBar(
+                                          "Başarıyla çıkış yapıldı",
+                                          Icons.check_circle_outline,
+                                          AppColors.success);
+                                      Navigator.pushNamed(
+                                          context, RouteNames.login);
+                                    },
+                                    child: const Text('Çıkış Yap'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          } catch (e) {
+                            context.showSnackBar("Çıkış yaparken hata oluştu",
+                                Icons.error_outline, AppColors.error);
+                          }
+                        },
                         icon: const Icon(Icons.exit_to_app),
                         color: context.colorScheme.onSecondary,
                       ),

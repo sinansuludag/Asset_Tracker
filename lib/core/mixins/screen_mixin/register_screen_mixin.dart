@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/constants/colors/app_colors.dart';
 import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
 import 'package:asset_tracker/core/exceptions/firebase_auth_exceptions/firebase_error_type.dart';
 import 'package:asset_tracker/core/extensions/firebase_error_extension.dart';
@@ -42,7 +43,8 @@ mixin RegisterScreenMixin {
         usernameController.clear();
         emailController.clear();
         passwordController.clear();
-        context.showSnackBar(TrStrings.succesRegister);
+        context.showSnackBar(TrStrings.succesRegister,
+            Icons.check_circle_outline, AppColors.success);
         Navigator.pushReplacementNamed(context, RouteNames.home);
       } else {
         throw Exception();
@@ -56,13 +58,15 @@ mixin RegisterScreenMixin {
       String errorMessage = errorType.getErrorMessage();
 
       // Kullanıcıya mesaj göster
-      context.showSnackBar(errorMessage);
+      context.showSnackBar(errorMessage, Icons.error_outline, AppColors.error);
     } on FirebaseException catch (e) {
       // **Firestore spesifik hataları yakala**
-      context.showSnackBar("Firestore Hatası: ${e.message}");
+      context.showSnackBar("Firestore Hatası: ${e.message}",
+          Icons.error_outline, AppColors.error);
     } catch (e) {
       // Bilinmeyen hata durumu
-      context.showSnackBar(TrStrings.unknownError);
+      context.showSnackBar(
+          TrStrings.unknownError, Icons.error_outline, AppColors.error);
     }
     // Yükleniyor durumunu pasif et
     finally {

@@ -1,13 +1,16 @@
 import 'dart:async';
 
 import 'package:asset_tracker/core/extensions/currency_code_extension.dart';
+import 'package:asset_tracker/core/riverpod/all_riverpod.dart';
 import 'package:asset_tracker/features/home/data/models/currency_data_model.dart';
 import 'package:asset_tracker/features/home/data/models/curreny_response_model.dart';
 import 'package:asset_tracker/features/home/domain/repositories/i_currency_repository.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
   final ICurrencyRepository _repository;
+  final Ref _ref;
 
   String _searchQuery = '';
   CurrencyResponse? _originalResponse;
@@ -16,7 +19,7 @@ class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
   DateTime _lastUpdate = DateTime.fromMillisecondsSinceEpoch(0);
   late StreamSubscription<CurrencyResponse> _subscription;
 
-  CurrencyNotifier(this._repository) : super([]) {
+  CurrencyNotifier(this._repository, this._ref) : super([]) {
     _listenToCurrencyUpdates();
   }
 
@@ -24,30 +27,27 @@ class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
 
   void _listenToCurrencyUpdates() {
     _subscription = _repository.getCurrencyUpdates().listen(
-      (currencyResponse) {
-        final now = DateTime.now();
-        final difference = now.difference(_lastUpdate);
+          (currencyResponse) {
+            final now = DateTime.now();
+            final difference = now.difference(_lastUpdate);
+            final interval = _ref.read(refreshIntervalProvider);
 
-        // 30 saniyede bir güncelle
-        if (difference.inSeconds >= 30) {
-          _originalResponse = currencyResponse;
-          _filterCurrencies();
-          _lastUpdate = now;
-          isConnected = true;
-        } else {
-          // Güncelleme aralığı geçmediği için yok say
-        }
-      },
-      onError: (error) {
-        print('WebSocket Error: $error');
-      },
-      onDone: () {
-        print('WebSocket Stream closed');
-        if (!isConnected) {
-          _usePreviousData();
-        }
-      },
-    );
+            if (interval == Duration.zero)
+              return; // Manuel modda otomatik güncelleme yok
+
+            if (difference >= interval) {
+              _originalResponse = currencyResponse;
+              _filterCurrencies();
+              _lastUpdate = now;
+              isConnected = true;
+            }
+          },
+          onError: (error) => print('WebSocket Error: $error'),
+          onDone: () {
+            print('WebSocket Stream closed');
+            if (!isConnected) _usePreviousData();
+          },
+        );
   }
 
   void _usePreviousData() {
@@ -95,5 +95,13 @@ class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
   void dispose() {
     _subscription.cancel();
     super.dispose();
+  }
+
+  void manualRefresh() async {
+    final response = await _repository.getCurrencyUpdates().first;
+    _originalResponse = response;
+    _filterCurrencies();
+    state = [_originalResponse!];
+    _lastUpdate = DateTime.now();
   }
 }

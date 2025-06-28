@@ -11,44 +11,61 @@ class FAQScreen extends StatelessWidget {
     {
       'question': 'Uygulama nasıl çalışıyor?',
       'answer':
-          'Uygulama, varlıklarınızı takip etmenizi sağlar ve döviz kurlarını anlık olarak sunar.'
+          'Uygulama, döviz ve kripto para birimlerinin anlık değerlerini WebSocket üzerinden alır. Kullanıcı, bu varlıklara dair alım/satım bilgilerini manuel olarak sisteme girer ve geçmiş işlemlerini grafiksel olarak takip edebilir.'
     },
     {
       'question': 'Veriler ne sıklıkla güncelleniyor?',
-      'answer': 'Veriler her 5 dakikada bir otomatik olarak güncellenir.'
+      'answer':
+          'Varsayılan olarak veriler her 30 saniyede bir güncellenir. Ancak kullanıcı ayarlardan bu süreyi 5 saniye, 1 dakika, 5 dakika gibi farklı aralıklara değiştirebilir veya "Yalnızca Manuel" seçeneğini seçerek yalnızca yenile butonuna bastığında verilerin güncellenmesini sağlayabilir.'
+    },
+    {
+      'question': 'Yenileme sıklığı nasıl değiştirilir?',
+      'answer':
+          'Profil > Uygulama Ayarları > Yenileme Sıklığı bölümünden veri güncellenme aralığını belirleyebilirsiniz.'
     },
     {
       'question': 'Bildirimleri nasıl kapatabilirim?',
       'answer':
-          'Profil > Bildirim Ayarları kısmından bildirim tercihlerinizi değiştirebilirsiniz.'
+          'Profil > Uygulama Ayarları > Bildirim Ayarları kısmından bildirim tercihlerinizi yönetebilirsiniz. Sistem bildirimleri uygulamanın bazı bölümlerinde aktif olabilir.'
     },
     {
       'question': 'Verilerim güvende mi?',
       'answer':
-          'Uygulama, verilerinizi sadece cihazda tutar ve güvenliğiniz için yerel şifreleme kullanır.'
+          'Cihazda tutulan veriler henüz şifrelenmemektedir. Ancak hassas bilgiler Firebase altyapısında güvenli şekilde saklanmaktadır. Yakında sürümlerde yerel veriler için şifreleme desteği eklenecektir.'
     },
+    {
+      'question': 'Karanlık mod desteği var mı?',
+      'answer':
+          'Evet. Profil > Uygulama Ayarları kısmından karanlık moda geçiş yapabilir ya da sistem temasını otomatik olarak kullanabilirsiniz.'
+    },
+    {
+      'question': 'Dil ayarlarını nasıl değiştirebilirim?',
+      'answer':
+          'Profil > Uygulama Ayarları > Dil bölümünden mevcut diller arasında geçiş yapabilirsiniz.'
+    },
+    {
+      'question': 'Uygulama çevrimdışı çalışır mı?',
+      'answer':
+          'Hayır. Uygulama, veri güncellemeleri için sürekli internet bağlantısına ihtiyaç duyar.'
+    }
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: const Text("Sık Sorulan Sorular"),
         scrolledUnderElevation: 0,
       ),
       body: Padding(
         padding: AppPaddings.horizontalSimetricDefaultPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Sık Sorulan Sorular',
-                style: context.textTheme.headlineMedium?.copyWith(
-                  color: context.colorScheme.onSecondary,
-                )),
-            SizedBox(height: MediaQuerySize(context).percent2Height),
-            ...faqList.map((item) =>
-                _buildFAQCard(context, item['question']!, item['answer']!)),
-            SizedBox(height: MediaQuerySize(context).percent3Height),
-          ],
+        child: ListView.builder(
+          itemCount: faqList.length,
+          itemBuilder: (context, index) {
+            final question = faqList[index]['question']!;
+            final answer = faqList[index]['answer']!;
+            return _buildFAQCard(context, question, answer);
+          },
         ),
       ),
     );

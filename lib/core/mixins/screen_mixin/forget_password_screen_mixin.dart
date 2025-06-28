@@ -1,5 +1,7 @@
+import 'package:asset_tracker/core/constants/colors/app_colors.dart';
 import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
 import 'package:asset_tracker/core/exceptions/firebase_auth_exceptions/firebase_error_type.dart';
+import 'package:asset_tracker/core/extensions/build_context_extension.dart';
 import 'package:asset_tracker/core/extensions/firebase_error_extension.dart';
 import 'package:asset_tracker/core/extensions/snack_bar_extension.dart';
 import 'package:asset_tracker/core/routing/route_names.dart';
@@ -24,10 +26,12 @@ mixin ForgetPasswordScreenMixin {
             FirebaseErrorHandlingExtension.getErrorTypeFromAuthException(e);
 
         String errorMessage = errorType.getErrorMessage();
-        context.showSnackBar(errorMessage);
+        context.showSnackBar(
+            errorMessage, Icons.error_outline, AppColors.error);
       } else {
         // Diğer hata durumları
-        context.showSnackBar(TrStrings.unknownError);
+        context.showSnackBar(
+            TrStrings.unknownError, Icons.error_outline, AppColors.error);
       }
     } finally {
       ref.read(isLoadingProvider.notifier).state = false;
