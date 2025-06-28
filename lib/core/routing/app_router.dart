@@ -1,6 +1,9 @@
 import 'package:asset_tracker/core/routing/route_names.dart';
 import 'package:asset_tracker/features/auth/presentation/pages/forget_password.dart';
 import 'package:asset_tracker/features/auth/presentation/pages/login_screen.dart';
+import 'package:asset_tracker/features/auth/presentation/pages/modern_forget_password_screen.dart';
+import 'package:asset_tracker/features/auth/presentation/pages/modern_login_screen.dart';
+import 'package:asset_tracker/features/auth/presentation/pages/modern_register_screen.dart';
 import 'package:asset_tracker/features/auth/presentation/pages/register_screen.dart';
 import 'package:asset_tracker/features/currencyAssets/presentation/pages/currency_asset_screen.dart';
 import 'package:asset_tracker/features/home/presentation/pages/home_screen.dart';
@@ -30,11 +33,11 @@ class AppRouter {
       case RouteNames.splash:
         return MaterialPageRoute(builder: (_) => const SplashScreen());
       case RouteNames.login:
-        return MaterialPageRoute(builder: (_) => LoginScreen());
+        return MaterialPageRoute(builder: (_) => ModernLoginScreen());
       case RouteNames.register:
-        return MaterialPageRoute(builder: (_) => RegisterScreen());
+        return MaterialPageRoute(builder: (_) => ModernRegisterScreen());
       case RouteNames.forgetPassword:
-        return MaterialPageRoute(builder: (_) => ForgetPasswordScreen());
+        return MaterialPageRoute(builder: (_) => ModernForgetPasswordScreen());
       case RouteNames.home:
         return MaterialPageRoute(builder: (_) => HomeScreen());
       case RouteNames.currencyAssets:

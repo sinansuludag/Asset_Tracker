@@ -56,33 +56,3 @@ class BuyingAssetModel extends AssetEntity {
     };
   }
 }
-
-// import 'package:asset_tracker/features/buying_asset/domain/entities/asset_model.dart';
-// import 'package:json_annotation/json_annotation.dart';
-
-// part 'buying_asset_model.g.dart'; // Kod üretilecek dosya
-
-// @JsonSerializable()
-// class BuyingAssetModel extends AssetModel {
-//   BuyingAssetModel({
-//     required String id,
-//     required String assetType,
-//     required DateTime buyingDate,
-//     required double buyingPrice,
-//     required int quantity,
-//   }) : super(
-//           id: id,
-//           assetType: assetType,
-//           buyingDate: buyingDate,
-//           buyingPrice: buyingPrice,
-//           quantity: quantity,
-//         );
-
-//   /// JSON'dan nesne oluşturma
-//   factory BuyingAssetModel.fromJson(Map<String, dynamic> json) =>
-//       _$BuyingAssetModelFromJson(json);
-
-//   /// Nesneyi JSON'a çevirme
-//   @override
-//   Map<String, dynamic> toJson() => _$BuyingAssetModelToJson(this);
-// }
