@@ -25,6 +25,9 @@ class AppColors {
   static const Color textSecondary = Color(0xFF7F8C8D);
   static const Color textLight = Color(0xFF95A5A6);
   static const Color overlayColor = Color(0x1A000000);
+// Mevcut renklerinize ekleyin
+  static const Color backgroundLight = Color(0xFFF8FFFE);
+  static const Color cardBackground = Color(0xFFFFFFFF);
 
   // Gradient definitions
   static const LinearGradient primaryGradient = LinearGradient(
