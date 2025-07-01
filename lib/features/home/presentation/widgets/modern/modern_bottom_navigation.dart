@@ -46,8 +46,8 @@ class ModernBottomNavigation extends StatelessWidget {
             ),
             _buildNavButton(
               context,
-              icon: Icons.account_balance_wallet_rounded,
-              label: "Varlıklar",
+              icon: Icons.pie_chart_rounded, // UPDATED: Better portfolio icon
+              label: "Portföy",
               index: 2,
               isSelected: currentIndex == 2,
             ),

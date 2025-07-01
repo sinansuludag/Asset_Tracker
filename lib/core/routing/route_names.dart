@@ -1,14 +1,31 @@
 class RouteNames {
   RouteNames._();
+
+  // Auth routes
   static const String splash = '/';
   static const String login = '/login';
   static const String register = '/register';
   static const String forgetPassword = 'forgetPassword';
+
+  // Main app routes
   static const String home = 'home';
+  static const String currencyAssets = 'currencyAssets';
+
+  // Markets routes
   static const String markets = 'markets';
   static const String marketDetail = 'marketDetail';
   static const String marketWatchlist = 'marketWatchlist';
-  static const String currencyAssets = 'currencyAssets';
+
+  // Portfolio routes
+  static const String portfolio = 'portfolio';
+  static const String modernPortfolio = 'modernPortfolio';
+  static const String portfolioDetail = 'portfolioDetail';
+  static const String addAsset = 'addAsset';
+  static const String editAsset = 'editAsset';
+  static const String portfolioAnalytics = 'portfolioAnalytics';
+
+  // Profile routes
+  static const String profile = 'profile'; // ADDED - Modern Profile Screen
   static const String accountInfo = 'accountInfo';
   static const String changePassword = 'changePassword';
   static const String changeLanguage = 'changeLanguage';

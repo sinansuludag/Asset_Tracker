@@ -1,5 +1,6 @@
 import 'package:asset_tracker/core/constants/colors/app_colors.dart';
 import 'package:asset_tracker/core/constants/paddings/paddings.dart';
+import 'package:asset_tracker/features/currencyAssets/presentation/pages/modern_portfolio_screen.dart';
 import 'package:asset_tracker/features/home/data/models/user_asset_model.dart';
 import 'package:flutter/material.dart';
 
@@ -31,7 +32,12 @@ class UserAssetsWidget extends StatelessWidget {
               ),
               TextButton(
                 onPressed: () {
-                  // Navigate to all assets
+                  // UPDATED: Navigate to modern portfolio screen
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const ModernPortfolioScreen(),
+                    ),
+                  );
                 },
                 child: Text(
                   "Tümünü Gör",
@@ -49,7 +55,9 @@ class UserAssetsWidget extends StatelessWidget {
           else if (userAssets.isEmpty)
             _buildEmptyState(context)
           else
-            ...userAssets.map((asset) => _buildAssetCard(context, asset)),
+            ...userAssets
+                .take(3)
+                .map((asset) => _buildAssetCard(context, asset)),
         ],
       ),
     );
@@ -86,7 +94,7 @@ class UserAssetsWidget extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            "İlk varlığınızı eklemek için + butonuna dokunun",
+            "İlk varlığınızı eklemek için portföy sayfasına gidin",
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: AppColors.textSecondary,
                 ),

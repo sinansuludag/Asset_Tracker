@@ -1,8 +1,11 @@
 import 'package:asset_tracker/features/currencyAssets/presentation/pages/currency_asset_screen.dart';
+import 'package:asset_tracker/features/currencyAssets/presentation/pages/modern_portfolio_screen.dart';
 import 'package:asset_tracker/features/home/presentation/pages/modern_home_screen.dart';
 import 'package:asset_tracker/features/home/presentation/widgets/modern/modern_bottom_navigation.dart';
-import 'package:asset_tracker/features/markets/presentation/pages/markets_screen.dart';
+import 'package:asset_tracker/features/profile/presentation/pages/modern/modern_profile_screen.dart';
 import 'package:asset_tracker/features/profile/presentation/pages/profile_screen.dart';
+import 'package:asset_tracker/features/markets/presentation/pages/markets_screen.dart';
+
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatefulWidget {
@@ -17,9 +20,9 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _pages = [
     const ModernHomeScreen(),
-    const MarketsScreen(), // ADD THIS LINE
-    const CurrencyAssetScreen(),
-    const ProfileScreen(),
+    const MarketsScreen(),
+    const ModernPortfolioScreen(), // UPDATED: Use modern portfolio
+    const ModernProfileScreen(),
   ];
 
   void _onTabTapped(int index) {

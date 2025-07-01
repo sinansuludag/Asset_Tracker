@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/routing/route_names.dart';
 import 'package:asset_tracker/core/constants/colors/app_colors.dart';
 import 'package:asset_tracker/core/constants/paddings/paddings.dart';
 import 'package:asset_tracker/core/extensions/currency_code_extension.dart';
@@ -33,14 +34,8 @@ class MarketOverviewWidget extends StatelessWidget {
               ),
               TextButton(
                 onPressed: () {
-                  // FIXED: Navigate to markets page
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Piyasalar sayfasına yönlendiriliyor..."),
-                      duration: Duration(seconds: 1),
-                    ),
-                  );
-                  // TODO: Navigator.pushNamed(context, RouteNames.markets);
+                  // UPDATED: Navigate to markets screen
+                  Navigator.pushNamed(context, RouteNames.markets);
                 },
                 child: Text(
                   "Tümünü Gör",
@@ -59,7 +54,7 @@ class MarketOverviewWidget extends StatelessWidget {
                 ? const Center(child: CircularProgressIndicator())
                 : ListView(
                     scrollDirection: Axis.horizontal,
-                    children: _buildMarketCards(context), // FIXED: Pass context
+                    children: _buildMarketCards(context),
                   ),
           ),
           const SizedBox(height: 20),
@@ -77,8 +72,7 @@ class MarketOverviewWidget extends StatelessWidget {
     for (String assetCode in priorityAssets) {
       final currencyData = currencies!.currencies[assetCode];
       if (currencyData != null) {
-        cards.add(_buildMarketCard(
-            context, assetCode, currencyData)); // FIXED: Pass context
+        cards.add(_buildMarketCard(context, assetCode, currencyData));
       }
     }
 
@@ -89,17 +83,16 @@ class MarketOverviewWidget extends StatelessWidget {
       BuildContext context, String code, dynamic currencyData) {
     final isPositive = (currencyData.buyingDir == 'up');
     final price = currencyData.buying ?? 0.0;
-    final change = 21.36;
-    final changePercent = 0.50;
+    final change = 21.36; // Mock data
+    final changePercent = 0.50; // Mock data
 
     return GestureDetector(
       onTap: () {
-        // FIXED: Add navigation to asset detail
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("${code.getCurrencyName()} detayına gidiliyor..."),
-            duration: const Duration(seconds: 1),
-          ),
+        // Navigate to market detail
+        Navigator.pushNamed(
+          context,
+          RouteNames.marketDetail,
+          arguments: {'marketCode': code},
         );
       },
       child: Container(

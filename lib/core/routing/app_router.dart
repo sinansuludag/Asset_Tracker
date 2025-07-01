@@ -1,15 +1,13 @@
 import 'package:asset_tracker/core/routing/route_names.dart';
-import 'package:asset_tracker/features/auth/presentation/pages/forget_password.dart';
 import 'package:asset_tracker/features/auth/presentation/pages/login_screen.dart';
 import 'package:asset_tracker/features/auth/presentation/pages/modern_forget_password_screen.dart';
 import 'package:asset_tracker/features/auth/presentation/pages/modern_login_screen.dart';
 import 'package:asset_tracker/features/auth/presentation/pages/modern_register_screen.dart';
-import 'package:asset_tracker/features/auth/presentation/pages/register_screen.dart';
 import 'package:asset_tracker/features/currencyAssets/presentation/pages/currency_asset_screen.dart';
-import 'package:asset_tracker/features/home/presentation/pages/home_screen.dart';
+import 'package:asset_tracker/features/currencyAssets/presentation/pages/modern_portfolio_screen.dart';
 import 'package:asset_tracker/features/home/presentation/pages/main_screen.dart';
-import 'package:asset_tracker/features/markets/presentation/pages/market_detail_screen.dart';
 import 'package:asset_tracker/features/markets/presentation/pages/markets_screen.dart';
+import 'package:asset_tracker/features/markets/presentation/pages/market_detail_screen.dart';
 import 'package:asset_tracker/features/markets/presentation/pages/watchlist_screen.dart';
 import 'package:asset_tracker/features/profile/presentation/pages/aboutAppScreens/about_app_screen.dart';
 import 'package:asset_tracker/features/profile/presentation/pages/aboutAppScreens/about_description_screen.dart';
@@ -23,6 +21,7 @@ import 'package:asset_tracker/features/profile/presentation/pages/helpSupportScr
 import 'package:asset_tracker/features/profile/presentation/pages/helpSupportScreens/feed_back_screen.dart';
 import 'package:asset_tracker/features/profile/presentation/pages/helpSupportScreens/help_support_screen.dart';
 import 'package:asset_tracker/features/profile/presentation/pages/language_settings_screen.dart';
+import 'package:asset_tracker/features/profile/presentation/pages/modern/modern_profile_screen.dart';
 import 'package:asset_tracker/features/profile/presentation/pages/natification_settings_screen.dart';
 import 'package:asset_tracker/features/profile/presentation/pages/privacy_policy_screen.dart';
 import 'package:asset_tracker/features/profile/presentation/pages/rate_app_screen.dart';
@@ -32,8 +31,10 @@ import 'package:flutter/material.dart';
 
 class AppRouter {
   AppRouter._();
+
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
+      // Auth Routes
       case RouteNames.splash:
         return MaterialPageRoute(builder: (_) => const SplashScreen());
       case RouteNames.login:
@@ -42,8 +43,14 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => ModernRegisterScreen());
       case RouteNames.forgetPassword:
         return MaterialPageRoute(builder: (_) => ModernForgetPasswordScreen());
+
+      // Main Routes
       case RouteNames.home:
         return MaterialPageRoute(builder: (_) => MainScreen());
+      case RouteNames.currencyAssets:
+        return MaterialPageRoute(builder: (_) => CurrencyAssetScreen());
+
+      // Markets Routes
       case RouteNames.markets:
         return MaterialPageRoute(builder: (_) => const MarketsScreen());
       case RouteNames.marketDetail:
@@ -55,8 +62,45 @@ class AppRouter {
         );
       case RouteNames.marketWatchlist:
         return MaterialPageRoute(builder: (_) => const WatchlistScreen());
-      case RouteNames.currencyAssets:
-        return MaterialPageRoute(builder: (_) => CurrencyAssetScreen());
+
+      // Portfolio Routes
+      case RouteNames.portfolio:
+      case RouteNames.modernPortfolio:
+        return MaterialPageRoute(builder: (_) => const ModernPortfolioScreen());
+
+      case RouteNames.portfolioDetail:
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => ModernPortfolioScreen(
+              // You can pass specific asset or portfolio data here
+              // initialAsset: args?['asset'],
+              ),
+        );
+
+      case RouteNames.addAsset:
+        return MaterialPageRoute(
+          builder: (_) => const ModernPortfolioScreen(),
+          // TODO: Replace with dedicated AddAssetScreen when implemented
+        );
+
+      case RouteNames.editAsset:
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => const ModernPortfolioScreen(),
+          // TODO: Replace with EditAssetScreen when implemented
+          // EditAssetScreen(asset: args?['asset']),
+        );
+
+      case RouteNames.portfolioAnalytics:
+        return MaterialPageRoute(
+          builder: (_) => const ModernPortfolioScreen(),
+          // TODO: Replace with PortfolioAnalyticsScreen when implemented
+        );
+
+      // Profile Routes
+      case RouteNames.profile: // ADDED - Modern Profile Screen
+        return MaterialPageRoute(builder: (_) => const ModernProfileScreen());
+
       case RouteNames.accountInfo:
         return MaterialPageRoute(builder: (_) => AccountInfoScreen());
       case RouteNames.changePassword:
@@ -89,6 +133,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => NotificationSettingsScreen());
       case RouteNames.refreshFrequency:
         return MaterialPageRoute(builder: (_) => RefreshFrequencyScreen());
+
+      // Default Route
       default:
         return MaterialPageRoute(builder: (_) => LoginScreen());
     }
