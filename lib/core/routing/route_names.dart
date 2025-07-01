@@ -5,6 +5,9 @@ class RouteNames {
   static const String register = '/register';
   static const String forgetPassword = 'forgetPassword';
   static const String home = 'home';
+  static const String markets = 'markets';
+  static const String marketDetail = 'marketDetail';
+  static const String marketWatchlist = 'marketWatchlist';
   static const String currencyAssets = 'currencyAssets';
   static const String accountInfo = 'accountInfo';
   static const String changePassword = 'changePassword';

@@ -8,6 +8,9 @@ import 'package:asset_tracker/features/auth/presentation/pages/register_screen.d
 import 'package:asset_tracker/features/currencyAssets/presentation/pages/currency_asset_screen.dart';
 import 'package:asset_tracker/features/home/presentation/pages/home_screen.dart';
 import 'package:asset_tracker/features/home/presentation/pages/main_screen.dart';
+import 'package:asset_tracker/features/markets/presentation/pages/market_detail_screen.dart';
+import 'package:asset_tracker/features/markets/presentation/pages/markets_screen.dart';
+import 'package:asset_tracker/features/markets/presentation/pages/watchlist_screen.dart';
 import 'package:asset_tracker/features/profile/presentation/pages/aboutAppScreens/about_app_screen.dart';
 import 'package:asset_tracker/features/profile/presentation/pages/aboutAppScreens/about_description_screen.dart';
 import 'package:asset_tracker/features/profile/presentation/pages/aboutAppScreens/check_for_update_screen.dart';
@@ -41,6 +44,17 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => ModernForgetPasswordScreen());
       case RouteNames.home:
         return MaterialPageRoute(builder: (_) => MainScreen());
+      case RouteNames.markets:
+        return MaterialPageRoute(builder: (_) => const MarketsScreen());
+      case RouteNames.marketDetail:
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => MarketDetailScreen(
+            marketCode: args?['marketCode'] ?? '',
+          ),
+        );
+      case RouteNames.marketWatchlist:
+        return MaterialPageRoute(builder: (_) => const WatchlistScreen());
       case RouteNames.currencyAssets:
         return MaterialPageRoute(builder: (_) => CurrencyAssetScreen());
       case RouteNames.accountInfo:

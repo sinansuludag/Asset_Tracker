@@ -1,5 +1,4 @@
 import 'package:asset_tracker/core/constants/colors/app_colors.dart';
-import 'package:asset_tracker/core/constants/strings/locale/tr_strings.dart';
 import 'package:flutter/material.dart';
 
 class ModernBottomNavigation extends StatelessWidget {
@@ -15,54 +14,51 @@ class ModernBottomNavigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 90,
+      height: 85,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(25)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.15),
+            color: Colors.black.withOpacity(0.1),
             offset: const Offset(0, -10),
             blurRadius: 30,
           ),
         ],
       ),
       child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavButton(
-                context,
-                icon: Icons.home_outlined,
-                activeIcon: Icons.home,
-                label: TrStrings.bottomNavigationHome,
-                index: 0,
-              ),
-              _buildNavButton(
-                context,
-                icon: Icons.trending_up_outlined,
-                activeIcon: Icons.trending_up,
-                label: "Piyasalar",
-                index: 1,
-              ),
-              _buildNavButton(
-                context,
-                icon: Icons.account_balance_wallet_outlined,
-                activeIcon: Icons.account_balance_wallet,
-                label: TrStrings.bottomNavigationCurrency,
-                index: 2,
-              ),
-              _buildNavButton(
-                context,
-                icon: Icons.person_outline,
-                activeIcon: Icons.person,
-                label: TrStrings.bottomNavigationProfile,
-                index: 3,
-              ),
-            ],
-          ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildNavButton(
+              context,
+              icon: Icons.home_rounded,
+              label: "Ana Sayfa",
+              index: 0,
+              isSelected: currentIndex == 0,
+            ),
+            _buildNavButton(
+              context,
+              icon: Icons.trending_up_rounded,
+              label: "Piyasalar",
+              index: 1,
+              isSelected: currentIndex == 1,
+            ),
+            _buildNavButton(
+              context,
+              icon: Icons.account_balance_wallet_rounded,
+              label: "Varlıklar",
+              index: 2,
+              isSelected: currentIndex == 2,
+            ),
+            _buildNavButton(
+              context,
+              icon: Icons.person_rounded,
+              label: "Profil",
+              index: 3,
+              isSelected: currentIndex == 3,
+            ),
+          ],
         ),
       ),
     );
@@ -71,39 +67,39 @@ class ModernBottomNavigation extends StatelessWidget {
   Widget _buildNavButton(
     BuildContext context, {
     required IconData icon,
-    required IconData activeIcon,
     required String label,
     required int index,
+    required bool isSelected,
   }) {
-    final isActive = currentIndex == index;
-
     return GestureDetector(
       onTap: () => onTabTapped(index),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isActive ? AppColors.primaryGreen.withOpacity(0.1) : null,
+          color: isSelected
+              ? AppColors.primaryGreen.withOpacity(0.1)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(15),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              isActive ? activeIcon : icon,
+              icon,
               color:
-                  isActive ? AppColors.primaryGreen : AppColors.textSecondary,
-              size: 22,
+                  isSelected ? AppColors.primaryGreen : AppColors.textSecondary,
+              size: 24,
             ),
             const SizedBox(height: 4),
             Text(
               label,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: isActive
-                        ? AppColors.primaryGreen
-                        : AppColors.textSecondary,
-                    fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
-                    fontSize: 11,
-                  ),
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: isSelected
+                    ? AppColors.primaryGreen
+                    : AppColors.textSecondary,
+              ),
             ),
           ],
         ),
