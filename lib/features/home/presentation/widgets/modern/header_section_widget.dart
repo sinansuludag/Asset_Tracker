@@ -1,12 +1,12 @@
 import 'package:asset_tracker/core/constants/colors/app_colors.dart';
-import 'package:asset_tracker/core/constants/paddings/paddings.dart';
 import 'package:flutter/material.dart';
 
+/// Üst kısım - Kullanıcı karşılama ve portföy özeti
 class HeaderSectionWidget extends StatelessWidget {
-  final double totalPortfolioValue;
-  final double totalChange;
-  final double changePercentage;
-  final String userName;
+  final double totalPortfolioValue; // Toplam portföy değeri
+  final double totalChange; // Toplam değişim
+  final double changePercentage; // Değişim yüzdesi
+  final String userName; // Kullanıcı adı
 
   const HeaderSectionWidget({
     super.key,
@@ -20,7 +20,7 @@ class HeaderSectionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        gradient: AppColors.primaryGradient,
+        gradient: AppColors.primaryGradient, // Gradyan arka plan
       ),
       child: SafeArea(
         child: Padding(
@@ -31,6 +31,7 @@ class HeaderSectionWidget extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  // Üst kısım - Selamlama ve butonlar
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,6 +57,7 @@ class HeaderSectionWidget extends StatelessWidget {
                       ],
                     ),
                   ),
+                  // Sağ taraf - Aksiyon butonları
                   Row(
                     children: [
                       _buildActionButton(
@@ -78,9 +80,10 @@ class HeaderSectionWidget extends StatelessWidget {
               ),
               const SizedBox(height: 30),
 
-              // Portfolio Summary
+              // Portföy özeti
               Column(
                 children: [
+                  // Ana portföy değeri
                   Text(
                     "₺${totalPortfolioValue.toStringAsFixed(2)}",
                     style: Theme.of(context).textTheme.headlineLarge?.copyWith(
@@ -90,6 +93,7 @@ class HeaderSectionWidget extends StatelessWidget {
                         ),
                   ),
                   const SizedBox(height: 8),
+                  // Portföy açıklaması ve değişim
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -100,6 +104,7 @@ class HeaderSectionWidget extends StatelessWidget {
                             ),
                       ),
                       const SizedBox(width: 8),
+                      // Değişim badge'i
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 4),
@@ -144,13 +149,15 @@ class HeaderSectionWidget extends StatelessWidget {
     );
   }
 
+  // Aksiyon butonu oluşturma helper'ı
   Widget _buildActionButton({
     required IconData icon,
-    String? badge,
+    String? badge, // Opsiyonel badge (bildirim sayısı)
     required VoidCallback onTap,
   }) {
     return Stack(
       children: [
+        // Ana buton container'ı
         Container(
           width: 40,
           height: 40,
@@ -171,6 +178,7 @@ class HeaderSectionWidget extends StatelessWidget {
             ),
           ),
         ),
+        // Badge (varsa)
         if (badge != null)
           Positioned(
             right: -2,

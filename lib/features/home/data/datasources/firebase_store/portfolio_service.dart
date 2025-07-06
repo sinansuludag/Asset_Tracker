@@ -1,6 +1,4 @@
 import 'package:asset_tracker/features/home/data/models/buying_asset_model.dart';
-import 'package:asset_tracker/features/home/data/models/user_asset_model.dart';
-import 'package:asset_tracker/features/home/data/models/curreny_response_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -9,6 +7,7 @@ abstract class IPortfolioService {
   Stream<List<BuyingAssetModel>> getUserAssetsStream();
 }
 
+/// Kullanıcının portföy verilerini Firestore'dan çeken servis
 class PortfolioFirestoreService implements IPortfolioService {
   final FirebaseFirestore _firestore;
   final FirebaseAuth _auth;
@@ -18,14 +17,16 @@ class PortfolioFirestoreService implements IPortfolioService {
   @override
   Future<List<BuyingAssetModel>> getUserAssets() async {
     final user = _auth.currentUser;
-    if (user == null) return [];
+    if (user == null) return []; // Kullanıcı oturum açmamışsa boş liste döner
 
     try {
+      // Firestore'dan sadece o kullanıcının varlıklarını çek
       final querySnapshot = await _firestore
           .collection('assets')
           .where('userId', isEqualTo: user.uid)
           .get();
 
+      // Her document'i BuyingAssetModel'e çevir
       return querySnapshot.docs
           .map((doc) => BuyingAssetModel.fromJson(doc.data()))
           .toList();
@@ -38,8 +39,9 @@ class PortfolioFirestoreService implements IPortfolioService {
   @override
   Stream<List<BuyingAssetModel>> getUserAssetsStream() {
     final user = _auth.currentUser;
-    if (user == null) return Stream.value([]);
 
+    if (user == null) return Stream.value([]);
+    // Gerçek zamanlı veri akışı sağlar
     return _firestore
         .collection('assets')
         .where('userId', isEqualTo: user.uid)

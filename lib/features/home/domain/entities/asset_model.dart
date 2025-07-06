@@ -1,10 +1,11 @@
+/// Varlık entity'si - pure business object
 abstract class AssetEntity {
-  final String id;
-  final String assetType;
-  final DateTime buyingDate;
-  final double buyingPrice;
-  final double quantity;
-  final String userId;
+  final String id; // Benzersiz ID
+  final String assetType; // Varlık türü
+  final DateTime buyingDate; // Alış tarihi
+  final double buyingPrice; // Alış fiyatı
+  final double quantity; // Miktar
+  final String userId; // Kullanıcı ID'si
 
   const AssetEntity({
     required this.id,

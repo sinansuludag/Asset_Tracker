@@ -1,8 +1,7 @@
-import 'package:asset_tracker/core/constants/colors/app_colors.dart';
-import 'package:asset_tracker/features/home/presentation/widgets/modern/ultra_modern_buying_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+// Gelişmiş yüzen aksiyon butonu (FAB)
 class QuantumFabWidget extends StatefulWidget {
   const QuantumFabWidget({super.key});
 
@@ -12,25 +11,30 @@ class QuantumFabWidget extends StatefulWidget {
 
 class _QuantumFabWidgetState extends State<QuantumFabWidget>
     with TickerProviderStateMixin {
-  late AnimationController _pulseController;
-  late AnimationController _rotationController;
+  // Animasyon controller'ları için
+  // Animasyon controller'ları ve animasyonlar
+  late AnimationController _pulseController; // Nabız animasyonu
+  late AnimationController _rotationController; // Dönme animasyonu
   late Animation<double> _pulseAnimation;
   late Animation<double> _rotationAnimation;
-  bool _isExpanded = false;
+  bool _isExpanded = false; // Açık/kapalı durumu
 
   @override
   void initState() {
     super.initState();
+    // Sürekli nabız animasyonu (2 saniye)
     _pulseController = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
-    )..repeat();
+    )..repeat(); // Sürekli tekrar
 
+    // Açılma/kapanma animasyonu (300ms)
     _rotationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
 
+    // Animasyon değerleri
     _pulseAnimation = Tween<double>(begin: 1.0, end: 1.2).animate(
         CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut));
 
@@ -50,31 +54,33 @@ class _QuantumFabWidgetState extends State<QuantumFabWidget>
       _isExpanded = !_isExpanded;
     });
 
+    // Animasyon kontrolü
     if (_isExpanded) {
       _rotationController.forward();
     } else {
       _rotationController.reverse();
     }
 
-    HapticFeedback.mediumImpact();
+    HapticFeedback.mediumImpact(); // Dokunsal geri bildirim
   }
 
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      bottom: 100,
+      bottom: 100, // Alt navigation'ın üstünde
       right: 20,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Expanded Action Buttons
+          // Genişletilmiş aksiyon butonları
           AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeOutBack,
-            height: _isExpanded ? 180 : 0,
+            height: _isExpanded ? 180 : 0, // Açık/kapalı yükseklik
             child: SingleChildScrollView(
               child: Column(
                 children: [
+                  // Hızlı Al
                   _buildMiniActionButton(
                     icon: Icons.flash_on,
                     label: "Hızlı Al",
@@ -84,6 +90,7 @@ class _QuantumFabWidgetState extends State<QuantumFabWidget>
                         _showQuickMessage("⚡ Hızlı alım özelliği yakında..."),
                   ),
                   const SizedBox(height: 12),
+                  // Analiz
                   _buildMiniActionButton(
                     icon: Icons.trending_up,
                     label: "Analiz",
@@ -94,6 +101,7 @@ class _QuantumFabWidgetState extends State<QuantumFabWidget>
                     },
                   ),
                   const SizedBox(height: 12),
+                  // Hızlı Alarm
                   _buildMiniActionButton(
                     icon: Icons.alarm_add,
                     label: "Hızlı Alarm",
@@ -108,15 +116,16 @@ class _QuantumFabWidgetState extends State<QuantumFabWidget>
             ),
           ),
 
-          // Main FAB
+          // Ana FAB
           ScaleTransition(
-            scale: _pulseAnimation,
+            scale: _pulseAnimation, // Nabız efekti
             child: RotationTransition(
-              turns: _rotationAnimation,
+              turns: _rotationAnimation, // Dönme efekti
               child: Container(
                 width: 64,
                 height: 64,
                 decoration: BoxDecoration(
+                  // Gradyan arka plan
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -127,6 +136,7 @@ class _QuantumFabWidgetState extends State<QuantumFabWidget>
                     ],
                   ),
                   shape: BoxShape.circle,
+                  // Çoklu gölge efekti
                   boxShadow: [
                     BoxShadow(
                       color: const Color(0xFF1DD1A1).withOpacity(0.4),
@@ -160,6 +170,7 @@ class _QuantumFabWidgetState extends State<QuantumFabWidget>
     );
   }
 
+  // Mini aksiyon butonu oluşturucu
   Widget _buildMiniActionButton({
     required IconData icon,
     required String label,
@@ -169,7 +180,7 @@ class _QuantumFabWidgetState extends State<QuantumFabWidget>
     return GestureDetector(
       onTap: () {
         onTap();
-        _toggleExpansion(); // Close after action
+        _toggleExpansion(); // İşlemden sonra kapat
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -203,6 +214,7 @@ class _QuantumFabWidgetState extends State<QuantumFabWidget>
     );
   }
 
+  // Hızlı mesaj gösterme
   void _showQuickMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

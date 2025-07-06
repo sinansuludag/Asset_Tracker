@@ -16,17 +16,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:asset_tracker/features/home/data/repositories/currency_repository.dart';
 import 'package:asset_tracker/features/home/data/datasources/web_socket/currency_web_socket_service.dart';
 
-// Currency WebSocket and Repository Providers
+// Tüm provider'ları merkezi bir yerden yönetme
+
+/// WebSocket Service Provider
 final currencyWebSocketServiceProvider =
     Provider<ICurrencyWebSocketService>((ref) {
+  // .env dosyasından WebSocket URL'i al
   return CurrencyWebSocketServiceImpl(dotenv.env['WEBSOCKET_URL'] ?? '');
 });
 
+// Repository Provider
 final currencyRepositoryProvider = Provider<ICurrencyRepository>((ref) {
   final webSocketService = ref.watch(currencyWebSocketServiceProvider);
   return CurrencyRepositoryImpl(webSocketService);
 });
 
+/// Asset Service Provider
 final currencyNotifierProvider =
     StateNotifierProvider<CurrencyNotifier, List<CurrencyResponse>>((ref) {
   final repository = ref.watch(currencyRepositoryProvider);
@@ -38,6 +43,7 @@ final _buyingAssetService = Provider<IAssetService>((ref) {
   return AssetFirestoreServiceImpl(FirebaseFirestore.instance);
 });
 
+/// Buying Asset Notifier Provider
 final buyingAssetProvider =
     StateNotifierProvider<BuyingAssetNotifier, BuyingAssetState>(
   (ref) {
@@ -47,6 +53,7 @@ final buyingAssetProvider =
   },
 );
 
+// Asset Amount Provider
 final assetAmountProvider = StateProvider<double>((ref) {
   return 0.0;
 });

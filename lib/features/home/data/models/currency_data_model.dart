@@ -1,13 +1,14 @@
+/// Tek bir döviz/kripto para verilerini tutan model
 class CurrencyData {
-  final String? code;
-  final double? buying;
-  final double? selling;
-  final double? low;
-  final double? high;
-  final double? close;
-  final String? date;
-  final String? buyingDir;
-  final String? sellingDir;
+  final String? code; // Para birimi kodu (USDTRY, ALTIN vs.)
+  final double? buying; // Alış fiyatı
+  final double? selling; // Satış fiyatı
+  final double? low; // Günün en düşük fiyatı
+  final double? high; // Günün en yüksek fiyatı
+  final double? close; // Kapanış fiyatı
+  final String? date; // Tarih
+  final String? buyingDir; // Alış yönü (up/down)
+  final String? sellingDir; // Satış yönü (up/down)
 
   CurrencyData({
     this.code,

@@ -1,4 +1,3 @@
-import 'package:asset_tracker/core/constants/colors/app_colors.dart';
 import 'package:asset_tracker/features/home/presentation/state_management/provider/all_providers.dart';
 import 'package:asset_tracker/features/home/presentation/widgets/modern/header_section_widget.dart';
 import 'package:asset_tracker/features/home/presentation/widgets/modern/market_overview_widget.dart';
@@ -25,14 +24,17 @@ class _ModernHomeScreenState extends ConsumerState<ModernHomeScreen> {
       backgroundColor: const Color(0xFFF8FFFE),
       body: Stack(
         children: [
+          // Ana içerik alanı
           RefreshIndicator(
+            // Çekerek yenileme özelliği
             onRefresh: () async {
               ref.read(currencyNotifierProvider.notifier).manualRefresh();
               await ref.read(userPortfolioProvider.notifier).refreshPortfolio();
             },
             child: CustomScrollView(
+              // Gelişmiş scroll widget'ı
               slivers: [
-                // Header with Portfolio Summary
+                // 1. Header (Portföy özeti)
                 SliverToBoxAdapter(
                   child: HeaderSectionWidget(
                     totalPortfolioValue: userAssets.totalValue,
@@ -42,12 +44,12 @@ class _ModernHomeScreenState extends ConsumerState<ModernHomeScreen> {
                   ),
                 ),
 
-                // Quick Actions
+                // Hızlı İşlemler
                 const SliverToBoxAdapter(
                   child: QuickActionsWidget(),
                 ),
 
-                // Market Overview
+                // Piyasa Durumu
                 SliverToBoxAdapter(
                   child: MarketOverviewWidget(
                     currencies: currencies.isNotEmpty ? currencies.first : null,
@@ -55,7 +57,7 @@ class _ModernHomeScreenState extends ConsumerState<ModernHomeScreen> {
                   ),
                 ),
 
-                // User Assets
+                // Kullanıcı Varlıkları
                 SliverToBoxAdapter(
                   child: UserAssetsWidget(
                     userAssets: userAssets.assets,
@@ -63,7 +65,7 @@ class _ModernHomeScreenState extends ConsumerState<ModernHomeScreen> {
                   ),
                 ),
 
-                // Bottom padding for navigation and FAB
+                // Alt boşluk (navigation ve FAB için)
                 const SliverToBoxAdapter(
                   child: SizedBox(height: 120),
                 ),
@@ -71,7 +73,7 @@ class _ModernHomeScreenState extends ConsumerState<ModernHomeScreen> {
             ),
           ),
 
-          // Quantum FAB
+          // Yüzen aksiyon butonu
           const QuantumFabWidget(),
         ],
       ),

@@ -1,13 +1,14 @@
 import 'package:asset_tracker/features/home/domain/entities/asset_model.dart';
 
+/// Kullanıcının satın aldığı varlıkları temsil eden model
 class BuyingAssetModel extends AssetEntity {
   BuyingAssetModel({
-    required super.id,
-    required super.assetType,
-    required super.buyingDate,
-    required super.buyingPrice,
-    required super.quantity,
-    required super.userId,
+    required super.id, // Varlık ID'si
+    required super.assetType, // Varlık türü (ALTIN, USDTRY vs.)
+    required super.buyingDate, // Alış tarihi
+    required super.buyingPrice, // Alış fiyatı
+    required super.quantity, // Miktar
+    required super.userId, // Hangi kullanıcıya ait
   });
 
   @override
@@ -29,18 +30,17 @@ class BuyingAssetModel extends AssetEntity {
     );
   }
 
+  // JSON'dan model oluşturma
   factory BuyingAssetModel.fromJson(Map<String, dynamic> json) {
     return BuyingAssetModel(
-      id: json['id'] ?? '',
-      assetType: json['assetType'] ?? '',
+      id: json['id'] ?? '', // Varlık ID'si
+      assetType: json['assetType'] ?? '', // Varlık türü (ALTIN, USDTRY vs.)
       buyingDate: json['buyingDate'] != null
-          ? DateTime.parse(json['buyingDate'])
+          ? DateTime.parse(json['buyingDate']) // String'den DateTime'a çevir
           : DateTime.now(),
-      buyingPrice: json['buyingPrice'] != null
-          ? (json['buyingPrice'] as num).toDouble()
-          : 0.0,
-      quantity: json['quantity'] ?? 0.0,
-      userId: json['userId'] ?? '',
+      buyingPrice: (json['buyingPrice'] as num).toDouble(), // Alış fiyatı
+      quantity: json['quantity'] ?? 0.0, // Miktar
+      userId: json['userId'] ?? '', // Hangi kullanıcıya ait
     );
   }
 

@@ -9,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// Portföy hesaplamalarını yöneten notifier
 class PortfolioNotifier extends StateNotifier<PortfolioModel> {
   final Ref _ref;
   final IPortfolioService _portfolioService;
@@ -21,10 +22,10 @@ class PortfolioNotifier extends StateNotifier<PortfolioModel> {
   }
 
   void _initializePortfolio() {
-    // Currency updates'i dinle
+    // Currency güncellemelerini dinle
     _ref.listen(currencyNotifierProvider, (previous, next) {
       if (next.isNotEmpty) {
-        _calculatePortfolio(next.first);
+        _calculatePortfolio(next.first); // Yeni kurlarla hesapla
       }
     });
 
@@ -36,10 +37,13 @@ class PortfolioNotifier extends StateNotifier<PortfolioModel> {
     state = state.copyWith(isLoading: true);
 
     try {
+      // Kullanıcının varlıklarını çek
       final userAssets = await _portfolioService.getUserAssets();
+      // Güncel kurları al
       final currencies = _ref.read(currencyNotifierProvider);
 
       if (currencies.isNotEmpty) {
+        // Portföy hesaplamalarını yap
         _calculatePortfolioWithAssets(userAssets, currencies.first);
       } else {
         // Currency verisi yoksa sadece asset'leri göster
@@ -68,24 +72,26 @@ class PortfolioNotifier extends StateNotifier<PortfolioModel> {
     double totalValue = 0.0;
     double totalInvested = 0.0;
 
-    // Her bir satın alınan varlık için hesaplama yap
+    // Her bir satın alınan varlık için hesaplama
     for (final buyingAsset in buyingAssets) {
       final currencyData = currencyResponse.currencies[buyingAsset.assetType];
 
       if (currencyData != null) {
+        // BuyingAsset'i UserAsset'e çevir (güncel fiyatlarla)
         final userAsset =
             UserAssetModel.fromBuyingAsset(buyingAsset, currencyData);
         userAssets.add(userAsset);
-
+        // Toplam değer ve yatırılan miktar hesaplama
         totalValue += userAsset.currentValue;
         totalInvested += (buyingAsset.quantity * buyingAsset.buyingPrice);
       }
     }
-
+    // Toplam değişim ve yüzdesi hesaplama
     final totalChange = totalValue - totalInvested;
     final changePercentage =
         totalInvested > 0 ? (totalChange / totalInvested) * 100 : 0.0;
 
+    // Yeni state oluşturma
     state = PortfolioModel(
       totalValue: totalValue,
       totalChange: totalChange,

@@ -5,9 +5,10 @@ import 'package:asset_tracker/core/extensions/currency_code_extension.dart';
 import 'package:asset_tracker/features/home/data/models/curreny_response_model.dart';
 import 'package:flutter/material.dart';
 
+/// Piyasa durumu widget'ı
 class MarketOverviewWidget extends StatelessWidget {
-  final CurrencyResponse? currencies;
-  final bool isLoading;
+  final CurrencyResponse? currencies; // Döviz verileri
+  final bool isLoading; // Yükleniyor durumu
 
   const MarketOverviewWidget({
     super.key,
@@ -21,6 +22,7 @@ class MarketOverviewWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
+          // Başlık satırı
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -32,6 +34,7 @@ class MarketOverviewWidget extends StatelessWidget {
                       fontSize: 20,
                     ),
               ),
+              // "Tümünü Gör" butonu
               TextButton(
                 onPressed: () {
                   // UPDATED: Navigate to markets screen
@@ -48,6 +51,7 @@ class MarketOverviewWidget extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 15),
+          // Piyasa kartları
           SizedBox(
             height: 140,
             child: isLoading
@@ -63,12 +67,15 @@ class MarketOverviewWidget extends StatelessWidget {
     );
   }
 
+  // Piyasa kartlarını oluşturma
   List<Widget> _buildMarketCards(BuildContext context) {
     if (currencies == null) return [];
 
+    // Öncelikli varlıklar
     final priorityAssets = ['ALTIN', 'USDTRY', 'EURTRY', 'GUMUSTRY'];
     final cards = <Widget>[];
 
+    // Her öncelikli varlık için kart oluştur
     for (String assetCode in priorityAssets) {
       final currencyData = currencies!.currencies[assetCode];
       if (currencyData != null) {
@@ -79,16 +86,17 @@ class MarketOverviewWidget extends StatelessWidget {
     return cards;
   }
 
+  // Tekil piyasa kartı
   Widget _buildMarketCard(
       BuildContext context, String code, dynamic currencyData) {
-    final isPositive = (currencyData.buyingDir == 'up');
-    final price = currencyData.buying ?? 0.0;
-    final change = 21.36; // Mock data
-    final changePercent = 0.50; // Mock data
+    final isPositive = (currencyData.buyingDir == 'up'); // Yön kontrolü
+    final price = currencyData.buying ?? 0.0; // Fiyat
+    final change = 21.36; // Mock veri - gerçekte hesaplanmalı
+    final changePercent = 0.50; // Mock veri - gerçekte hesaplanmalı
 
     return GestureDetector(
       onTap: () {
-        // Navigate to market detail
+        // Detay sayfasına git
         Navigator.pushNamed(
           context,
           RouteNames.marketDetail,
@@ -122,8 +130,10 @@ class MarketOverviewWidget extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Row(
+                // Üst kısım - İkon ve trend
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  // Varlık ikonu
                   Container(
                     width: 32,
                     height: 32,
@@ -142,6 +152,7 @@ class MarketOverviewWidget extends StatelessWidget {
                       ),
                     ),
                   ),
+                  // Trend ikonu
                   Icon(
                     isPositive ? Icons.trending_up : Icons.trending_down,
                     color: isPositive ? Colors.green : Colors.red,
@@ -150,6 +161,7 @@ class MarketOverviewWidget extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 8),
+              // Varlık adı
               Flexible(
                 child: Text(
                   code.getCurrencyName(),
@@ -163,6 +175,7 @@ class MarketOverviewWidget extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 4),
+              // Fiyat
               Text(
                 "₺${price.toStringAsFixed(2)}",
                 style: const TextStyle(
@@ -172,6 +185,7 @@ class MarketOverviewWidget extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 2),
+              // Değişim
               Text(
                 "${isPositive ? '+' : '-'}₺$change (+$changePercent%)",
                 style: TextStyle(
@@ -189,6 +203,7 @@ class MarketOverviewWidget extends StatelessWidget {
     );
   }
 
+  // Varlık sembolü belirleme
   String _getAssetSymbol(String code) {
     switch (code) {
       case 'ALTIN':

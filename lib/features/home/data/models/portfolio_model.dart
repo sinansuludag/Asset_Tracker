@@ -1,12 +1,12 @@
 import 'package:asset_tracker/features/home/data/models/user_asset_model.dart';
 
 class PortfolioModel {
-  final double totalValue;
-  final double totalChange;
-  final double changePercentage;
-  final List<UserAssetModel> assets;
-  final bool isLoading;
-  final bool hasError;
+  final double totalValue; // Toplam portföy değeri
+  final double totalChange; // Toplam değişim (₺)
+  final double changePercentage; // Toplam değişim yüzdesi (%)
+  final List<UserAssetModel> assets; // Kullanıcının sahip olduğu varlıklar
+  final bool isLoading; // Veri yükleniyor mu?
+  final bool hasError; // Veri çekilirken hata oluştu mu?
 
   const PortfolioModel({
     required this.totalValue,

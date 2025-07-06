@@ -5,12 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// Gelişmiş varlık ekleme dialog'u
 void showUltraModernBuyingDialog(BuildContext context) {
   showModalBottomSheet(
     context: context,
-    isScrollControlled: true,
-    isDismissible: true,
-    enableDrag: true,
+    isScrollControlled: true, // Tam ekran kontrolü
+    isDismissible: true, // Dışarı tıklayınca kapanır
+    enableDrag: true, // Sürükleyerek kapatılabilir
     backgroundColor: Colors.transparent,
     barrierColor: Colors.black.withOpacity(0.5),
     builder: (context) => const UltraModernBuyingDialog(),
@@ -28,12 +29,14 @@ class UltraModernBuyingDialog extends ConsumerStatefulWidget {
 class _UltraModernBuyingDialogState
     extends ConsumerState<UltraModernBuyingDialog>
     with TickerProviderStateMixin {
-  final _buyingAssetController = TextEditingController();
-  final _quantityAssetController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
-  DateTime? _selectedDate;
-  String? selectedAsset;
+  // Form controller'ları
+  final _buyingAssetController = TextEditingController(); // Fiyat
+  final _quantityAssetController = TextEditingController(); // Miktar
+  final _formKey = GlobalKey<FormState>(); // Form validation
+  DateTime? _selectedDate; // Seçilen tarih
+  String? selectedAsset; // Seçilen varlık
 
+  // Animasyon controller'ları
   late AnimationController _fadeController;
   late AnimationController _slideController;
   late Animation<double> _fadeAnimation;
@@ -42,6 +45,7 @@ class _UltraModernBuyingDialogState
   @override
   void initState() {
     super.initState();
+    // Animasyon setup'ı
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 400),
       vsync: this,
@@ -51,12 +55,14 @@ class _UltraModernBuyingDialogState
       vsync: this,
     );
 
+    // Animasyon tanımları
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(parent: _fadeController, curve: Curves.easeOut));
     _slideAnimation = Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero)
         .animate(CurvedAnimation(
             parent: _slideController, curve: Curves.elasticOut));
 
+    // Animasyonları başlat
     _fadeController.forward();
     _slideController.forward();
   }
@@ -100,7 +106,7 @@ class _UltraModernBuyingDialogState
           ),
           child: Column(
             children: [
-              _buildDynamicHeader(),
+              _buildDynamicHeader(), // Üst kısım
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(24),
@@ -108,15 +114,15 @@ class _UltraModernBuyingDialogState
                     key: _formKey,
                     child: Column(
                       children: [
-                        _buildGlassmorphicAssetSelector(),
+                        _buildGlassmorphicAssetSelector(), // Varlık seçici
                         const SizedBox(height: 24),
-                        _buildNeonPriceField(),
+                        _buildNeonPriceField(), // Fiyat alanı
                         const SizedBox(height: 24),
-                        _buildCyberQuantityField(),
+                        _buildCyberQuantityField(), // Miktar alanı
                         const SizedBox(height: 24),
-                        _buildHolographicDatePicker(),
+                        _buildHolographicDatePicker(), // Tarih seçici
                         const SizedBox(height: 32),
-                        _buildQuantumActionButtons(),
+                        _buildQuantumActionButtons(), // Aksiyon butonları
                       ],
                     ),
                   ),
@@ -129,282 +135,195 @@ class _UltraModernBuyingDialogState
     );
   }
 
-  // Hızlı satın alma dialog'u (daha basit)
-  void _showQuickBuyDialog() {
-    showDialog(
-      context: context,
-      barrierColor: Colors.black54,
-      builder: (context) => Dialog(
-        backgroundColor: Colors.transparent,
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF1DD1A1), Color(0xFF26D0CE)],
-            ),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF1DD1A1).withOpacity(0.4),
-                blurRadius: 20,
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.flash_on, color: Colors.white, size: 48),
-              const SizedBox(height: 16),
-              const Text(
-                "⚡ Hızlı Satın Al",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                "Önceden ayarlanmış miktarlarda\nhızlı alım yapın",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 14,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children: [
-                  _buildQuickBuyButton("💰 1g Altın", "₺4.267"),
-                  _buildQuickBuyButton("💵 100\$ USD", "₺10.757"),
-                  _buildQuickBuyButton("💎 5g Gümüş", "₺264"),
-                  _buildQuickBuyButton("🪙 0.5g 22K", "₺1.962"),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text(
-                        "İptal",
-                        style: TextStyle(color: Colors.white70),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        showUltraModernBuyingDialog(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: const Color(0xFF1DD1A1),
-                      ),
-                      child: const Text("Detaylı Ekle"),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget _buildQuickBuyButton(String title, String price) {
+  //   return GestureDetector(
+  //     onTap: () {
+  //       Navigator.pop(context);
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text("🎉 $title satın alındı!"),
+  //           backgroundColor: const Color(0xFF1DD1A1),
+  //           behavior: SnackBarBehavior.floating,
+  //           shape:
+  //               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+  //         ),
+  //       );
+  //     },
+  //     child: Container(
+  //       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+  //       decoration: BoxDecoration(
+  //         color: Colors.white.withOpacity(0.2),
+  //         borderRadius: BorderRadius.circular(12),
+  //         border: Border.all(color: Colors.white.withOpacity(0.3)),
+  //       ),
+  //       child: Column(
+  //         children: [
+  //           Text(
+  //             title,
+  //             style: const TextStyle(
+  //               color: Colors.white,
+  //               fontSize: 12,
+  //               fontWeight: FontWeight.bold,
+  //             ),
+  //           ),
+  //           Text(
+  //             price,
+  //             style: const TextStyle(
+  //               color: Colors.white70,
+  //               fontSize: 10,
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  Widget _buildQuickBuyButton(String title, String price) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("🎉 $title satın alındı!"),
-            backgroundColor: const Color(0xFF1DD1A1),
-            behavior: SnackBarBehavior.floating,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.white.withOpacity(0.3)),
-        ),
-        child: Column(
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              price,
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 10,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // // Hızlı alarm dialog'u
+  // void _showQuickAlarmDialog() {
+  //   showDialog(
+  //     context: context,
+  //     barrierColor: Colors.black54,
+  //     builder: (context) => Dialog(
+  //       backgroundColor: Colors.transparent,
+  //       child: Container(
+  //         padding: const EdgeInsets.all(24),
+  //         decoration: BoxDecoration(
+  //           gradient: const LinearGradient(
+  //             colors: [Colors.orange, Colors.deepOrange],
+  //           ),
+  //           borderRadius: BorderRadius.circular(20),
+  //           boxShadow: [
+  //             BoxShadow(
+  //               color: Colors.orange.withOpacity(0.4),
+  //               blurRadius: 20,
+  //             ),
+  //           ],
+  //         ),
+  //         child: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             const Icon(Icons.alarm_add, color: Colors.white, size: 48),
+  //             const SizedBox(height: 16),
+  //             const Text(
+  //               "⏰ Hızlı Alarm",
+  //               style: TextStyle(
+  //                 color: Colors.white,
+  //                 fontSize: 24,
+  //                 fontWeight: FontWeight.bold,
+  //               ),
+  //             ),
+  //             const SizedBox(height: 8),
+  //             const Text(
+  //               "Popüler fiyat seviyelerinde\nalarm kurun",
+  //               textAlign: TextAlign.center,
+  //               style: TextStyle(
+  //                 color: Colors.white70,
+  //                 fontSize: 14,
+  //               ),
+  //             ),
+  //             const SizedBox(height: 24),
+  //             Wrap(
+  //               spacing: 12,
+  //               runSpacing: 12,
+  //               children: [
+  //                 _buildQuickAlarmButton("📈 Altın +%5", "₺4.480"),
+  //                 _buildQuickAlarmButton("📉 Altın -%5", "₺4.054"),
+  //                 _buildQuickAlarmButton("💵 USD ₺110", "₺110.00"),
+  //                 _buildQuickAlarmButton("🎯 Özel Fiyat", "Manuel"),
+  //               ],
+  //             ),
+  //             const SizedBox(height: 20),
+  //             Row(
+  //               children: [
+  //                 Expanded(
+  //                   child: TextButton(
+  //                     onPressed: () => Navigator.pop(context),
+  //                     child: const Text(
+  //                       "İptal",
+  //                       style: TextStyle(color: Colors.white70),
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 Expanded(
+  //                   child: ElevatedButton(
+  //                     onPressed: () {
+  //                       Navigator.pop(context);
+  //                       _showQuickMessage(
+  //                           "🔔 Detaylı alarm sistemi yakında...");
+  //                     },
+  //                     style: ElevatedButton.styleFrom(
+  //                       backgroundColor: Colors.white,
+  //                       foregroundColor: Colors.orange,
+  //                     ),
+  //                     child: const Text("Detaylı Alarm"),
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  // Hızlı alarm dialog'u
-  void _showQuickAlarmDialog() {
-    showDialog(
-      context: context,
-      barrierColor: Colors.black54,
-      builder: (context) => Dialog(
-        backgroundColor: Colors.transparent,
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Colors.orange, Colors.deepOrange],
-            ),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.orange.withOpacity(0.4),
-                blurRadius: 20,
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.alarm_add, color: Colors.white, size: 48),
-              const SizedBox(height: 16),
-              const Text(
-                "⏰ Hızlı Alarm",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                "Popüler fiyat seviyelerinde\nalarm kurun",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 14,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children: [
-                  _buildQuickAlarmButton("📈 Altın +%5", "₺4.480"),
-                  _buildQuickAlarmButton("📉 Altın -%5", "₺4.054"),
-                  _buildQuickAlarmButton("💵 USD ₺110", "₺110.00"),
-                  _buildQuickAlarmButton("🎯 Özel Fiyat", "Manuel"),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text(
-                        "İptal",
-                        style: TextStyle(color: Colors.white70),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        _showQuickMessage(
-                            "🔔 Detaylı alarm sistemi yakında...");
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.orange,
-                      ),
-                      child: const Text("Detaylı Alarm"),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget _buildQuickAlarmButton(String title, String target) {
+  //   return GestureDetector(
+  //     onTap: () {
+  //       Navigator.pop(context);
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text("⏰ $title alarmı kuruldu!"),
+  //           backgroundColor: Colors.orange,
+  //           behavior: SnackBarBehavior.floating,
+  //           shape:
+  //               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+  //         ),
+  //       );
+  //     },
+  //     child: Container(
+  //       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+  //       decoration: BoxDecoration(
+  //         color: Colors.white.withOpacity(0.2),
+  //         borderRadius: BorderRadius.circular(12),
+  //         border: Border.all(color: Colors.white.withOpacity(0.3)),
+  //       ),
+  //       child: Column(
+  //         children: [
+  //           Text(
+  //             title,
+  //             style: const TextStyle(
+  //               color: Colors.white,
+  //               fontSize: 12,
+  //               fontWeight: FontWeight.bold,
+  //             ),
+  //           ),
+  //           Text(
+  //             target,
+  //             style: const TextStyle(
+  //               color: Colors.white70,
+  //               fontSize: 10,
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  Widget _buildQuickAlarmButton(String title, String target) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("⏰ $title alarmı kuruldu!"),
-            backgroundColor: Colors.orange,
-            behavior: SnackBarBehavior.floating,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.white.withOpacity(0.3)),
-        ),
-        child: Column(
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              target,
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 10,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // void _showQuickMessage(String message) {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(
+  //       content: Text(message),
+  //       behavior: SnackBarBehavior.floating,
+  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+  //       duration: const Duration(seconds: 2),
+  //     ),
+  //   );
+  // }
 
-  void _showQuickMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-
+  // Header kısmı - animasyonlu ve modern
   Widget _buildDynamicHeader() {
     return Container(
       padding: const EdgeInsets.all(24),
@@ -429,7 +348,7 @@ class _UltraModernBuyingDialogState
       ),
       child: Column(
         children: [
-          // Animated Handle
+          // Drag handle (sürükleme çubuğu)
           TweenAnimationBuilder<double>(
             duration: const Duration(seconds: 2),
             tween: Tween(begin: 0.0, end: 1.0),
@@ -452,9 +371,10 @@ class _UltraModernBuyingDialogState
           ),
           const SizedBox(height: 20),
 
-          // Hero Section
+          // Ana header içeriği
           Row(
             children: [
+              // Sol taraf - İkon
               Container(
                 width: 60,
                 height: 60,
@@ -482,6 +402,7 @@ class _UltraModernBuyingDialogState
                 ),
               ),
               const SizedBox(width: 20),
+              // Orta - Başlık ve açıklama
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -508,6 +429,7 @@ class _UltraModernBuyingDialogState
                   ],
                 ),
               ),
+              // Sağ - Kapatma butonu
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.2),
@@ -525,6 +447,7 @@ class _UltraModernBuyingDialogState
     );
   }
 
+  // Varlık seçici widget'ı
   Widget _buildGlassmorphicAssetSelector() {
     return Container(
       decoration: BoxDecoration(
@@ -547,6 +470,7 @@ class _UltraModernBuyingDialogState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Başlık kısmı
           Padding(
             padding: const EdgeInsets.only(left: 20, top: 16, right: 20),
             child: Row(
@@ -573,6 +497,7 @@ class _UltraModernBuyingDialogState
               ],
             ),
           ),
+          // Dropdown alanı
           Padding(
             padding: const EdgeInsets.all(20),
             child: DropdownButtonFormField<String>(
@@ -635,6 +560,7 @@ class _UltraModernBuyingDialogState
     );
   }
 
+  // Fiyat input alanı
   Widget _buildNeonPriceField() {
     return Container(
       decoration: BoxDecoration(
@@ -657,6 +583,7 @@ class _UltraModernBuyingDialogState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Başlık
           Padding(
             padding: const EdgeInsets.only(left: 20, top: 16, right: 20),
             child: Row(
@@ -683,6 +610,7 @@ class _UltraModernBuyingDialogState
               ],
             ),
           ),
+          // Input alanı
           Padding(
             padding: const EdgeInsets.all(20),
             child: TextFormField(
@@ -730,6 +658,7 @@ class _UltraModernBuyingDialogState
     );
   }
 
+  // Miktar alanı (artırma/azaltma butonlarıyla)
   Widget _buildCyberQuantityField() {
     return Container(
       decoration: BoxDecoration(
@@ -752,6 +681,7 @@ class _UltraModernBuyingDialogState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Başlık
           Padding(
             padding: const EdgeInsets.only(left: 20, top: 16, right: 20),
             child: Row(
@@ -778,6 +708,7 @@ class _UltraModernBuyingDialogState
               ],
             ),
           ),
+          // Miktar kontrolü
           Padding(
             padding: const EdgeInsets.all(20),
             child: Container(
@@ -801,6 +732,7 @@ class _UltraModernBuyingDialogState
                       }
                     },
                   ),
+                  // Miktar input'u
                   Expanded(
                     child: TextFormField(
                       controller: _quantityAssetController,
@@ -825,6 +757,7 @@ class _UltraModernBuyingDialogState
                       },
                     ),
                   ),
+                  // Artırma butonu
                   _buildQuantityButton(
                     icon: Icons.add,
                     gradient: const LinearGradient(
@@ -846,6 +779,7 @@ class _UltraModernBuyingDialogState
     );
   }
 
+  // Miktar butonları
   Widget _buildQuantityButton({
     required IconData icon,
     required Gradient gradient,
@@ -879,6 +813,7 @@ class _UltraModernBuyingDialogState
     );
   }
 
+  // Tarih seçici
   Widget _buildHolographicDatePicker() {
     return Container(
       decoration: BoxDecoration(
@@ -901,6 +836,7 @@ class _UltraModernBuyingDialogState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Başlık
           Padding(
             padding: const EdgeInsets.only(left: 20, top: 16, right: 20),
             child: Row(
@@ -927,6 +863,7 @@ class _UltraModernBuyingDialogState
               ],
             ),
           ),
+          // Tarih seçici buton
           Padding(
             padding: const EdgeInsets.all(20),
             child: GestureDetector(
@@ -1004,9 +941,11 @@ class _UltraModernBuyingDialogState
     );
   }
 
+  // Alt aksiyon butonları
   Widget _buildQuantumActionButtons() {
     return Row(
       children: [
+        // İptal butonu
         Expanded(
           child: Container(
             height: 56,
@@ -1034,6 +973,7 @@ class _UltraModernBuyingDialogState
           ),
         ),
         const SizedBox(width: 16),
+        // Varlık ekle butonu
         Expanded(
           flex: 2,
           child: Container(
@@ -1060,9 +1000,11 @@ class _UltraModernBuyingDialogState
               child: InkWell(
                 onTap: () {
                   HapticFeedback.heavyImpact();
+                  // Form validation kontrolü
                   if (_formKey.currentState!.validate() &&
                       selectedAsset != null &&
                       _selectedDate != null) {
+                    // Başarılı - varlık ekle
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -1081,6 +1023,7 @@ class _UltraModernBuyingDialogState
                       ),
                     );
                   } else {
+                    // Hata - eksik bilgi
                     HapticFeedback.lightImpact();
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -1119,6 +1062,7 @@ class _UltraModernBuyingDialogState
     );
   }
 
+  // Varlık ikonları oluşturucu
   Widget _getCurrencyIcon(String currency) {
     final colors = <LinearGradient>[
       const LinearGradient(colors: [Colors.amber, Colors.orange]),

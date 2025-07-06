@@ -5,9 +5,9 @@ import 'package:asset_tracker/core/riverpod/all_riverpod.dart';
 import 'package:asset_tracker/features/home/data/models/currency_data_model.dart';
 import 'package:asset_tracker/features/home/data/models/curreny_response_model.dart';
 import 'package:asset_tracker/features/home/domain/repositories/i_currency_repository.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// Döviz kurları için state management
 class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
   final ICurrencyRepository _repository;
   final Ref _ref;
@@ -26,6 +26,7 @@ class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
   CurrencyResponse? get fullCurrencyResponse => _originalResponse;
 
   void _listenToCurrencyUpdates() {
+    // Repository'den gelen veri akışını dinle
     _subscription = _repository.getCurrencyUpdates().listen(
           (currencyResponse) {
             final now = DateTime.now();
@@ -45,7 +46,8 @@ class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
           onError: (error) => print('WebSocket Error: $error'),
           onDone: () {
             print('WebSocket Stream closed');
-            if (!isConnected) _usePreviousData();
+            if (!isConnected)
+              _usePreviousData(); // Bağlantı koptuğunda önceki veriyi kullan
           },
         );
   }
@@ -60,7 +62,7 @@ class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
 
   void updateSearchQuery(String query) {
     _searchQuery = query.toLowerCase();
-    _filterCurrencies();
+    _filterCurrencies(); // Yeni arama ile filtreleme
   }
 
   void _filterCurrencies() {
@@ -69,8 +71,10 @@ class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
     final allCurrencies = _originalResponse!.currencies.values.toList();
 
     if (_searchQuery.isEmpty) {
+      // Arama yoksa tüm veriyi göster
       state = [_originalResponse!];
     } else {
+      // Arama varsa filtrele
       final filtered = allCurrencies
           .where((currency) => currency.code!
               .getCurrencyName()
@@ -78,6 +82,7 @@ class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
               .contains(_searchQuery))
           .toList();
 
+      // Filtrelenmiş veriyle yeni response oluştur
       state = [
         _originalResponse!.copyWith(
           currencies: {for (var currency in filtered) currency.code!: currency},
@@ -98,6 +103,7 @@ class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
   }
 
   void manualRefresh() async {
+    // Manuel yenileme
     final response = await _repository.getCurrencyUpdates().first;
     _originalResponse = response;
     _filterCurrencies();

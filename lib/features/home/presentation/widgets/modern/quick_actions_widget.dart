@@ -2,6 +2,7 @@ import 'package:asset_tracker/core/constants/colors/app_colors.dart';
 import 'package:asset_tracker/features/home/presentation/widgets/modern/ultra_modern_buying_dialog.dart';
 import 'package:flutter/material.dart';
 
+/// Hızlı işlem butonları widget'ı
 class QuickActionsWidget extends StatelessWidget {
   const QuickActionsWidget({super.key});
 
@@ -9,8 +10,10 @@ class QuickActionsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      transform: Matrix4.translationValues(0, -15, 0),
+      transform:
+          Matrix4.translationValues(0, -15, 0), // Header'ın üzerine çıkar
       decoration: BoxDecoration(
+        // Glassmorphism efekti
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -40,6 +43,7 @@ class QuickActionsWidget extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
+            // Varlık Ekle Butonu
             _buildHolographicActionItem(
               context,
               icon: Icons.rocket_launch,
@@ -48,6 +52,7 @@ class QuickActionsWidget extends StatelessWidget {
                   colors: [Color(0xFF1DD1A1), Color(0xFF26D0CE)]),
               onTap: () => showUltraModernBuyingDialog(context),
             ),
+            // Hesaplayıcı Butonu
             _buildHolographicActionItem(
               context,
               icon: Icons.calculate,
@@ -63,6 +68,7 @@ class QuickActionsWidget extends StatelessWidget {
                 );
               },
             ),
+            // Alarmlar Butonu
             _buildHolographicActionItem(
               context,
               icon: Icons.notifications_active,
@@ -78,6 +84,7 @@ class QuickActionsWidget extends StatelessWidget {
                 );
               },
             ),
+            // Grafikler Butonu
             _buildHolographicActionItem(
               context,
               icon: Icons.trending_up,
@@ -99,6 +106,7 @@ class QuickActionsWidget extends StatelessWidget {
     );
   }
 
+  // Hızlı işlem butonu oluşturucu
   Widget _buildHolographicActionItem(
     BuildContext context, {
     required IconData icon,
@@ -109,6 +117,7 @@ class QuickActionsWidget extends StatelessWidget {
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
+        // İkon container'ı
         child: Column(
           children: [
             Container(
@@ -133,6 +142,7 @@ class QuickActionsWidget extends StatelessWidget {
               child: Icon(icon, color: Colors.white, size: 26),
             ),
             const SizedBox(height: 10),
+            // Label metni
             Text(
               label,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(

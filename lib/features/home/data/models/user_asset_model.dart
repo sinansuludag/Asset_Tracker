@@ -2,18 +2,19 @@ import 'package:asset_tracker/core/extensions/currency_code_extension.dart';
 import 'package:asset_tracker/features/home/data/models/buying_asset_model.dart';
 import 'package:asset_tracker/features/home/data/models/currency_data_model.dart';
 
+/// Kullanıcının sahip olduğu varlıkları temsil eden model
 class UserAssetModel {
-  final String id;
-  final String assetType;
-  final String displayName;
-  final double quantity;
-  final double averagePrice;
-  final double currentPrice;
-  final double currentValue;
-  final double change;
-  final double changePercentage;
-  final String icon;
-  final DateTime lastUpdated;
+  final String id; // Varlık ID'si
+  final String assetType; // Varlık türü
+  final String displayName; // Görüntülenecek isim
+  final double quantity; // Miktar
+  final double averagePrice; // Ortalama alış fiyatı
+  final double currentPrice; // Şu anki fiyat
+  final double currentValue; // Şu anki değer
+  final double change; // Değişim (₺)
+  final double changePercentage; // Değişim (%)
+  final String icon; // İkon
+  final DateTime lastUpdated; // Son güncellenme
 
   const UserAssetModel({
     required this.id,
@@ -29,14 +30,24 @@ class UserAssetModel {
     required this.lastUpdated,
   });
 
+  /// BuyingAssetModel'den UserAssetModel oluşturma
   factory UserAssetModel.fromBuyingAsset(
     BuyingAssetModel buyingAsset,
     CurrencyData currentData,
   ) {
+    /// Şu anki fiyatı
     final currentPrice = currentData.buying ?? 0.0;
+
+    /// Şu anki değeri
     final currentValue = buyingAsset.quantity * currentPrice;
+
+    /// Toplam yatırılan miktar
     final totalInvested = buyingAsset.quantity * buyingAsset.buyingPrice;
+
+    /// Kar/zarar hesaplama
     final change = currentValue - totalInvested;
+
+    /// Değişim yüzdesi hesaplama
     final changePercentage =
         totalInvested > 0 ? (change / totalInvested) * 100 : 0.0;
 

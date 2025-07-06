@@ -1,9 +1,10 @@
 import 'package:asset_tracker/features/home/data/models/currency_data_model.dart';
 
+/// Tüm döviz verilerini içeren ana response model
 class CurrencyResponse {
-  final Map<String, CurrencyData> currencies;
-  final String metaTime;
-  final String metaDate;
+  final Map<String, CurrencyData> currencies; // Tüm para birimleri
+  final String metaTime; // Veri zamanı
+  final String metaDate; // Veri tarihi
 
   CurrencyResponse({
     required this.currencies,
@@ -12,6 +13,7 @@ class CurrencyResponse {
   });
 
   factory CurrencyResponse.fromJson(Map<String, dynamic> json) {
+    // Her para birimi için CurrencyData oluştur
     Map<String, CurrencyData> currencyMap = {};
     json['data']?.forEach((key, value) {
       currencyMap[key] = CurrencyData.fromJson(value ?? {});

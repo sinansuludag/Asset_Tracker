@@ -2,6 +2,7 @@ import 'package:asset_tracker/features/home/data/datasources/web_socket/i_curren
 import 'package:asset_tracker/features/home/data/models/curreny_response_model.dart';
 import 'package:asset_tracker/features/home/domain/repositories/i_currency_repository.dart';
 
+/// Domain layer'daki interface'in concrete implementasyonu
 class CurrencyRepositoryImpl implements ICurrencyRepository {
   final ICurrencyWebSocketService _webSocketService;
 

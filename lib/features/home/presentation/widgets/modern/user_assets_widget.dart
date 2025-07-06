@@ -4,9 +4,10 @@ import 'package:asset_tracker/features/currencyAssets/presentation/pages/modern_
 import 'package:asset_tracker/features/home/data/models/user_asset_model.dart';
 import 'package:flutter/material.dart';
 
+/// Kullanıcı varlıkları listesi widget'ı
 class UserAssetsWidget extends StatelessWidget {
-  final List<UserAssetModel> userAssets;
-  final bool isLoading;
+  final List<UserAssetModel> userAssets; // Kullanıcının varlıkları
+  final bool isLoading; // Yükleniyor durumu
 
   const UserAssetsWidget({
     super.key,
@@ -20,6 +21,7 @@ class UserAssetsWidget extends StatelessWidget {
       padding: AppPaddings.horizontalSimetricDefaultPadding,
       child: Column(
         children: [
+          // Başlık satırı
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -30,6 +32,7 @@ class UserAssetsWidget extends StatelessWidget {
                       color: AppColors.textPrimary,
                     ),
               ),
+              // Portföy sayfasına git
               TextButton(
                 onPressed: () {
                   // UPDATED: Navigate to modern portfolio screen
@@ -50,6 +53,7 @@ class UserAssetsWidget extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 15),
+          // Varlık listesi / boş durum / yükleniyor
           if (isLoading)
             const Center(child: CircularProgressIndicator())
           else if (userAssets.isEmpty)
@@ -63,6 +67,7 @@ class UserAssetsWidget extends StatelessWidget {
     );
   }
 
+  // Boş durum widget'ı (varlık yoksa)
   Widget _buildEmptyState(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(40),
@@ -105,6 +110,7 @@ class UserAssetsWidget extends StatelessWidget {
     );
   }
 
+  // Varlık kartı
   Widget _buildAssetCard(BuildContext context, UserAssetModel asset) {
     final isPositive = asset.change >= 0;
 
@@ -146,11 +152,12 @@ class UserAssetsWidget extends StatelessWidget {
             ),
             const SizedBox(width: 12),
 
-            // Asset Info
+            // Varlık bilgileri
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Varlık adı
                   Text(
                     asset.displayName,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -159,6 +166,7 @@ class UserAssetsWidget extends StatelessWidget {
                         ),
                   ),
                   const SizedBox(height: 2),
+                  // Miktar
                   Text(
                     "${asset.quantity} ${_getQuantityUnit(asset.assetType)}",
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -169,10 +177,11 @@ class UserAssetsWidget extends StatelessWidget {
               ),
             ),
 
-            // Value and Change
+            // Değer ve değişim
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
+                // Güncel değer
                 Text(
                   "₺${asset.currentValue.toStringAsFixed(2)}",
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -181,6 +190,7 @@ class UserAssetsWidget extends StatelessWidget {
                       ),
                 ),
                 const SizedBox(height: 2),
+                // Değişim
                 Text(
                   "${isPositive ? '+' : ''}₺${asset.change.toStringAsFixed(2)}",
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -196,6 +206,7 @@ class UserAssetsWidget extends StatelessWidget {
     );
   }
 
+  // Varlık türüne göre birim belirleme
   String _getQuantityUnit(String assetType) {
     switch (assetType.toLowerCase()) {
       case 'altin':
