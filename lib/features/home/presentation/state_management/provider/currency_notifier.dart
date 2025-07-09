@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:asset_tracker/core/extensions/currency_code_extension.dart';
 import 'package:asset_tracker/core/riverpod/all_riverpod.dart';
 import 'package:asset_tracker/features/home/data/models/currency_data_model.dart';
@@ -7,7 +6,7 @@ import 'package:asset_tracker/features/home/data/models/curreny_response_model.d
 import 'package:asset_tracker/features/home/domain/repositories/i_currency_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Döviz kurları için state management
+/// Haremaltın WebSocket'inden gelen döviz kurlarını yöneten StateNotifier
 class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
   final ICurrencyRepository _repository;
   final Ref _ref;
@@ -15,7 +14,6 @@ class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
   String _searchQuery = '';
   CurrencyResponse? _originalResponse;
   bool isConnected = true;
-
   DateTime _lastUpdate = DateTime.fromMillisecondsSinceEpoch(0);
   late StreamSubscription<CurrencyResponse> _subscription;
 
@@ -23,35 +21,41 @@ class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
     _listenToCurrencyUpdates();
   }
 
+  /// Tam currency response'u getirme
   CurrencyResponse? get fullCurrencyResponse => _originalResponse;
 
+  /// WebSocket'den gelen verileri dinleme
   void _listenToCurrencyUpdates() {
-    // Repository'den gelen veri akışını dinle
     _subscription = _repository.getCurrencyUpdates().listen(
-          (currencyResponse) {
-            final now = DateTime.now();
-            final difference = now.difference(_lastUpdate);
-            final interval = _ref.read(refreshIntervalProvider);
+      (currencyResponse) {
+        final now = DateTime.now();
+        final difference = now.difference(_lastUpdate);
+        final interval = _ref.read(refreshIntervalProvider);
 
-            if (interval == Duration.zero)
-              return; // Manuel modda otomatik güncelleme yok
+        // Manuel modda otomatik güncelleme yapma
+        if (interval == Duration.zero) return;
 
-            if (difference >= interval) {
-              _originalResponse = currencyResponse;
-              _filterCurrencies();
-              _lastUpdate = now;
-              isConnected = true;
-            }
-          },
-          onError: (error) => print('WebSocket Error: $error'),
-          onDone: () {
-            print('WebSocket Stream closed');
-            if (!isConnected)
-              _usePreviousData(); // Bağlantı koptuğunda önceki veriyi kullan
-          },
-        );
+        // Belirlenen interval'da güncelle
+        if (difference >= interval) {
+          _originalResponse = currencyResponse;
+          _filterCurrencies();
+          _lastUpdate = now;
+          isConnected = true;
+        }
+      },
+      onError: (error) {
+        print('❌ WebSocket Error: $error');
+        isConnected = false;
+      },
+      onDone: () {
+        print('⚠️ WebSocket Stream closed');
+        isConnected = false;
+        if (!isConnected) _usePreviousData();
+      },
+    );
   }
 
+  /// Bağlantı koptuğunda önceki veriyi kullanma
   void _usePreviousData() {
     if (_originalResponse != null) {
       state = [_originalResponse!];
@@ -60,11 +64,13 @@ class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
     }
   }
 
+  /// Arama query'sini güncelleme
   void updateSearchQuery(String query) {
     _searchQuery = query.toLowerCase();
-    _filterCurrencies(); // Yeni arama ile filtreleme
+    _filterCurrencies();
   }
 
+  /// Varlıkları filtreleme (arama + izinli varlıklar)
   void _filterCurrencies() {
     if (_originalResponse == null) return;
 
@@ -91,23 +97,29 @@ class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
     }
   }
 
+  /// Filtrelenmiş currency listesi
   List<CurrencyData> get filteredCurrencies {
     if (state.isEmpty) return [];
     return state.first.currencies.values.toList();
   }
 
+  /// Manuel yenileme
+  void manualRefresh() async {
+    try {
+      final response = await _repository.getCurrencyUpdates().first;
+      _originalResponse = response;
+      _filterCurrencies();
+      state = [_originalResponse!];
+      _lastUpdate = DateTime.now();
+    } catch (e) {
+      print('❌ Manual refresh error: $e');
+    }
+  }
+
   @override
   void dispose() {
     _subscription.cancel();
+    _repository.disconnect();
     super.dispose();
-  }
-
-  void manualRefresh() async {
-    // Manuel yenileme
-    final response = await _repository.getCurrencyUpdates().first;
-    _originalResponse = response;
-    _filterCurrencies();
-    state = [_originalResponse!];
-    _lastUpdate = DateTime.now();
   }
 }

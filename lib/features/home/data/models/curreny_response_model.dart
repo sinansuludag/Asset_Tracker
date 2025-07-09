@@ -1,6 +1,7 @@
 import 'package:asset_tracker/features/home/data/models/currency_data_model.dart';
 
-/// Tüm döviz verilerini içeren ana response model
+/// Haremaltın WebSocket'inden gelen tam response
+/// Tüm döviz/altın verilerini içeren ana model
 class CurrencyResponse {
   final Map<String, CurrencyData> currencies; // Tüm para birimleri
   final String metaTime; // Veri zamanı
@@ -12,20 +13,27 @@ class CurrencyResponse {
     required this.metaDate,
   });
 
+  /// Haremaltın WebSocket JSON formatından model oluşturma
+  /// Format: {"data": {"ALTIN": {...}, "USDTRY": {...}}, "meta": {...}}
   factory CurrencyResponse.fromJson(Map<String, dynamic> json) {
-    // Her para birimi için CurrencyData oluştur
     Map<String, CurrencyData> currencyMap = {};
-    json['data']?.forEach((key, value) {
-      currencyMap[key] = CurrencyData.fromJson(value ?? {});
+
+    // 'data' field'ındaki her para birimi için CurrencyData oluştur
+    final dataMap = json['data'] as Map<String, dynamic>? ?? {};
+    dataMap.forEach((key, value) {
+      if (value != null) {
+        currencyMap[key] = CurrencyData.fromJson(value);
+      }
     });
 
     return CurrencyResponse(
       currencies: currencyMap,
-      metaTime: json['meta']['time'].toString(),
-      metaDate: json['meta']['tarih'] ?? '',
+      metaTime: json['meta']?['time']?.toString() ?? '',
+      metaDate: json['meta']?['tarih']?.toString() ?? '',
     );
   }
 
+  /// Immutable update için copyWith
   CurrencyResponse copyWith({
     Map<String, CurrencyData>? currencies,
     String? metaTime,
@@ -36,5 +44,23 @@ class CurrencyResponse {
       metaTime: metaTime ?? this.metaTime,
       metaDate: metaDate ?? this.metaDate,
     );
+  }
+
+  /// Belirli bir varlığın verilerini getirme
+  CurrencyData? getCurrencyData(String assetCode) {
+    return currencies[assetCode];
+  }
+
+  /// Issue gereksinimi: Sadece izinli varlıkları filtrele
+  CurrencyResponse filterByAllowedAssets(List<String> allowedAssetIds) {
+    final filteredCurrencies = <String, CurrencyData>{};
+
+    for (final assetId in allowedAssetIds) {
+      if (currencies.containsKey(assetId)) {
+        filteredCurrencies[assetId] = currencies[assetId]!;
+      }
+    }
+
+    return copyWith(currencies: filteredCurrencies);
   }
 }

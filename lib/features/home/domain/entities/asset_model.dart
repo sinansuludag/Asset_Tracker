@@ -1,11 +1,12 @@
-/// Varlık entity'si - pure business object
+/// Varlık entity'si - pure business object (DDD pattern)
+/// Firebase'de saklanacak temel varlık bilgileri
 abstract class AssetEntity {
-  final String id; // Benzersiz ID
-  final String assetType; // Varlık türü
+  final String id; // Benzersiz ID (Firebase doc ID)
+  final String assetType; // Varlık türü (ALTIN, EURTRY vs.)
   final DateTime buyingDate; // Alış tarihi
-  final double buyingPrice; // Alış fiyatı
-  final double quantity; // Miktar
-  final String userId; // Kullanıcı ID'si
+  final double buyingPrice; // Alış fiyatı (TL)
+  final double quantity; // Miktar (gram, adet vs.)
+  final String userId; // Hangi kullanıcıya ait (Firebase Auth UID)
 
   const AssetEntity({
     required this.id,
@@ -16,9 +17,10 @@ abstract class AssetEntity {
     required this.userId,
   });
 
+  /// JSON serialization için abstract method
   Map<String, dynamic> toJson();
 
-  /// Soyut `copyWith` metodu
+  /// Immutable update için abstract copyWith
   AssetEntity copyWith({
     String? id,
     String? assetType,

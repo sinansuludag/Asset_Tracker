@@ -1,14 +1,15 @@
 import 'package:asset_tracker/core/routing/route_names.dart';
 import 'package:asset_tracker/core/constants/colors/app_colors.dart';
-import 'package:asset_tracker/core/constants/paddings/paddings.dart';
-import 'package:asset_tracker/core/extensions/currency_code_extension.dart';
 import 'package:asset_tracker/features/home/data/models/curreny_response_model.dart';
+import 'package:asset_tracker/features/home/presentation/state_management/provider/allowed_assets_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Piyasa durumu widget'ı
-class MarketOverviewWidget extends StatelessWidget {
-  final CurrencyResponse? currencies; // Döviz verileri
-  final bool isLoading; // Yükleniyor durumu
+/// Piyasa durumu widget'ı - Sadece izinli varlıkları gösterir
+/// Issue gereksinimi: Öncelikli varlıklar (ALTIN, EURTRY, GBPTRY, PLATIN)
+class MarketOverviewWidget extends ConsumerWidget {
+  final CurrencyResponse? currencies;
+  final bool isLoading;
 
   const MarketOverviewWidget({
     super.key,
@@ -17,7 +18,9 @@ class MarketOverviewWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final priorityAssets = ref.watch(priorityAssetsProvider);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -34,10 +37,8 @@ class MarketOverviewWidget extends StatelessWidget {
                       fontSize: 20,
                     ),
               ),
-              // "Tümünü Gör" butonu
               TextButton(
                 onPressed: () {
-                  // UPDATED: Navigate to markets screen
                   Navigator.pushNamed(context, RouteNames.markets);
                 },
                 child: Text(
@@ -56,9 +57,17 @@ class MarketOverviewWidget extends StatelessWidget {
             height: 140,
             child: isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : ListView(
+                : ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    children: _buildMarketCards(context),
+                    itemCount: priorityAssets.length,
+                    itemBuilder: (context, index) {
+                      final asset = priorityAssets[index];
+                      final currencyData = currencies?.currencies[asset.id];
+
+                      if (currencyData == null) return const SizedBox.shrink();
+
+                      return _buildMarketCard(context, asset, currencyData);
+                    },
                   ),
           ),
           const SizedBox(height: 20),
@@ -67,40 +76,21 @@ class MarketOverviewWidget extends StatelessWidget {
     );
   }
 
-  // Piyasa kartlarını oluşturma
-  List<Widget> _buildMarketCards(BuildContext context) {
-    if (currencies == null) return [];
+  /// Tekil piyasa kartı
+  Widget _buildMarketCard(BuildContext context, asset, currencyData) {
+    final isPositive = (currencyData.buyingDir == 'up');
+    final price = currencyData.buying ?? 0.0;
 
-    // Öncelikli varlıklar
-    final priorityAssets = ['ALTIN', 'USDTRY', 'EURTRY', 'GUMUSTRY'];
-    final cards = <Widget>[];
-
-    // Her öncelikli varlık için kart oluştur
-    for (String assetCode in priorityAssets) {
-      final currencyData = currencies!.currencies[assetCode];
-      if (currencyData != null) {
-        cards.add(_buildMarketCard(context, assetCode, currencyData));
-      }
-    }
-
-    return cards;
-  }
-
-  // Tekil piyasa kartı
-  Widget _buildMarketCard(
-      BuildContext context, String code, dynamic currencyData) {
-    final isPositive = (currencyData.buyingDir == 'up'); // Yön kontrolü
-    final price = currencyData.buying ?? 0.0; // Fiyat
-    final change = 21.36; // Mock veri - gerçekte hesaplanmalı
-    final changePercent = 0.50; // Mock veri - gerçekte hesaplanmalı
+    // Mock değişim verileri - gerçek uygulamada önceki günden hesaplanmalı
+    final change = 21.36;
+    final changePercent = 0.50;
 
     return GestureDetector(
       onTap: () {
-        // Detay sayfasına git
         Navigator.pushNamed(
           context,
           RouteNames.marketDetail,
-          arguments: {'marketCode': code},
+          arguments: {'marketCode': asset.id},
         );
       },
       child: Container(
@@ -110,10 +100,7 @@ class MarketOverviewWidget extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border(
-            left: BorderSide(
-              color: AppColors.primaryGreen,
-              width: 4,
-            ),
+            left: BorderSide(color: AppColors.primaryGreen, width: 4),
           ),
           boxShadow: [
             BoxShadow(
@@ -130,10 +117,9 @@ class MarketOverviewWidget extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Row(
-                // Üst kısım - İkon ve trend
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Varlık ikonu
+                  // Varlık ikonu (issue'deki symbol kullanımı)
                   Container(
                     width: 32,
                     height: 32,
@@ -143,7 +129,7 @@ class MarketOverviewWidget extends StatelessWidget {
                     ),
                     child: Center(
                       child: Text(
-                        _getAssetSymbol(code),
+                        asset.symbol,
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -161,10 +147,10 @@ class MarketOverviewWidget extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 8),
-              // Varlık adı
+              // Varlık adı (issue'deki displayName)
               Flexible(
                 child: Text(
-                  code.getCurrencyName(),
+                  asset.displayName,
                   style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
@@ -201,21 +187,5 @@ class MarketOverviewWidget extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  // Varlık sembolü belirleme
-  String _getAssetSymbol(String code) {
-    switch (code) {
-      case 'ALTIN':
-        return 'AU';
-      case 'USDTRY':
-        return '\$';
-      case 'EURTRY':
-        return '€';
-      case 'GUMUSTRY':
-        return 'AG';
-      default:
-        return code.substring(0, 2);
-    }
   }
 }

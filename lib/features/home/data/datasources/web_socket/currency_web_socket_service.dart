@@ -7,7 +7,8 @@ import 'package:asset_tracker/features/home/data/models/curreny_response_model.d
 import 'package:flutter/material.dart';
 import 'package:web_socket_client/web_socket_client.dart';
 
-/// Gerçek zamanlı döviz kurları için WebSocket bağlantısı
+/// Haremaltın WebSocket servisinin implementasyonu
+/// Real-time döviz kurları için WebSocket bağlantısı
 class CurrencyWebSocketServiceImpl
     with CurrencyWebSocketServiceImplMixin
     implements ICurrencyWebSocketService {
@@ -26,6 +27,8 @@ class CurrencyWebSocketServiceImpl
 
   Future<void> _connectSocket() async {
     try {
+      debugPrint('🔗 Connecting to WebSocket: $_url');
+
       // WebSocket bağlantısını kur
       _webSocket = WebSocket(Uri.parse(_url), timeout: timeout);
 
@@ -33,17 +36,15 @@ class CurrencyWebSocketServiceImpl
       _webSocket.connection.listen(
         (connectionState) {
           if (connectionState is Connected) {
-            debugPrint('WebSocket connected');
-            reconnectAttempts = 0; //
+            debugPrint('✅ WebSocket connected successfully');
+            reconnectAttempts = 0;
             // Bağlandığında ilk veri talebini gönder
-            _webSocket
-                .send(WebSocketActionEnum.REQUEST.value); // Initial handshake
+            _webSocket.send(WebSocketActionEnum.REQUEST.value);
           } else if (connectionState is Reconnecting) {
-            debugPrint('WebSocket reconnecting...');
+            debugPrint('🔄 WebSocket reconnecting...');
           } else if (connectionState is Disconnected) {
-            debugPrint('WebSocket disconnected');
+            debugPrint('❌ WebSocket disconnected');
             if (!isManuallyDisconnected) {
-              // Bağlantı koptuğunda yeniden bağlanmayı dene
               _attemptReconnect();
             }
           }
@@ -54,53 +55,64 @@ class CurrencyWebSocketServiceImpl
       _webSocket.messages.listen(
         (message) {
           try {
-            if (message
-                .toString()
-                .startsWith(WebSocketActionEnum.RESEND.value)) {
-              // Socket.IO formatı
-              final dataString = message.toString().substring(2);
-              final decodedJson = jsonDecode(dataString)[1];
-              final response = CurrencyResponse.fromJson(decodedJson);
-              _streamController.add(response); // Stream'e gönder
-            } else if (message
-                .toString()
+            final messageStr = message.toString();
+
+            // Haremaltın Socket.IO formatı kontrolü
+            if (messageStr.startsWith(WebSocketActionEnum.RESEND.value)) {
+              // "42" ile başlayan mesajlar - gerçek veri
+              final dataString = messageStr.substring(2);
+              final decodedJson = jsonDecode(dataString);
+
+              // Haremaltın formatı: [event_name, data]
+              if (decodedJson is List && decodedJson.length > 1) {
+                final currencyData = decodedJson[1];
+                final response = CurrencyResponse.fromJson(currencyData);
+                _streamController.add(response);
+
+                debugPrint(
+                    '📈 Currency data received: ${response.currencies.length} assets');
+              }
+            } else if (messageStr
                 .startsWith(WebSocketActionEnum.REFRESH.value)) {
-              debugPrint('Refreshing connection');
+              // "2" ile başlayan mesajlar - ping/pong
+              debugPrint('🔄 Refreshing connection');
               _webSocket.send(WebSocketActionEnum.REQUEST.value);
             }
           } catch (e) {
+            debugPrint('❌ Error parsing WebSocket message: $e');
             _streamController.addError(Exception('Error parsing message: $e'));
-            debugPrint('Error parsing message: $e');
           }
         },
         onError: (error) {
-          debugPrint('WebSocket message error: $error');
+          debugPrint('❌ WebSocket message error: $error');
           _streamController.addError(Exception('WebSocket Error: $error'));
         },
         onDone: () {
-          debugPrint('WebSocket message stream closed');
+          debugPrint('⚠️ WebSocket message stream closed');
           if (!isManuallyDisconnected) {
             _attemptReconnect();
           }
         },
       );
     } catch (e) {
-      debugPrint('Error connecting to WebSocket: $e');
+      debugPrint('❌ Error connecting to WebSocket: $e');
       _attemptReconnect();
     }
   }
 
   void _attemptReconnect() {
-    // Maksimum deneme sayısına kadar yeniden bağlanmayı dene
     if (reconnectAttempts < maxReconnectAttempts) {
       reconnectAttempts++;
       debugPrint(
-          'Attempt $reconnectAttempts to reconnect in ${reconnectDelay.inSeconds} seconds...');
+          '🔄 Reconnect attempt $reconnectAttempts/$maxReconnectAttempts in ${reconnectDelay.inSeconds}s');
+
       Future.delayed(reconnectDelay, () {
-        _connectSocket(); // Belirli süre sonra yeniden dene
+        if (!isManuallyDisconnected) {
+          _connectSocket();
+        }
       });
     } else {
-      debugPrint('Maximum reconnect attempts reached. Giving up.');
+      debugPrint('❌ Maximum reconnect attempts reached. Giving up.');
       _streamController
           .addError(Exception('Unable to reconnect to WebSocket.'));
     }
@@ -108,9 +120,9 @@ class CurrencyWebSocketServiceImpl
 
   @override
   void disconnect() {
-    isManuallyDisconnected = true; // Mark as manually disconnected
+    debugPrint('🔌 Disconnecting WebSocket manually');
+    isManuallyDisconnected = true;
     _webSocket.close();
     _streamController.close();
-    debugPrint('WebSocket connection closed manually');
   }
 }

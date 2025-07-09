@@ -3,14 +3,15 @@ import 'package:asset_tracker/features/home/data/models/buying_asset_model.dart'
 import 'package:asset_tracker/features/home/data/models/currency_data_model.dart';
 
 /// Kullanıcının sahip olduğu varlıkları temsil eden model
+/// BuyingAsset + güncel fiyat = UserAsset (portföy görünümü için)
 class UserAssetModel {
   final String id; // Varlık ID'si
-  final String assetType; // Varlık türü
+  final String assetType; // Varlık türü (ALTIN, EURTRY vs.)
   final String displayName; // Görüntülenecek isim
   final double quantity; // Miktar
   final double averagePrice; // Ortalama alış fiyatı
-  final double currentPrice; // Şu anki fiyat
-  final double currentValue; // Şu anki değer
+  final double currentPrice; // Şu anki fiyat (WebSocket'den)
+  final double currentValue; // Şu anki değer (quantity × currentPrice)
   final double change; // Değişim (₺)
   final double changePercentage; // Değişim (%)
   final String icon; // İkon
@@ -30,24 +31,33 @@ class UserAssetModel {
     required this.lastUpdated,
   });
 
-  /// BuyingAssetModel'den UserAssetModel oluşturma
+  /// BuyingAsset + güncel fiyat → UserAsset dönüşümü
+  /// Bu method portföy hesaplama için kritik
   factory UserAssetModel.fromBuyingAsset(
     BuyingAssetModel buyingAsset,
     CurrencyData currentData,
   ) {
-    /// Şu anki fiyatı
+    // Şu anki fiyat (WebSocket'den gelen alış fiyatı)
     final currentPrice = currentData.buying ?? 0.0;
 
-    /// Şu anki değeri
-    final currentValue = buyingAsset.quantity * currentPrice;
+    // Bilezik özel durumu kontrolü
+    double currentValue;
+    if (buyingAsset.isBracelet && buyingAsset.gramWeight != null) {
+      // Bilezik: gramWeight × ayarPrice
+      // Burada ayar fiyatını currentPrice olarak kullanıyoruz
+      currentValue = buyingAsset.gramWeight! * currentPrice;
+    } else {
+      // Normal: quantity × currentPrice
+      currentValue = buyingAsset.quantity * currentPrice;
+    }
 
-    /// Toplam yatırılan miktar
+    // Toplam yatırılan miktar
     final totalInvested = buyingAsset.quantity * buyingAsset.buyingPrice;
 
-    /// Kar/zarar hesaplama
+    // Kar/zarar hesaplama
     final change = currentValue - totalInvested;
 
-    /// Değişim yüzdesi hesaplama
+    // Değişim yüzdesi hesaplama
     final changePercentage =
         totalInvested > 0 ? (change / totalInvested) * 100 : 0.0;
 
@@ -66,29 +76,31 @@ class UserAssetModel {
     );
   }
 
+  /// Varlık kodunu Türkçe isme çevirme
   static String _getDisplayName(String assetType) {
-    // Mevcut extension'ınızı kullanın
-    return assetType.getCurrencyName();
+    return assetType.getCurrencyName(); // Mevcut extension kullanımı
   }
 
+  /// Varlık türüne göre ikon belirleme
   static String _getAssetIcon(String assetType) {
-    switch (assetType.toLowerCase()) {
-      case 'altin':
-      case 'gold':
+    switch (assetType.toUpperCase()) {
+      case 'ALTIN':
+      case 'KULCEALTIN':
         return 'AU';
-      case 'usdtry':
-      case 'usd':
+      case 'USDTRY':
         return '\$';
-      case 'eurtry':
-      case 'eur':
+      case 'EURTRY':
         return '€';
-      case 'ayar14':
+      case 'GBPTRY':
+        return '£';
+      case 'AYAR14':
         return '14K';
-      case 'ayar22':
+      case 'AYAR22':
         return '22K';
-      case 'gumustry':
-      case 'silver':
+      case 'GUMUSTRY':
         return 'AG';
+      case 'PLATIN':
+        return 'PT';
       default:
         return '₺';
     }
