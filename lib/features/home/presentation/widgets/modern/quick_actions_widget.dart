@@ -1,6 +1,7 @@
 import 'package:asset_tracker/core/constants/colors/app_colors.dart';
 import 'package:asset_tracker/features/home/presentation/widgets/modern/ultra_modern_buying_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// Hızlı işlem butonları widget'ı
 class QuickActionsWidget extends StatelessWidget {
@@ -9,7 +10,7 @@ class QuickActionsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      margin: EdgeInsets.fromLTRB(20.w, 0.h, 20.w, 20.h),
       transform:
           Matrix4.translationValues(0, -15, 0), // Header'ın üzerine çıkar
       decoration: BoxDecoration(
@@ -19,27 +20,27 @@ class QuickActionsWidget extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [
             Colors.white,
-            Colors.white.withOpacity(0.95),
+            Colors.white.withAlpha(230),
             Colors.white,
           ],
         ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.3)),
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(color: Colors.white.withAlpha(100)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withAlpha(25),
             offset: const Offset(0, 10),
-            blurRadius: 30,
+            blurRadius: 30.r,
           ),
           BoxShadow(
-            color: const Color(0xFF1DD1A1).withOpacity(0.1),
+            color: const Color(0xFF1DD1A1).withAlpha(25),
             offset: const Offset(0, -5),
-            blurRadius: 20,
+            blurRadius: 20.r,
           ),
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(20.r),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -117,44 +118,48 @@ class QuickActionsWidget extends StatelessWidget {
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
-        // İkon container'ı
-        child: Column(
-          children: [
-            Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                gradient: gradient,
-                borderRadius: BorderRadius.circular(18),
-                boxShadow: [
-                  BoxShadow(
-                    color: gradient.colors.first.withOpacity(0.4),
-                    offset: const Offset(0, 8),
-                    blurRadius: 20,
-                  ),
-                  BoxShadow(
-                    color: gradient.colors.last.withOpacity(0.2),
-                    offset: const Offset(0, 4),
-                    blurRadius: 12,
-                  ),
-                ],
+        child: SizedBox(
+          width: 70.w, // Sabit genişlik ver
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // İçeriğe göre boyutlandır
+            children: [
+              // İkon container'ı
+              Container(
+                width: 52.w,
+                height: 52.h,
+                decoration: BoxDecoration(
+                  gradient: gradient,
+                  borderRadius: BorderRadius.circular(16.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: gradient.colors.first.withAlpha(95),
+                      offset: const Offset(0, 8),
+                      blurRadius: 20.r,
+                    ),
+                    BoxShadow(
+                      color: gradient.colors.last.withAlpha(95),
+                      offset: const Offset(0, 4),
+                      blurRadius: 12.r,
+                    ),
+                  ],
+                ),
+                child: Icon(icon, color: Colors.white, size: 24.r),
               ),
-              child: Icon(icon, color: Colors.white, size: 26),
-            ),
-            const SizedBox(height: 10),
-            // Label metni
-            Text(
-              label,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                    fontSize: 12,
-                  ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+              SizedBox(height: 8.h),
+              // Label metni
+              Text(
+                label,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                      fontSize: 11.sp,
+                    ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
         ),
       ),
     );

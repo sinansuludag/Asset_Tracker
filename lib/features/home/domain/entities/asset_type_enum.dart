@@ -1,10 +1,9 @@
-/// Varlık türleri enum'u - issue'deki kategorileri temsil eder
+/// Issue gereksinimlerine uygun varlık türleri
 enum AssetType {
   gold, // Altın (Has altın, 22 ayar, 14 ayar vs.)
   currency, // Döviz (Euro/TL, Sterlin/TL vs.)
-  bracelet, // Bilezik (özel durum - ayar + gramaj)
   platinum, // Platin
-  silver, // Gümüş
+  silver, // Gümüş (gelecekte kullanım için)
 }
 
 extension AssetTypeExtension on AssetType {
@@ -15,8 +14,6 @@ extension AssetTypeExtension on AssetType {
         return 'Altın';
       case AssetType.currency:
         return 'Döviz';
-      case AssetType.bracelet:
-        return 'Bilezik';
       case AssetType.platinum:
         return 'Platin';
       case AssetType.silver:
@@ -31,8 +28,6 @@ extension AssetTypeExtension on AssetType {
         return '🥇';
       case AssetType.currency:
         return '💱';
-      case AssetType.bracelet:
-        return '📿';
       case AssetType.platinum:
         return '⚪';
       case AssetType.silver:

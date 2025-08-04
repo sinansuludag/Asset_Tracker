@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors/app_colors.dart';
 import '../../../../core/constants/dimensions/app_dimensions.dart';
 
@@ -111,12 +112,12 @@ class _ModernTextFieldState extends State<ModernTextField>
             child: Container(
               decoration: BoxDecoration(
                 borderRadius:
-                    BorderRadius.circular(AppDimensions.authButtonRadius),
+                    BorderRadius.circular(AppDimensions.authButtonRadius.r),
                 boxShadow: [
                   BoxShadow(
                     color: _isFocused
-                        ? AppColors.primaryGreen.withOpacity(0.2)
-                        : Colors.black.withOpacity(0.08),
+                        ? AppColors.primaryGreen.withAlpha(50)
+                        : Colors.black.withAlpha(20),
                     blurRadius: _isFocused ? 15 : 8,
                     offset: const Offset(0, 4),
                   ),
@@ -130,8 +131,8 @@ class _ModernTextFieldState extends State<ModernTextField>
                 textInputAction: widget.textInputAction,
                 validator: widget.validator,
                 onEditingComplete: _handleEditingComplete,
-                style: const TextStyle(
-                  fontSize: 16,
+                style: TextStyle(
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.w500,
                   color: AppColors.textPrimary,
                 ),
@@ -139,7 +140,7 @@ class _ModernTextFieldState extends State<ModernTextField>
                   labelText: widget.label,
                   hintText: widget.hint,
                   filled: true,
-                  fillColor: Colors.white.withOpacity(0.9),
+                  fillColor: Colors.white.withAlpha(225),
                   prefixIcon: widget.prefixIcon != null
                       ? Icon(
                           widget.prefixIcon,
@@ -159,21 +160,21 @@ class _ModernTextFieldState extends State<ModernTextField>
                                 ? Icons.visibility_off
                                 : Icons.visibility,
                             color: AppColors.textSecondary,
-                            size: 20,
+                            size: 20.r,
                           ),
                         )
                       : null,
                   border: OutlineInputBorder(
                     borderRadius:
-                        BorderRadius.circular(AppDimensions.authButtonRadius),
+                        BorderRadius.circular(AppDimensions.authButtonRadius.r),
                     borderSide: BorderSide.none,
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius:
-                        BorderRadius.circular(AppDimensions.authButtonRadius),
+                        BorderRadius.circular(AppDimensions.authButtonRadius.r),
                     borderSide: BorderSide(
                       color: AppColors.primaryGreen,
-                      width: 2,
+                      width: 1.w,
                     ),
                   ),
                   labelStyle: TextStyle(
@@ -182,13 +183,13 @@ class _ModernTextFieldState extends State<ModernTextField>
                         : AppColors.textSecondary,
                     fontWeight: FontWeight.w500,
                   ),
-                  hintStyle: TextStyle(
+                  hintStyle: const TextStyle(
                     color: AppColors.textLight,
                     fontWeight: FontWeight.w400,
                   ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: AppDimensions.spaceM,
-                    vertical: AppDimensions.spaceM,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: AppDimensions.spaceM.w,
+                    vertical: AppDimensions.spaceM.h,
                   ),
                 ),
               ),

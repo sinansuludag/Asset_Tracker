@@ -1,5 +1,6 @@
 import 'package:asset_tracker/core/constants/colors/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ModernBottomNavigation extends StatelessWidget {
   final int currentIndex;
@@ -14,15 +15,15 @@ class ModernBottomNavigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 85,
+      height: 80.h,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(25)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25.r)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withAlpha(35),
             offset: const Offset(0, -10),
-            blurRadius: 30,
+            blurRadius: 30.r,
           ),
         ],
       ),
@@ -74,12 +75,12 @@ class ModernBottomNavigation extends StatelessWidget {
     return GestureDetector(
       onTap: () => onTabTapped(index),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 7.h),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.primaryGreen.withOpacity(0.1)
+              ? AppColors.primaryGreen.withAlpha(40)
               : Colors.transparent,
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(15.r),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -88,13 +89,13 @@ class ModernBottomNavigation extends StatelessWidget {
               icon,
               color:
                   isSelected ? AppColors.primaryGreen : AppColors.textSecondary,
-              size: 24,
+              size: 24.r,
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: 3.h),
             Text(
               label,
               style: TextStyle(
-                fontSize: 11,
+                fontSize: 10.sp,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 color: isSelected
                     ? AppColors.primaryGreen

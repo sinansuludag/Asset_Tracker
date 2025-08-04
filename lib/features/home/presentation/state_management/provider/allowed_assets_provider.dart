@@ -3,11 +3,11 @@ import 'package:asset_tracker/features/home/data/models/asset_definition_model.d
 import 'package:asset_tracker/features/home/domain/entities/asset_type_enum.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// İzinli varlıklar için Riverpod provider'ları
+/// İzinli varlıklar için Riverpod provider'ları - TİP GÜVENLİ VERSİYON
 
 /// Tüm izinli varlıklar
 final allowedAssetsProvider = Provider<List<AssetDefinitionModel>>((ref) {
-  return AllowedAssetsService.getAllowedAssets();
+  return AllowedAssetsService.getAllAssets();
 });
 
 /// Ana sayfada gösterilecek varlıklar (isVisible: true)

@@ -215,39 +215,4 @@ class EnhancedPortfolioService {
       return false;
     }
   }
-
-  /// Bilezik önerileri getir
-  Future<Map<String, dynamic>> getBraceletRecommendations({
-    required double gramWeight,
-    required double budget,
-    required CurrencyResponse currencyData,
-  }) async {
-    try {
-      final recommendations =
-          BraceletCalculationService.getRecommendedBraceletPrices(
-        gramWeight: gramWeight,
-        currencyData: currencyData,
-      );
-
-      final optimalAyar =
-          BraceletCalculationService.getOptimalAyarRecommendation(
-        gramWeight: gramWeight,
-        currencyData: currencyData,
-        budget: budget,
-      );
-
-      return {
-        'success': true,
-        'recommendations': recommendations,
-        'optimalAyar': optimalAyar,
-        'gramWeight': gramWeight,
-        'budget': budget,
-      };
-    } catch (e) {
-      return {
-        'success': false,
-        'error': e.toString(),
-      };
-    }
-  }
 }

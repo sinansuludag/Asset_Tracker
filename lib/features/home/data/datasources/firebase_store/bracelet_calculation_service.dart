@@ -2,7 +2,7 @@ import 'package:asset_tracker/features/home/data/models/buying_asset_model.dart'
 import 'package:asset_tracker/features/home/data/models/curreny_response_model.dart';
 
 /// Bilezik değer hesaplama servisi
-/// Issue gereksinimi: Bilezik değeri = gramWeight × ayarPrice
+/// Bilezik değeri = gramWeight × ayarPrice
 class BraceletCalculationService {
   /// Bilezik değerini hesapla
   static double calculateBraceletValue({
@@ -69,44 +69,5 @@ class BraceletCalculationService {
       'profitLoss': profitLoss,
       'profitLossPercentage': profitLossPercentage,
     };
-  }
-
-  /// Bilezik ayarına göre öneri fiyat hesaplama
-  static Map<String, double> getRecommendedBraceletPrices({
-    required double gramWeight,
-    required CurrencyResponse currencyData,
-  }) {
-    final ayar14Price = currencyData.currencies['AYAR14']?.buying ?? 0.0;
-    final ayar22Price = currencyData.currencies['AYAR22']?.buying ?? 0.0;
-
-    return {
-      '14_ayar_value': gramWeight * ayar14Price,
-      '22_ayar_value': gramWeight * ayar22Price,
-      '14_ayar_price_per_gram': ayar14Price,
-      '22_ayar_price_per_gram': ayar22Price,
-    };
-  }
-
-  /// Bilezik için optimal ayar önerisi
-  static String getOptimalAyarRecommendation({
-    required double gramWeight,
-    required CurrencyResponse currencyData,
-    required double budget, // Kullanıcının bütçesi
-  }) {
-    final prices = getRecommendedBraceletPrices(
-      gramWeight: gramWeight,
-      currencyData: currencyData,
-    );
-
-    final ayar14Value = prices['14_ayar_value']!;
-    final ayar22Value = prices['22_ayar_value']!;
-
-    if (budget >= ayar22Value) {
-      return '22 ayar öneririz - Daha değerli ve saf altın';
-    } else if (budget >= ayar14Value) {
-      return '14 ayar uygun - Bütçenize uygun seçenek';
-    } else {
-      return 'Mevcut bütçe ile ${gramWeight}g bilezik alamazsınız';
-    }
   }
 }

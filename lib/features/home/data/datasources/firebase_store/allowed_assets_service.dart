@@ -1,19 +1,18 @@
 import 'package:asset_tracker/features/home/data/models/asset_definition_model.dart';
 import 'package:asset_tracker/features/home/domain/entities/asset_type_enum.dart';
 
-/// İzinli varlıklar servisi - issue'deki exact listeyi yönetir
-/// Bu servis sayesinde sadece belirlenen varlıklar gösterilir ve eklenebilir
+/// İzinli varlıklar servisi - Sadece extension'daki varlıklar
 class AllowedAssetsService {
-  // Issue'den alınan exact varlık listesi - değiştirilmemeli!
   static const List<AssetDefinitionModel> _allowedAssets = [
-    // ===== ALTIN GRUBU =====
+    // =====================================================
+    // ALTIN GRUBU
+    // =====================================================
     AssetDefinitionModel(
       id: 'ALTIN',
-      displayName: 'Has Altın',
+      displayName: 'Altın',
       isSelectable: true,
       isVisible: true,
       type: AssetType.gold,
-      description: '%99 saf altın 999.99 yazar altın üzerinde',
       symbol: 'AU',
     ),
     AssetDefinitionModel(
@@ -26,69 +25,39 @@ class AllowedAssetsService {
     ),
     AssetDefinitionModel(
       id: 'AYAR22',
-      displayName: '22 Ayar Gram Altın',
+      displayName: '22 Ayar Altın',
       isSelectable: true,
       isVisible: true,
       type: AssetType.gold,
-      description:
-          'Gram olarak satıldığında üzerinde 995 yazar. Bileziklerde de kullanılır.',
       symbol: '22K',
     ),
     AssetDefinitionModel(
       id: 'AYAR14',
-      displayName: '14 Ayar Gram Altın',
+      displayName: '14 Ayar Altın',
       isSelectable: true,
       isVisible: true,
       type: AssetType.gold,
-      description: 'Genelde bileziklerde ve takılarda kullanılır.',
       symbol: '14K',
     ),
 
-    // ===== DÖVİZ GRUBU =====
+    // =====================================================
+    // ALTIN SİKKELER
+    // =====================================================
     AssetDefinitionModel(
-      id: 'EURTRY',
-      displayName: 'Euro / TL',
-      isSelectable: true,
-      isVisible: true,
-      type: AssetType.currency,
-      description: 'Ekranda sadece Euro da yazılabilir',
-      symbol: '€',
-    ),
-    AssetDefinitionModel(
-      id: 'EURUSD',
-      displayName: 'Euro / USD',
-      isSelectable: false, // ⚠️ Issue gereksinimi: Sadece gösterim!
-      isVisible: true,
-      type: AssetType.currency,
-      description: 'Sadece gösterim. Kullanıcı ekleyemez.',
-      symbol: 'EUR/USD',
-    ),
-    AssetDefinitionModel(
-      id: 'GBPTRY',
-      displayName: 'Sterlin / TL',
-      isSelectable: true,
-      isVisible: true,
-      type: AssetType.currency,
-      description: 'Ekranda sadece Sterlin veya benzer isim yazılabilir.',
-      symbol: '£',
-    ),
-
-    // ===== ÖZEL ALTIN SİKKELERİ =====
-    AssetDefinitionModel(
-      id: 'CEYREK_YENI',
-      displayName: 'Çeyrek Altın (Yeni)',
+      id: 'TEK_YENI',
+      displayName: 'Tam Altın (Yeni)',
       isSelectable: true,
       isVisible: true,
       type: AssetType.gold,
-      symbol: '1/4',
+      symbol: '1',
     ),
     AssetDefinitionModel(
-      id: 'CEYREK_ESKI',
-      displayName: 'Çeyrek Altın (Eski)',
+      id: 'TEK_ESKI',
+      displayName: 'Tam Altın (Eski)',
       isSelectable: true,
       isVisible: true,
       type: AssetType.gold,
-      symbol: '1/4',
+      symbol: '1',
     ),
     AssetDefinitionModel(
       id: 'YARIM_YENI',
@@ -107,24 +76,24 @@ class AllowedAssetsService {
       symbol: '1/2',
     ),
     AssetDefinitionModel(
-      id: 'TEK_YENI',
-      displayName: 'Tam Altın (Yeni)',
+      id: 'CEYREK_YENI',
+      displayName: 'Çeyrek Altın (Yeni)',
       isSelectable: true,
       isVisible: true,
       type: AssetType.gold,
-      symbol: '1',
+      symbol: '1/4',
     ),
     AssetDefinitionModel(
-      id: 'TEK_ESKI',
-      displayName: 'Tam Altın (Eski)',
+      id: 'CEYREK_ESKI',
+      displayName: 'Çeyrek Altın (Eski)',
       isSelectable: true,
       isVisible: true,
       type: AssetType.gold,
-      symbol: '1',
+      symbol: '1/4',
     ),
     AssetDefinitionModel(
       id: 'ATA_YENI',
-      displayName: 'Ata Lira (Yeni)',
+      displayName: 'Ata (Yeni)',
       isSelectable: true,
       isVisible: true,
       type: AssetType.gold,
@@ -132,7 +101,7 @@ class AllowedAssetsService {
     ),
     AssetDefinitionModel(
       id: 'ATA_ESKI',
-      displayName: 'Ata Lira (Eski)',
+      displayName: 'Ata (Eski)',
       isSelectable: true,
       isVisible: true,
       type: AssetType.gold,
@@ -140,7 +109,7 @@ class AllowedAssetsService {
     ),
     AssetDefinitionModel(
       id: 'ATA5_YENI',
-      displayName: 'Beşi Bir Yerde Ata(Yeni)',
+      displayName: '5\'li Ata (Eski)',
       isSelectable: true,
       isVisible: true,
       type: AssetType.gold,
@@ -148,32 +117,132 @@ class AllowedAssetsService {
     ),
     AssetDefinitionModel(
       id: 'ATA5_ESKI',
-      displayName: 'Beşi Bir Yerde Ata (Eski)',
+      displayName: '5\'li Ata (Yeni)',
       isSelectable: true,
       isVisible: true,
       type: AssetType.gold,
       symbol: '5ATA',
     ),
     AssetDefinitionModel(
-      id: 'GREMSE_YENI',
-      displayName: 'Gremse (Yeni)',
+      id: 'GREMESE_YENI',
+      displayName: 'Ziynet 2.5 Altın (Yeni)',
       isSelectable: true,
       isVisible: true,
       type: AssetType.gold,
-      description: 'Ziynet 2.5 Altın',
       symbol: 'GR',
     ),
     AssetDefinitionModel(
-      id: 'GREMSE_ESKI',
-      displayName: 'Gremse (Eski)',
+      id: 'GREMESE_ESKI',
+      displayName: 'Ziynet 2.5 Altın (Eski)',
       isSelectable: true,
       isVisible: true,
       type: AssetType.gold,
-      description: 'Ziynet 2.5 Altın',
       symbol: 'GR',
     ),
 
-    // ===== PLATİN =====
+    // =====================================================
+    // DÖVİZLER
+    // =====================================================
+    AssetDefinitionModel(
+      id: 'USDTRY',
+      displayName: 'ABD Doları',
+      isSelectable: true,
+      isVisible: true,
+      type: AssetType.currency,
+      symbol: '\$',
+    ),
+    AssetDefinitionModel(
+      id: 'EURTRY',
+      displayName: 'Euro',
+      isSelectable: true,
+      isVisible: true,
+      type: AssetType.currency,
+      symbol: '€',
+    ),
+    AssetDefinitionModel(
+      id: 'GBPTRY',
+      displayName: 'İngiliz Sterlini',
+      isSelectable: true,
+      isVisible: true,
+      type: AssetType.currency,
+      symbol: '£',
+    ),
+    AssetDefinitionModel(
+      id: 'CHFTRY',
+      displayName: 'İsviçre Frangı',
+      isSelectable: true,
+      isVisible: true,
+      type: AssetType.currency,
+      symbol: 'CHF',
+    ),
+    AssetDefinitionModel(
+      id: 'CADTRY',
+      displayName: 'Kanada Doları',
+      isSelectable: true,
+      isVisible: true,
+      type: AssetType.currency,
+      symbol: 'CAD',
+    ),
+    AssetDefinitionModel(
+      id: 'AUDTRY',
+      displayName: 'Avustralya Doları',
+      isSelectable: true,
+      isVisible: true,
+      type: AssetType.currency,
+      symbol: 'AUD',
+    ),
+    AssetDefinitionModel(
+      id: 'JPYTRY',
+      displayName: 'Japon Yeni',
+      isSelectable: true,
+      isVisible: true,
+      type: AssetType.currency,
+      symbol: '¥',
+    ),
+    AssetDefinitionModel(
+      id: 'SARTRY',
+      displayName: 'Suudi Arabistan Riyali',
+      isSelectable: true,
+      isVisible: true,
+      type: AssetType.currency,
+      symbol: 'SAR',
+    ),
+    AssetDefinitionModel(
+      id: 'NOKTRY',
+      displayName: 'Norveç Kronu',
+      isSelectable: true,
+      isVisible: true,
+      type: AssetType.currency,
+      symbol: 'NOK',
+    ),
+    AssetDefinitionModel(
+      id: 'DKKTRY',
+      displayName: 'Danimarka Kronu',
+      isSelectable: true,
+      isVisible: true,
+      type: AssetType.currency,
+      symbol: 'DKK',
+    ),
+    AssetDefinitionModel(
+      id: 'SEKTRY',
+      displayName: 'İsveç Kronu',
+      isSelectable: true,
+      isVisible: true,
+      type: AssetType.currency,
+      symbol: 'SEK',
+    ),
+
+    // =====================================================
+    // METALLER
+    // =====================================================
+    AssetDefinitionModel(
+      id: 'GUMUSTRY',
+      displayName: 'Gümüş',
+      isSelectable: true,
+      isVisible: true,
+      type: AssetType.silver,
+      symbol: 'AG',
+    ),
     AssetDefinitionModel(
       id: 'PLATIN',
       displayName: 'Platin',
@@ -182,22 +251,31 @@ class AllowedAssetsService {
       type: AssetType.platinum,
       symbol: 'PT',
     ),
+    AssetDefinitionModel(
+      id: 'PALADYUM',
+      displayName: 'Paladyum',
+      isSelectable: true,
+      isVisible: true,
+      type: AssetType.platinum,
+      symbol: 'PD',
+    ),
 
-    // ===== SADECE GÖSTERİM (Kullanıcı ekleyemez) =====
+    // =====================================================
+    // SADECE GÖSTERİM (ONS - Eklenemez)
+    // =====================================================
     AssetDefinitionModel(
       id: 'ONS',
       displayName: 'Ons Altın',
-      isSelectable: false, // ⚠️ Issue gereksinimi: Sadece gösterim!
+      isSelectable: false, // ❌ ONS eklenemez, sadece görünür
       isVisible: true,
       type: AssetType.gold,
-      description: 'Sadece gösterim. Kullanıcı Ekleyemez.',
       symbol: 'OZ',
     ),
   ];
 
-  /// Tüm izinli varlıkları getir
-  static List<AssetDefinitionModel> getAllowedAssets() {
-    return List.from(_allowedAssets); // Immutable copy
+  /// Tüm varlıkları getir
+  static List<AssetDefinitionModel> getAllAssets() {
+    return List.from(_allowedAssets);
   }
 
   /// Ana sayfada gösterilecek varlıkları getir (isVisible: true)
@@ -206,12 +284,11 @@ class AllowedAssetsService {
   }
 
   /// Kullanıcının ekleyebileceği varlıkları getir (isSelectable: true)
-  /// EURUSD ve ONS burada olmayacak!
   static List<AssetDefinitionModel> getSelectableAssets() {
     return _allowedAssets.where((asset) => asset.isSelectable).toList();
   }
 
-  /// Türe göre varlıkları getir (altın, döviz vs.)
+  /// Türe göre varlıkları getir
   static List<AssetDefinitionModel> getAssetsByType(AssetType type) {
     return _allowedAssets.where((asset) => asset.type == type).toList();
   }
@@ -221,7 +298,7 @@ class AllowedAssetsService {
     try {
       return _allowedAssets.firstWhere((asset) => asset.id == id);
     } catch (e) {
-      return null; // Bulunamadı
+      return null;
     }
   }
 
@@ -231,9 +308,17 @@ class AllowedAssetsService {
     return asset?.isSelectable ?? false;
   }
 
-  /// Ana sayfada gösterilecek öncelikli varlıklar (piyasa kartları için)
+  /// Ana sayfada gösterilecek öncelikli varlıklar (market overview için)
   static List<AssetDefinitionModel> getPriorityAssets() {
-    final priorities = ['ALTIN', 'EURTRY', 'GBPTRY', 'PLATIN'];
+    final priorities = [
+      'ALTIN', // Altın
+      'USDTRY', // ABD Doları
+      'EURTRY', // Euro
+      'GBPTRY', // İngiliz Sterlini
+      'GUMUSTRY', // Gümüş
+      'PLATIN', // Platin
+      'ONS', // Ons
+    ];
     return priorities
         .map((id) => getAssetById(id))
         .where((asset) => asset != null)
@@ -241,8 +326,8 @@ class AllowedAssetsService {
         .toList();
   }
 
-  /// Issue gereksinimi: Bilezik için ayar listesi
+  /// Bilezik için ayar listesi
   static List<String> getBraceletAyarOptions() {
-    return ['14', '22']; // Sadece 14 ve 22 ayar
+    return ['14', '22'];
   }
 }

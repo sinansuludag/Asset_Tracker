@@ -53,6 +53,7 @@ dependencies:
   flutter_animate: ^4.3.0
   phosphor_flutter: ^2.0.1
   gap: ^3.0.1
+  flutter_screenutil: ^5.9.3
   
  
 

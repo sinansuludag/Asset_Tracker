@@ -2,15 +2,16 @@ import 'package:asset_tracker/core/constants/colors/app_colors.dart';
 import 'package:asset_tracker/features/home/presentation/state_management/provider/allowed_assets_provider.dart';
 import 'package:asset_tracker/features/home/presentation/state_management/provider/all_providers.dart';
 import 'package:asset_tracker/features/home/data/models/buying_asset_model.dart';
+import 'package:asset_tracker/features/home/data/models/asset_definition_model.dart';
 import 'package:asset_tracker/features/home/domain/entities/asset_type_enum.dart';
 import 'package:asset_tracker/features/home/presentation/state_management/provider/buying_asset_notifier.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-/// Gelişmiş varlık ekleme dialog'u
-/// Issue gereksinimi: Sadece izinli varlıklar + bilezik özel durumu
+/// Orta düzey tasarım varlık ekleme dialog'u
 void showUltraModernBuyingDialog(BuildContext context) {
   showModalBottomSheet(
     context: context,
@@ -18,7 +19,7 @@ void showUltraModernBuyingDialog(BuildContext context) {
     isDismissible: true,
     enableDrag: true,
     backgroundColor: Colors.transparent,
-    barrierColor: Colors.black.withOpacity(0.5),
+    barrierColor: Colors.black.withAlpha(125),
     builder: (context) => const UltraModernBuyingDialog(),
   );
 }
@@ -35,16 +36,16 @@ class _UltraModernBuyingDialogState
     extends ConsumerState<UltraModernBuyingDialog>
     with TickerProviderStateMixin {
   // Form controller'ları
-  final _buyingAssetController = TextEditingController();
-  final _quantityAssetController = TextEditingController();
-  final _gramWeightController = TextEditingController(); // Bilezik için
+  final _buyingPriceController = TextEditingController();
+  final _quantityController = TextEditingController();
+  final _gramWeightController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   // Seçim durumları
   DateTime? _selectedDate;
   String? selectedAssetId;
   bool isBraceletSelected = false;
-  String? selectedAyar; // 14 veya 22 ayar (bilezik için)
+  String? selectedAyar;
 
   // Animasyon controller'ları
   late AnimationController _fadeController;
@@ -82,16 +83,29 @@ class _UltraModernBuyingDialogState
   void dispose() {
     _fadeController.dispose();
     _slideController.dispose();
-    _buyingAssetController.dispose();
-    _quantityAssetController.dispose();
+    _buyingPriceController.dispose();
+    _quantityController.dispose();
     _gramWeightController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final selectableAssets = ref.watch(selectableAssetsProvider);
-    final buyingAssetState = ref.watch(buyingAssetProvider);
+    final List<AssetDefinitionModel> selectableAssets =
+        ref.watch(selectableAssetsProvider);
+    final BuyingAssetState buyingAssetState = ref.watch(buyingAssetProvider);
+
+    // ✅ ref.listen'i build metodu içine taşı
+    ref.listen(buyingAssetProvider, (previous, next) {
+      if (next == BuyingAssetState.loaded) {
+        Navigator.pop(context);
+        _showSuccessMessage("Varlık başarıyla eklendi!");
+        ref.read(enhancedPortfolioProvider.notifier).refreshPortfolio();
+      } else if (next == BuyingAssetState.error) {
+        final error = ref.read(buyingAssetProvider.notifier).lastError;
+        _showErrorMessage("Hata: ${error ?? 'Bilinmeyen hata'}");
+      }
+    });
 
     return FadeTransition(
       opacity: _fadeAnimation,
@@ -100,51 +114,40 @@ class _UltraModernBuyingDialogState
         child: Container(
           height: MediaQuery.of(context).size.height * 0.9,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.white, const Color(0xFFF8FFFE), Colors.white],
-            ),
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                offset: const Offset(0, -10),
-                blurRadius: 30,
-              ),
-            ],
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
           ),
           child: Column(
             children: [
-              _buildDynamicHeader(),
+              _buildHeader(),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
+                  padding: EdgeInsets.all(24.r),
                   child: Form(
                     key: _formKey,
                     child: Column(
                       children: [
                         _buildAssetSelector(selectableAssets),
-                        const SizedBox(height: 24),
+                        SizedBox(height: 24.h),
 
-                        // Issue gereksinimi: Bilezik özel alanları
+                        // Bilezik özel alanları
                         if (isBraceletSelected) ...[
                           _buildAyarSelector(),
-                          const SizedBox(height: 24),
+                          SizedBox(height: 24.h),
                           _buildGramWeightField(),
-                          const SizedBox(height: 24),
+                          SizedBox(height: 24.h),
                         ],
 
-                        _buildNeonPriceField(),
-                        const SizedBox(height: 24),
+                        _buildPriceField(),
+                        SizedBox(height: 24.h),
 
-                        // Normal varlıklar için miktar alanı
-                        if (!isBraceletSelected) _buildCyberQuantityField(),
-                        const SizedBox(height: 24),
+                        // Normal varlıklar için miktar
+                        if (!isBraceletSelected) _buildQuantityField(),
+                        SizedBox(height: 24.h),
 
-                        _buildHolographicDatePicker(),
-                        const SizedBox(height: 32),
-                        _buildQuantumActionButtons(buyingAssetState),
+                        _buildDatePicker(),
+                        SizedBox(height: 32.h),
+                        _buildActionButtons(buyingAssetState),
                       ],
                     ),
                   ),
@@ -157,10 +160,8 @@ class _UltraModernBuyingDialogState
     );
   }
 
-  /// Header kısmı - animasyonlu ve modern
-  Widget _buildDynamicHeader() {
+  Widget _buildHeader() {
     return Container(
-      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
@@ -171,219 +172,197 @@ class _UltraModernBuyingDialogState
             Color(0xFF00E5FF),
           ],
         ),
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF1DD1A1).withOpacity(0.3),
-            offset: const Offset(0, 10),
-            blurRadius: 30,
+            color: const Color(0xFF1DD1A1).withAlpha(80),
+            offset: const Offset(0, 4),
+            blurRadius: 20.r,
           ),
         ],
       ),
       child: Column(
         children: [
-          // Drag handle
-          TweenAnimationBuilder<double>(
-            duration: const Duration(seconds: 2),
-            tween: Tween(begin: 0.0, end: 1.0),
-            builder: (context, value, child) {
-              return Container(
-                width: 50 * value,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.8),
-                  borderRadius: BorderRadius.circular(2),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.white.withOpacity(0.5),
-                      blurRadius: 10,
-                    ),
-                  ],
-                ),
-              );
-            },
+          // Drag indicator
+          Container(
+            margin: EdgeInsets.only(top: 12.h),
+            width: 50.w,
+            height: 5.h,
+            decoration: BoxDecoration(
+              color: Colors.white.withAlpha(200),
+              borderRadius: BorderRadius.circular(3.r),
+            ),
           ),
-          const SizedBox(height: 20),
 
-          // Ana header içeriği
-          Row(
-            children: [
-              Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.white.withOpacity(0.3),
-                      Colors.white.withOpacity(0.1),
+          // Header content
+          Padding(
+            padding: EdgeInsets.fromLTRB(24.w, 20.h, 24.w, 28.h),
+            child: Row(
+              children: [
+                // Icon container with glow effect
+                Container(
+                  padding: EdgeInsets.all(14.r),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withAlpha(90),
+                    borderRadius: BorderRadius.circular(16.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.white.withAlpha(60),
+                        offset: const Offset(0, 2),
+                        blurRadius: 8.r,
+                      ),
                     ],
                   ),
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                      color: Colors.white.withOpacity(0.3), width: 2),
+                  child: Icon(
+                    Icons.auto_awesome,
+                    color: const Color(0xFF1DD1A1),
+                    size: 26.r,
+                  ),
                 ),
-                child: const Icon(Icons.auto_awesome,
-                    color: Colors.white, size: 28),
-              ),
-              const SizedBox(width: 20),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "✨ Yeni Varlık Ekle",
-                      style:
-                          Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                    ),
-                    Text(
-                      "Sadece izinli varlıkları ekleyebilirsiniz",
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.white.withOpacity(0.9),
-                          ),
-                    ),
-                  ],
+                SizedBox(width: 18.w),
+
+                // Title and subtitle
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Yeni Varlık Ekle",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 20.sp,
+                          height: 1.2,
+                        ),
+                      ),
+                      SizedBox(height: 4.h),
+                      Text(
+                        "Portföyünüze yeni varlık ekleyin",
+                        style: TextStyle(
+                          color: Colors.white.withAlpha(220),
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  shape: BoxShape.circle,
+
+                // Close button
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withAlpha(80),
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  child: IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: Icon(Icons.close_rounded,
+                        color: Colors.white, size: 22.r),
+                    padding: EdgeInsets.all(8.r),
+                  ),
                 ),
-                child: IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.close, color: Colors.white),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  /// Varlık seçici - sadece izinli varlıklar
-  Widget _buildAssetSelector(selectableAssets) {
+  Widget _buildAssetSelector(List<AssetDefinitionModel> selectableAssets) {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.white.withOpacity(0.9),
-            Colors.white.withOpacity(0.6),
+            const Color(0xFF1DD1A1).withAlpha(40),
+            const Color(0xFF1DD1A1).withAlpha(20),
           ],
         ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.3)),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: const Color(0xFF1DD1A1).withAlpha(100)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 20, top: 16, right: 20),
+            padding: EdgeInsets.only(left: 16.w, top: 16.h, right: 16.w),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: EdgeInsets.all(8.r),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF1DD1A1), Color(0xFF26D0CE)],
-                    ),
-                    borderRadius: BorderRadius.circular(10),
+                    color: const Color(0xFF1DD1A1),
+                    borderRadius: BorderRadius.circular(8.r),
                   ),
-                  child: const Icon(Icons.currency_exchange,
-                      color: Colors.white, size: 20),
+                  child: Icon(Icons.currency_exchange,
+                      color: Colors.white, size: 18.r),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12.w),
                 Text(
-                  "💎 İzinli Varlık Seç",
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
+                  "Varlık Seç",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                    fontSize: 16.sp,
+                  ),
                 ),
               ],
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(16.r),
             child: DropdownButtonFormField<String>(
               value: selectedAssetId,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(12.r),
                   borderSide: BorderSide.none,
                 ),
                 filled: true,
-                fillColor: Colors.grey[50],
+                fillColor: Colors.white,
                 contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                prefixIcon: Container(
-                  margin: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF1DD1A1), Color(0xFF26D0CE)],
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(Icons.account_balance_wallet,
-                      color: Colors.white, size: 20),
-                ),
+                    EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
               ),
-              hint: const Text("🚀 İzinli varlık seçin"),
+              hint: const Text("Varlık seçin"),
               isExpanded: true,
-              items: selectableAssets.map((asset) {
-                return DropdownMenuItem(
+              items: selectableAssets
+                  .map<DropdownMenuItem<String>>((AssetDefinitionModel asset) {
+                return DropdownMenuItem<String>(
                   value: asset.id,
                   child: Row(
                     children: [
                       _getAssetTypeIcon(asset.type),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12.w),
                       Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              asset.displayName,
-                              overflow: TextOverflow.ellipsis,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w600),
-                            ),
-                            if (asset.description != null)
-                              Text(
-                                asset.description!,
-                                style: TextStyle(
-                                    fontSize: 11, color: Colors.grey[600]),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                          ],
+                        child: Text(
+                          asset.displayName,
+                          style: TextStyle(fontSize: 14.sp),
                         ),
                       ),
                       Text(
                         asset.symbol,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF1DD1A1),
+                          color: const Color(0xFF1DD1A1),
+                          fontSize: 12.sp,
                         ),
                       ),
                     ],
                   ),
                 );
               }).toList(),
-              onChanged: (value) {
+              onChanged: (String? value) {
                 setState(() {
                   selectedAssetId = value;
-                  // Issue gereksinimi: Bilezik kontrolü
-                  // Bilezik seçenekleri AYAR14 ve AYAR22 olabilir
                   isBraceletSelected = value == 'AYAR14' || value == 'AYAR22';
+                  if (isBraceletSelected) {
+                    selectedAyar = value == 'AYAR14' ? '14' : '22';
+                  }
                 });
                 HapticFeedback.lightImpact();
               },
-              validator: (value) {
-                if (value == null) return "✋ Lütfen bir varlık seçin";
+              validator: (String? value) {
+                if (value == null) return "Lütfen bir varlık seçin";
                 return null;
               },
             ),
@@ -393,53 +372,51 @@ class _UltraModernBuyingDialogState
     );
   }
 
-  /// Issue gereksinimi: Ayar seçici (bilezik için)
   Widget _buildAyarSelector() {
-    final ayarOptions = ref.watch(braceletAyarOptionsProvider);
+    final List<String> ayarOptions = ref.watch(braceletAyarOptionsProvider);
 
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.indigo.withOpacity(0.1),
-            Colors.purple.withOpacity(0.05),
+            Colors.indigo.withAlpha(40),
+            Colors.purple.withAlpha(20),
           ],
         ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.indigo.withOpacity(0.3)),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: Colors.indigo.withAlpha(100)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 20, top: 16, right: 20),
+            padding: EdgeInsets.only(left: 16.w, top: 16.h, right: 16.w),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: EdgeInsets.all(8.r),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Colors.indigo, Colors.purple],
-                    ),
-                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.indigo,
+                    borderRadius: BorderRadius.circular(8.r),
                   ),
-                  child: const Icon(Icons.star, color: Colors.white, size: 20),
+                  child: Icon(Icons.star, color: Colors.white, size: 18.r),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12.w),
                 Text(
-                  "⭐ Bilezik Ayarı",
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
+                  "Bilezik Ayarı",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                    fontSize: 16.sp,
+                  ),
                 ),
               ],
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(16.r),
             child: Row(
-              children: ayarOptions.map((ayar) {
+              children: ayarOptions.map<Widget>((String ayar) {
                 final isSelected = selectedAyar == ayar;
                 return Expanded(
                   child: GestureDetector(
@@ -450,39 +427,37 @@ class _UltraModernBuyingDialogState
                       HapticFeedback.lightImpact();
                     },
                     child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 8),
-                      padding: const EdgeInsets.all(16),
+                      margin: EdgeInsets.symmetric(horizontal: 6.w),
+                      padding: EdgeInsets.all(14.r),
                       decoration: BoxDecoration(
-                        color: isSelected
-                            ? const Color(0xFF1DD1A1).withOpacity(0.1)
-                            : Colors.white,
-                        borderRadius: BorderRadius.circular(16),
+                        color:
+                            isSelected ? const Color(0xFF1DD1A1) : Colors.white,
+                        borderRadius: BorderRadius.circular(12.r),
                         border: Border.all(
                           color: isSelected
                               ? const Color(0xFF1DD1A1)
                               : Colors.grey[300]!,
-                          width: isSelected ? 2 : 1,
+                          width: 2.w,
                         ),
                       ),
                       child: Column(
                         children: [
                           Text(
-                            "${ayar} Ayar",
+                            "$ayar Ayar",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: isSelected
-                                  ? const Color(0xFF1DD1A1)
-                                  : Colors.black,
+                              color: isSelected ? Colors.white : Colors.black,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4.h),
                           Text(
                             ayar == '14' ? 'Takı için' : 'Bilezik için',
                             style: TextStyle(
-                              fontSize: 11,
-                              color: Colors.grey[600],
+                              fontSize: 11.sp,
+                              color: isSelected
+                                  ? Colors.white.withAlpha(200)
+                                  : Colors.grey[600],
                             ),
-                            textAlign: TextAlign.center,
                           ),
                         ],
                       ),
@@ -497,61 +472,59 @@ class _UltraModernBuyingDialogState
     );
   }
 
-  /// Issue gereksinimi: Gram ağırlığı alanı (bilezik için)
   Widget _buildGramWeightField() {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.pink.withOpacity(0.1),
-            Colors.red.withOpacity(0.05),
+            Colors.pink.withAlpha(40),
+            Colors.red.withAlpha(20),
           ],
         ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.pink.withOpacity(0.3)),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: Colors.pink.withAlpha(100)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 20, top: 16, right: 20),
+            padding: EdgeInsets.only(left: 16.w, top: 16.h, right: 16.w),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: EdgeInsets.all(8.r),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Colors.pink, Colors.red],
-                    ),
-                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.pink,
+                    borderRadius: BorderRadius.circular(8.r),
                   ),
-                  child: const Icon(Icons.scale, color: Colors.white, size: 20),
+                  child: Icon(Icons.scale, color: Colors.white, size: 18.r),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12.w),
                 Text(
-                  "⚖️ Gram Ağırlığı",
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
+                  "Gram Ağırlığı",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                    fontSize: 16.sp,
+                  ),
                 ),
               ],
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(16.r),
             child: TextFormField(
               controller: _gramWeightController,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(12.r),
                   borderSide: BorderSide.none,
                 ),
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.8),
+                fillColor: Colors.white,
                 contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                hintText: "📏 Bilezik ağırlığı (gram)",
+                    EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                hintText: "Bilezik ağırlığı (gram)",
                 suffixText: "gram",
                 suffixStyle: const TextStyle(
                   fontWeight: FontWeight.bold,
@@ -561,12 +534,14 @@ class _UltraModernBuyingDialogState
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
               onChanged: (value) => HapticFeedback.selectionClick(),
-              validator: (value) {
+              validator: (String? value) {
                 if (isBraceletSelected) {
-                  if (value == null || value.isEmpty)
-                    return "⚖️ Gram ağırlığı gerekli";
-                  if (double.tryParse(value) == null)
-                    return "🔢 Geçerli bir ağırlık giriniz";
+                  if (value == null || value.isEmpty) {
+                    return "Gram ağırlığı gerekli";
+                  }
+                  if (double.tryParse(value) == null) {
+                    return "Geçerli bir ağırlık giriniz";
+                  }
                 }
                 return null;
               },
@@ -577,62 +552,60 @@ class _UltraModernBuyingDialogState
     );
   }
 
-  /// Fiyat input alanı
-  Widget _buildNeonPriceField() {
+  Widget _buildPriceField() {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.orange.withOpacity(0.1),
-            Colors.deepOrange.withOpacity(0.05),
+            Colors.orange.withAlpha(40),
+            Colors.deepOrange.withAlpha(20),
           ],
         ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.orange.withOpacity(0.3)),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: Colors.orange.withAlpha(100)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 20, top: 16, right: 20),
+            padding: EdgeInsets.only(left: 16.w, top: 16.h, right: 16.w),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: EdgeInsets.all(8.r),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Colors.orange, Colors.deepOrange],
-                    ),
-                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.orange,
+                    borderRadius: BorderRadius.circular(8.r),
                   ),
-                  child: const Icon(Icons.attach_money,
-                      color: Colors.white, size: 20),
+                  child:
+                      Icon(Icons.attach_money, color: Colors.white, size: 18.r),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12.w),
                 Text(
-                  "💰 Alış Fiyatı",
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
+                  "Alış Fiyatı",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                    fontSize: 16.sp,
+                  ),
                 ),
               ],
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(16.r),
             child: TextFormField(
-              controller: _buyingAssetController,
+              controller: _buyingPriceController,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(12.r),
                   borderSide: BorderSide.none,
                 ),
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.8),
+                fillColor: Colors.white,
                 contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                hintText: "🎯 Alış fiyatını giriniz",
+                    EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                hintText: "Alış fiyatını giriniz",
                 suffixText: "₺",
                 suffixStyle: const TextStyle(
                   fontWeight: FontWeight.bold,
@@ -642,86 +615,12 @@ class _UltraModernBuyingDialogState
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
               onChanged: (value) => HapticFeedback.selectionClick(),
-              validator: (value) {
-                if (value == null || value.isEmpty)
-                  return "💸 Alış fiyatı gerekli";
-                if (double.tryParse(value) == null)
-                  return "🔢 Geçerli bir fiyat giriniz";
-                return null;
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Miktar alanı (normal varlıklar için)
-  Widget _buildCyberQuantityField() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Colors.purple.withOpacity(0.1),
-            Colors.indigo.withOpacity(0.05),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.purple.withOpacity(0.3)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 20, top: 16, right: 20),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Colors.purple, Colors.indigo],
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(Icons.inventory,
-                      color: Colors.white, size: 20),
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  "⚡ Miktar",
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: TextFormField(
-              controller: _quantityAssetController,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                fillColor: Colors.white.withOpacity(0.8),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                hintText: "🎲 Miktar giriniz",
-              ),
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              onChanged: (value) => HapticFeedback.selectionClick(),
-              validator: (value) {
-                if (!isBraceletSelected) {
-                  if (value == null || value.isEmpty)
-                    return "📊 Miktar gerekli";
-                  if (double.tryParse(value) == null)
-                    return "🔢 Geçerli bir miktar giriniz";
+              validator: (String? value) {
+                if (value == null || value.isEmpty) {
+                  return "Alış fiyatı gerekli";
+                }
+                if (double.tryParse(value) == null) {
+                  return "Geçerli bir fiyat giriniz";
                 }
                 return null;
               },
@@ -732,50 +631,122 @@ class _UltraModernBuyingDialogState
     );
   }
 
-  /// Tarih seçici
-  Widget _buildHolographicDatePicker() {
+  Widget _buildQuantityField() {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.cyan.withOpacity(0.1),
-            Colors.blue.withOpacity(0.05),
+            Colors.purple.withAlpha(40),
+            Colors.indigo.withAlpha(20),
           ],
         ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.cyan.withOpacity(0.3)),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: Colors.purple.withAlpha(100)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 20, top: 16, right: 20),
+            padding: EdgeInsets.only(left: 16.w, top: 16.h, right: 16.w),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: EdgeInsets.all(8.r),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Colors.cyan, Colors.blue],
-                    ),
-                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.purple,
+                    borderRadius: BorderRadius.circular(8.r),
                   ),
-                  child:
-                      const Icon(Icons.schedule, color: Colors.white, size: 20),
+                  child: Icon(Icons.inventory, color: Colors.white, size: 18.r),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12.w),
                 Text(
-                  "📅 Alış Tarihi",
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
+                  "Miktar",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                    fontSize: 16.sp,
+                  ),
                 ),
               ],
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(16.r),
+            child: TextFormField(
+              controller: _quantityController,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+                fillColor: Colors.white,
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                hintText: "Miktar giriniz",
+              ),
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              onChanged: (value) => HapticFeedback.selectionClick(),
+              validator: (String? value) {
+                if (!isBraceletSelected) {
+                  if (value == null || value.isEmpty) {
+                    return "Miktar gerekli";
+                  }
+                  if (double.tryParse(value) == null) {
+                    return "Geçerli bir miktar giriniz";
+                  }
+                }
+                return null;
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDatePicker() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Colors.cyan.withAlpha(40),
+            Colors.blue.withAlpha(20),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: Colors.cyan.withAlpha(100)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(left: 16.w, top: 16.h, right: 16.w),
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(8.r),
+                  decoration: BoxDecoration(
+                    color: Colors.cyan,
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: Icon(Icons.schedule, color: Colors.white, size: 18.r),
+                ),
+                SizedBox(width: 12.w),
+                Text(
+                  "Alış Tarihi",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                    fontSize: 16.sp,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(16.r),
             child: GestureDetector(
               onTap: () async {
                 HapticFeedback.mediumImpact();
@@ -784,19 +755,6 @@ class _UltraModernBuyingDialogState
                   initialDate: DateTime.now(),
                   firstDate: DateTime(2020),
                   lastDate: DateTime.now(),
-                  builder: (context, child) {
-                    return Theme(
-                      data: Theme.of(context).copyWith(
-                        colorScheme: const ColorScheme.light(
-                          primary: Color(0xFF1DD1A1),
-                          onPrimary: Colors.white,
-                          surface: Colors.white,
-                          onSurface: Colors.black,
-                        ),
-                      ),
-                      child: child!,
-                    );
-                  },
                 );
                 if (date != null) {
                   setState(() {
@@ -806,41 +764,36 @@ class _UltraModernBuyingDialogState
                 }
               },
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.8),
-                  borderRadius: BorderRadius.circular(16),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Row(
                   children: [
                     Container(
-                      margin: const EdgeInsets.only(right: 12),
-                      padding: const EdgeInsets.all(8),
+                      margin: EdgeInsets.only(right: 12.w),
+                      padding: EdgeInsets.all(6.r),
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Colors.cyan, Colors.blue],
-                        ),
-                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.cyan,
+                        borderRadius: BorderRadius.circular(6.r),
                       ),
-                      child: const Icon(Icons.event,
-                          color: Colors.white, size: 20),
+                      child: Icon(Icons.event, color: Colors.white, size: 16.r),
                     ),
                     Expanded(
                       child: Text(
                         _selectedDate != null
-                            ? "📆 ${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}"
-                            : "🗓️ Tarih seçin",
+                            ? "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}"
+                            : "Tarih seçin",
                         style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
+                          fontSize: 14.sp,
                           color: _selectedDate != null
                               ? Colors.black
                               : Colors.grey[600],
                         ),
                       ),
                     ),
-                    const Icon(Icons.arrow_drop_down, color: Colors.cyan),
+                    Icon(Icons.arrow_drop_down, color: Colors.cyan, size: 20.r),
                   ],
                 ),
               ),
@@ -851,59 +804,75 @@ class _UltraModernBuyingDialogState
     );
   }
 
-  /// Alt aksiyon butonları
-  Widget _buildQuantumActionButtons(BuyingAssetState buyingAssetState) {
+  Widget _buildActionButtons(BuyingAssetState buyingAssetState) {
     final isLoading = buyingAssetState == BuyingAssetState.loading;
 
     return Row(
       children: [
-        // İptal butonu
+        // Cancel button
         Expanded(
           child: Container(
-            height: 56,
+            height: 54.h,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.grey[300]!),
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(14.r),
+              border: Border.all(color: Colors.grey[300]!, width: 1.5.w),
             ),
             child: Material(
               color: Colors.transparent,
               child: InkWell(
                 onTap: () => Navigator.pop(context),
-                borderRadius: BorderRadius.circular(16),
-                child: const Center(
-                  child: Text(
-                    "❌ İptal",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey,
-                    ),
+                borderRadius: BorderRadius.circular(14.r),
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.close_rounded,
+                          color: Colors.grey[600], size: 20.r),
+                      SizedBox(width: 8.w),
+                      Text(
+                        "İptal",
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
           ),
         ),
-        const SizedBox(width: 16),
-        // Varlık ekle butonu
+        SizedBox(width: 16.w),
+
+        // Save button
         Expanded(
           flex: 2,
           child: Container(
-            height: 56,
+            height: 54.h,
             decoration: BoxDecoration(
               gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
                 colors: [
                   Color(0xFF1DD1A1),
                   Color(0xFF26D0CE),
-                  Color(0xFF00E5FF),
+                  Color(0xFF00E5FF)
                 ],
               ),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(14.r),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF1DD1A1).withOpacity(0.4),
-                  offset: const Offset(0, 8),
-                  blurRadius: 24,
+                  color: const Color(0xFF1DD1A1).withAlpha(100),
+                  offset: const Offset(0, 6),
+                  blurRadius: 20.r,
+                ),
+                BoxShadow(
+                  color: Colors.white.withAlpha(80),
+                  offset: const Offset(0, 1),
+                  blurRadius: 0,
                 ),
               ],
             ),
@@ -911,25 +880,48 @@ class _UltraModernBuyingDialogState
               color: Colors.transparent,
               child: InkWell(
                 onTap: isLoading ? null : _handleAssetSave,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(14.r),
                 child: Center(
                   child: isLoading
-                      ? const SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.white),
-                            strokeWidth: 2,
-                          ),
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 22.w,
+                              height: 22.h,
+                              child: const CircularProgressIndicator(
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                                strokeWidth: 2.5,
+                              ),
+                            ),
+                            SizedBox(width: 12.w),
+                            Text(
+                              "Ekleniyor...",
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
                         )
-                      : const Text(
-                          "✨ Varlık Ekle",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.add_circle_outline,
+                                color: Colors.white, size: 22.r),
+                            SizedBox(width: 10.w),
+                            Text(
+                              "Varlık Ekle",
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
                         ),
                 ),
               ),
@@ -940,42 +932,37 @@ class _UltraModernBuyingDialogState
     );
   }
 
-  /// Varlık kaydetme işlemi
+  // ✅ _handleAssetSave metodunu basitleştir - ref.listen artık build metodunda
   void _handleAssetSave() {
     HapticFeedback.heavyImpact();
 
-    // Form validation kontrolü
     if (!_formKey.currentState!.validate() ||
         selectedAssetId == null ||
         _selectedDate == null) {
-      _showErrorMessage("⚠️ Lütfen tüm alanları doldurun");
+      _showErrorMessage("Lütfen tüm alanları doldurun");
       return;
     }
 
-    // Bilezik özel kontrolü
     if (isBraceletSelected &&
         (selectedAyar == null || _gramWeightController.text.isEmpty)) {
-      _showErrorMessage("⚠️ Bilezik için ayar ve gram ağırlığı gerekli");
+      _showErrorMessage("Bilezik için ayar ve gram ağırlığı gerekli");
       return;
     }
 
-    // Asset oluştur
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
-      _showErrorMessage("❌ Kullanıcı oturumu bulunamadı");
+      _showErrorMessage("Kullanıcı oturumu bulunamadı");
       return;
     }
 
     final asset = BuyingAssetModel(
-      id: '', // Firestore tarafından oluşturulacak
+      id: '',
       assetType: selectedAssetId!,
       buyingDate: _selectedDate!,
-      buyingPrice: double.parse(_buyingAssetController.text),
-      quantity: isBraceletSelected
-          ? 1.0
-          : double.parse(_quantityAssetController.text),
+      buyingPrice: double.parse(_buyingPriceController.text),
+      quantity:
+          isBraceletSelected ? 1.0 : double.parse(_quantityController.text),
       userId: user.uid,
-      // Issue gereksinimi: Bilezik özel alanları
       assetSubType: isBraceletSelected ? 'bracelet' : 'normal',
       ayarType: selectedAyar,
       gramWeight: isBraceletSelected
@@ -983,21 +970,8 @@ class _UltraModernBuyingDialogState
           : null,
     );
 
-    // Asset'i kaydet
+    // ✅ Sadece save işlemini yap, listen build metodunda
     ref.read(buyingAssetProvider.notifier).saveBuyingAsset(asset);
-
-    // Listen for state changes
-    ref.listen(buyingAssetProvider, (previous, next) {
-      if (next == BuyingAssetState.loaded) {
-        Navigator.pop(context);
-        _showSuccessMessage("🎉 Varlık başarıyla eklendi!");
-        // Portföyü yenile
-        ref.read(userPortfolioProvider.notifier).refreshPortfolio();
-      } else if (next == BuyingAssetState.error) {
-        final error = ref.read(buyingAssetProvider.notifier).lastError;
-        _showErrorMessage("❌ Hata: ${error ?? 'Bilinmeyen hata'}");
-      }
-    });
   }
 
   void _showSuccessMessage(String message) {
@@ -1006,13 +980,14 @@ class _UltraModernBuyingDialogState
         content: Row(
           children: [
             const Icon(Icons.check_circle, color: Colors.white),
-            const SizedBox(width: 12),
+            SizedBox(width: 12.w),
             Text(message),
           ],
         ),
         backgroundColor: AppColors.primaryGreen,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
       ),
     );
   }
@@ -1024,18 +999,18 @@ class _UltraModernBuyingDialogState
         content: Row(
           children: [
             const Icon(Icons.warning, color: Colors.white),
-            const SizedBox(width: 12),
+            SizedBox(width: 12.w),
             Text(message),
           ],
         ),
         backgroundColor: Colors.orange,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
       ),
     );
   }
 
-  /// Varlık türü ikonu
   Widget _getAssetTypeIcon(AssetType type) {
     Color color;
     IconData icon;
@@ -1049,10 +1024,6 @@ class _UltraModernBuyingDialogState
         color = Colors.green;
         icon = Icons.attach_money;
         break;
-      case AssetType.bracelet:
-        color = Colors.purple;
-        icon = Icons.watch; // Changed from Icons.jewelry to Icons.watch
-        break;
       case AssetType.platinum:
         color = Colors.grey;
         icon = Icons.diamond;
@@ -1064,13 +1035,13 @@ class _UltraModernBuyingDialogState
     }
 
     return Container(
-      width: 32,
-      height: 32,
+      width: 28.w,
+      height: 28.h,
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(8),
+        color: color.withAlpha(50),
+        borderRadius: BorderRadius.circular(6.r),
       ),
-      child: Icon(icon, color: color, size: 18),
+      child: Icon(icon, color: color, size: 16.r),
     );
   }
 }

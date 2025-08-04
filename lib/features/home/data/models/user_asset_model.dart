@@ -5,17 +5,17 @@ import 'package:asset_tracker/features/home/data/models/currency_data_model.dart
 /// Kullanıcının sahip olduğu varlıkları temsil eden model
 /// BuyingAsset + güncel fiyat = UserAsset (portföy görünümü için)
 class UserAssetModel {
-  final String id; // Varlık ID'si
-  final String assetType; // Varlık türü (ALTIN, EURTRY vs.)
-  final String displayName; // Görüntülenecek isim
-  final double quantity; // Miktar
-  final double averagePrice; // Ortalama alış fiyatı
-  final double currentPrice; // Şu anki fiyat (WebSocket'den)
-  final double currentValue; // Şu anki değer (quantity × currentPrice)
-  final double change; // Değişim (₺)
-  final double changePercentage; // Değişim (%)
-  final String icon; // İkon
-  final DateTime lastUpdated; // Son güncellenme
+  final String id;
+  final String assetType;
+  final String displayName;
+  final double quantity;
+  final double averagePrice;
+  final double currentPrice;
+  final double currentValue;
+  final double change;
+  final double changePercentage;
+  final String icon;
+  final DateTime lastUpdated;
 
   const UserAssetModel({
     required this.id,
@@ -32,32 +32,58 @@ class UserAssetModel {
   });
 
   /// BuyingAsset + güncel fiyat → UserAsset dönüşümü
-  /// Bu method portföy hesaplama için kritik
   factory UserAssetModel.fromBuyingAsset(
     BuyingAssetModel buyingAsset,
     CurrencyData currentData,
   ) {
-    // Şu anki fiyat (WebSocket'den gelen alış fiyatı)
-    final currentPrice = currentData.buying ?? 0.0;
-
-    // Bilezik özel durumu kontrolü
+    double currentPrice;
     double currentValue;
-    if (buyingAsset.isBracelet && buyingAsset.gramWeight != null) {
-      // Bilezik: gramWeight × ayarPrice
-      // Burada ayar fiyatını currentPrice olarak kullanıyoruz
-      currentValue = buyingAsset.gramWeight! * currentPrice;
-    } else {
-      // Normal: quantity × currentPrice
-      currentValue = buyingAsset.quantity * currentPrice;
-    }
+    double totalInvested;
 
-    // Toplam yatırılan miktar
-    final totalInvested = buyingAsset.quantity * buyingAsset.buyingPrice;
+    if (buyingAsset.isBracelet && buyingAsset.gramWeight != null) {
+      // ✅ BİLEZİK HESAPLAMASI (Saf altın değeri)
+
+      // Ayar oranlarını direkt burada belirle
+      double pureGoldRatio;
+      switch (buyingAsset.assetType.toUpperCase()) {
+        case 'AYAR14':
+          pureGoldRatio = 0.585; // %58.5 saf altın
+          break;
+        case 'AYAR22':
+          pureGoldRatio = 0.917; // %91.7 saf altın
+          break;
+        default:
+          pureGoldRatio = 1.0; // %100 saf altın (24K)
+      }
+
+      // Saf altın ağırlığı hesapla
+      double pureGoldWeight = buyingAsset.gramWeight! * pureGoldRatio;
+
+      // Şu anki altın fiyatı (24K)
+      currentPrice = currentData.buying ?? 0.0;
+
+      // Şu anki değer = saf altın ağırlığı × güncel altın fiyatı
+      currentValue = pureGoldWeight * currentPrice;
+
+      // Yatırılan miktar = quantity × alış fiyatı
+      totalInvested = buyingAsset.quantity * buyingAsset.buyingPrice;
+    } else {
+      // ✅ NORMAL VARLIK HESAPLAMASI
+
+      // Şu anki fiyat (WebSocket'den)
+      currentPrice = currentData.buying ?? 0.0;
+
+      // Şu anki değer = quantity × güncel fiyat
+      currentValue = buyingAsset.quantity * currentPrice;
+
+      // Yatırılan miktar = quantity × alış fiyatı
+      totalInvested = buyingAsset.quantity * buyingAsset.buyingPrice;
+    }
 
     // Kar/zarar hesaplama
     final change = currentValue - totalInvested;
 
-    // Değişim yüzdesi hesaplama
+    // Değişim yüzdesi
     final changePercentage =
         totalInvested > 0 ? (change / totalInvested) * 100 : 0.0;
 
@@ -78,7 +104,7 @@ class UserAssetModel {
 
   /// Varlık kodunu Türkçe isme çevirme
   static String _getDisplayName(String assetType) {
-    return assetType.getCurrencyName(); // Mevcut extension kullanımı
+    return assetType.getCurrencyName();
   }
 
   /// Varlık türüne göre ikon belirleme
