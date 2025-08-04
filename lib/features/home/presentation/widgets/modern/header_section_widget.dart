@@ -1,12 +1,13 @@
 import 'package:asset_tracker/core/constants/colors/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-/// Üst kısım - Kullanıcı karşılama ve portföy özeti
+/// Üst kısım - Kullanıcı karşılama ve portföy özeti - DÜZELTİLMİŞ VERSİYON
 class HeaderSectionWidget extends StatelessWidget {
   final double totalPortfolioValue; // Toplam portföy değeri
-  final double totalChange; // Toplam değişim
+  final double totalChange; // Toplam değişim miktarı
   final double changePercentage; // Değişim yüzdesi
-  final String userName; // Kullanıcı adı
+  final String userName;
 
   const HeaderSectionWidget({
     super.key,
@@ -20,11 +21,11 @@ class HeaderSectionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        gradient: AppColors.primaryGradient, // Gradyan arka plan
+        gradient: AppColors.primaryGradient,
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
+          padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 40.h),
           child: Column(
             children: [
               // Header Top
@@ -32,7 +33,7 @@ class HeaderSectionWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Üst kısım - Selamlama ve butonlar
-                  Expanded(
+                  Flexible(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -40,10 +41,11 @@ class HeaderSectionWidget extends StatelessWidget {
                           "Merhaba,",
                           style:
                               Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                    color: Colors.white.withOpacity(0.9),
+                                    color: Colors.white.withAlpha(240),
+                                    fontSize: 14.sp,
                                   ),
                         ),
-                        const SizedBox(height: 2),
+                        SizedBox(height: 1.h),
                         Text(
                           userName,
                           style: Theme.of(context)
@@ -52,22 +54,18 @@ class HeaderSectionWidget extends StatelessWidget {
                               ?.copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
+                                fontSize: 20.sp,
                               ),
+                          overflow: TextOverflow.ellipsis, // Taşma kontrolü
+                          maxLines: 1, // Tek satırda sınırla
                         ),
                       ],
                     ),
                   ),
                   // Sağ taraf - Aksiyon butonları
                   Row(
+                    mainAxisSize: MainAxisSize.min, // İçeriğe göre boyutlandır
                     children: [
-                      _buildActionButton(
-                        icon: Icons.notifications_outlined,
-                        badge: "3",
-                        onTap: () {
-                          // Notification handler
-                        },
-                      ),
-                      const SizedBox(width: 12),
                       _buildActionButton(
                         icon: Icons.settings_outlined,
                         onTap: () {
@@ -78,7 +76,7 @@ class HeaderSectionWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 30),
+              SizedBox(height: 25.h),
 
               // Portföy özeti
               Column(
@@ -89,51 +87,64 @@ class HeaderSectionWidget extends StatelessWidget {
                     style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w800,
-                          fontSize: 36,
+                          fontSize: 36.sp,
                         ),
+                    textAlign: TextAlign.center, // Merkeze hizala
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8.h),
                   // Portföy açıklaması ve değişim
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        "Toplam Portföy Değeri",
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: Colors.white.withOpacity(0.9),
-                            ),
+                      Flexible(
+                        // Expanded yerine Flexible
+                        child: Text(
+                          "Toplam Portföy Değeri",
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    color: Colors.white.withAlpha(240),
+                                    fontSize: 14.sp,
+                                  ),
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis, // Taşma kontrolü
+                        ),
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8.w),
                       // Değişim badge'i
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 8.w, vertical: 4.h),
                         decoration: BoxDecoration(
                           color: totalChange >= 0
-                              ? Colors.green.withOpacity(0.2)
-                              : Colors.red.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(8),
+                              ? Colors.green.withAlpha(75)
+                              : Colors.red.withAlpha(75),
+                          borderRadius: BorderRadius.circular(8.r),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              "${totalChange >= 0 ? '+' : ''}₺${totalChange.toStringAsFixed(2)}",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                            Flexible(
+                              // Text widget için Flexible
+                              child: Text(
+                                "${totalChange >= 0 ? '+' : ''}₺${totalChange.toStringAsFixed(2)}",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 12.sp,
+                                    ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                            const SizedBox(width: 4),
+                            SizedBox(width: 4.w),
                             Icon(
                               totalChange >= 0
                                   ? Icons.trending_up
                                   : Icons.trending_down,
                               color: Colors.white,
-                              size: 16,
+                              size: 16.r,
                             ),
                           ],
                         ),
@@ -152,29 +163,30 @@ class HeaderSectionWidget extends StatelessWidget {
   // Aksiyon butonu oluşturma helper'ı
   Widget _buildActionButton({
     required IconData icon,
-    String? badge, // Opsiyonel badge (bildirim sayısı)
+    String? badge,
     required VoidCallback onTap,
   }) {
     return Stack(
+      clipBehavior: Clip.none, // Taşma kontrolü
       children: [
         // Ana buton container'ı
         Container(
-          width: 40,
-          height: 40,
+          width: 40.w,
+          height: 40.h,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(12),
+            color: Colors.white.withAlpha(65),
+            borderRadius: BorderRadius.circular(12.r),
             border: Border.all(
-              color: Colors.white.withOpacity(0.2),
-              width: 1,
+              color: Colors.white.withAlpha(65),
+              width: 1.w,
             ),
           ),
           child: Material(
             color: Colors.transparent,
             child: InkWell(
               onTap: onTap,
-              borderRadius: BorderRadius.circular(12),
-              child: Icon(icon, color: Colors.white, size: 20),
+              borderRadius: BorderRadius.circular(12.r),
+              child: Icon(icon, color: Colors.white, size: 20.r),
             ),
           ),
         ),
@@ -184,17 +196,17 @@ class HeaderSectionWidget extends StatelessWidget {
             right: -2,
             top: -2,
             child: Container(
-              padding: const EdgeInsets.all(4),
+              padding: EdgeInsets.all(4.r),
               decoration: const BoxDecoration(
                 color: Colors.red,
                 shape: BoxShape.circle,
               ),
-              constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
+              constraints: BoxConstraints(minWidth: 18.w, minHeight: 18.h),
               child: Text(
                 badge,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
-                  fontSize: 10,
+                  fontSize: 10.r,
                   fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,

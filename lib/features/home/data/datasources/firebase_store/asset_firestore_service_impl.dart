@@ -20,7 +20,6 @@ class AssetFirestoreServiceImpl implements IAssetService {
     try {
       final user = _auth.currentUser;
       if (user == null) {
-        debugPrint('❌ User not authenticated');
         return false;
       }
 
@@ -36,10 +35,8 @@ class AssetFirestoreServiceImpl implements IAssetService {
       // Firestore'a kaydet
       await docRef.set(assetWithId.toJson());
 
-      debugPrint('✅ Asset saved successfully: ${assetWithId.id}');
       return true;
     } catch (e) {
-      debugPrint('❌ Error saving asset: $e');
       return false;
     }
   }
@@ -56,11 +53,8 @@ class AssetFirestoreServiceImpl implements IAssetService {
       final assets = querySnapshot.docs
           .map((doc) => BuyingAssetModel.fromJson(doc.data()))
           .toList();
-
-      debugPrint('✅ Fetched ${assets.length} assets for user: $userId');
       return assets;
     } catch (e) {
-      debugPrint('❌ Error fetching user assets: $e');
       return [];
     }
   }
@@ -75,16 +69,13 @@ class AssetFirestoreServiceImpl implements IAssetService {
       final doc =
           await _firestore.collection(_collectionName).doc(assetId).get();
       if (!doc.exists || doc.data()?['userId'] != user.uid) {
-        debugPrint('❌ Asset not found or unauthorized');
         return false;
       }
 
       await _firestore.collection(_collectionName).doc(assetId).delete();
 
-      debugPrint('✅ Asset deleted successfully: $assetId');
       return true;
     } catch (e) {
-      debugPrint('❌ Error deleting asset: $e');
       return false;
     }
   }
@@ -99,7 +90,6 @@ class AssetFirestoreServiceImpl implements IAssetService {
       final doc =
           await _firestore.collection(_collectionName).doc(asset.id).get();
       if (!doc.exists || doc.data()?['userId'] != user.uid) {
-        debugPrint('❌ Asset not found or unauthorized');
         return false;
       }
 
@@ -108,15 +98,13 @@ class AssetFirestoreServiceImpl implements IAssetService {
           .doc(asset.id)
           .update(asset.toJson());
 
-      debugPrint('✅ Asset updated successfully: ${asset.id}');
       return true;
     } catch (e) {
-      debugPrint('❌ Error updating asset: $e');
       return false;
     }
   }
 
-  /// Real-time stream for user assets (bonus feature)
+  /// Real-time stream for user assets
   Stream<List<AssetEntity>> getUserAssetsStream(String userId) {
     return _firestore
         .collection(_collectionName)

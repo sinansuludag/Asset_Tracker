@@ -4,7 +4,7 @@ import 'package:asset_tracker/features/home/domain/entities/asset_model.dart';
 /// Firebase Firestore'da saklanacak gerçek veri yapısı
 /// Issue'deki bilezik özel durumunu da destekler
 class BuyingAssetModel extends AssetEntity {
-  // Bilezik özel alanları (issue gereksinimi)
+  // Bilezik özel alanları
   final String? ayarType; // 14 veya 22 ayar (bilezik için zorunlu)
   final double? gramWeight; // Gram ağırlığı (bilezik için zorunlu)
   final String? assetSubType; // 'normal', 'bracelet' vs.
@@ -58,7 +58,7 @@ class BuyingAssetModel extends AssetEntity {
       quantity: (json['quantity'] as num?)?.toDouble() ?? 0.0,
       userId: json['userId'] ?? '',
       ayarType: json['ayarType'],
-      gramWeight: json['gramWeight']?.toDouble(),
+      gramWeight: json['gramWeight']?.toDouble() ?? 0.0,
       assetSubType: json['assetSubType'] ?? 'normal',
     );
   }
@@ -80,10 +80,23 @@ class BuyingAssetModel extends AssetEntity {
     };
   }
 
-  /// Issue gereksinimi: Bilezik değeri hesaplama
+  /// Bilezik kontrolü
+  /// Varlığın bilezik olup olmadığını kontrol etme
+  bool get isBracelet {
+    return assetSubType == 'bracelet' ||
+        (ayarType != null && gramWeight != null && gramWeight! > 0) ||
+        _isAyarBasedAsset();
+  }
+
+  /// Ayar bazlı varlık kontrolü (AYAR14, AYAR22)
+  bool _isAyarBasedAsset() {
+    return assetType == 'AYAR14' || assetType == 'AYAR22';
+  }
+
+  ///Bilezik değeri hesaplama
   /// Bilezik seçilmesi durumunda değer = gramWeight × ayarPrice
   double calculateBraceletValue(double ayar14Price, double ayar22Price) {
-    if (assetSubType != 'bracelet' || gramWeight == null || ayarType == null) {
+    if (!isBracelet || gramWeight == null || ayarType == null) {
       return quantity * buyingPrice; // Normal hesaplama
     }
 
@@ -92,6 +105,35 @@ class BuyingAssetModel extends AssetEntity {
     return gramWeight! * ayarPrice;
   }
 
-  /// Varlığın bilezik olup olmadığını kontrol etme
-  bool get isBracelet => assetSubType == 'bracelet';
+  /// Bilezik için görünen isim
+  String get displayName {
+    if (isBracelet && ayarType != null && gramWeight != null) {
+      return '$ayarType Ayar Bilezik (${gramWeight!.toStringAsFixed(1)}g)';
+    }
+    return assetType; // Normal varlık adı
+  }
+
+  /// Bilezik için miktar birimi
+  String get quantityUnit {
+    if (isBracelet) {
+      return 'gram';
+    }
+
+    // Normal varlıklar için birim belirleme
+    switch (assetType.toLowerCase()) {
+      case 'altin':
+      case 'ayar14':
+      case 'ayar22':
+      case 'kulcealtin':
+        return 'gram';
+      case 'usdtry':
+        return 'USD';
+      case 'eurtry':
+        return 'EUR';
+      case 'gbptry':
+        return 'GBP';
+      default:
+        return 'adet';
+    }
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 
 import '../../../../core/constants/strings/locale/tr_strings.dart';
@@ -29,33 +30,33 @@ class ModernLoginScreen extends ConsumerWidget with LoginScreenMixin {
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppDimensions.spaceL,
+            padding: EdgeInsets.symmetric(
+              horizontal: AppDimensions.spaceL.r,
             ),
             child: Form(
               key: formKey,
               child: Column(
                 children: [
-                  const Gap(60),
+                  Gap(50.h),
 
                   // Logo and title
-                  ModernAuthLogo(
+                  const ModernAuthLogo(
                     title: TrStrings.signIn,
                     subtitle: "Varlıklarınızı akıllıca yönetin",
                   ),
 
-                  const Gap(50),
+                  Gap(30.h),
 
                   // Form card with glassmorphism
                   _buildFormCard(
                       context, ref, emailFocusNode, passwordFocusNode),
 
-                  const Gap(30),
+                  Gap(30.h),
 
                   // Footer links
                   _buildFooter(context),
 
-                  const Gap(40),
+                  Gap(30.h),
                 ],
               ),
             ),
@@ -70,17 +71,17 @@ class ModernLoginScreen extends ConsumerWidget with LoginScreenMixin {
     return FadeInUp(
       duration: const Duration(milliseconds: 1000),
       child: Container(
-        padding: const EdgeInsets.all(AppDimensions.spaceL),
+        padding: EdgeInsets.all(AppDimensions.spaceL.r),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppDimensions.authCardRadius),
-          color: Colors.white.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(AppDimensions.authCardRadius.r),
+          color: Colors.white.withAlpha(35),
           border: Border.all(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withAlpha(50),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withAlpha(25),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -91,7 +92,7 @@ class ModernLoginScreen extends ConsumerWidget with LoginScreenMixin {
             Text(
               "Hoş Geldiniz",
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 22.sp,
                 fontWeight: FontWeight.w700,
                 color: Colors.white,
               ),
@@ -102,13 +103,13 @@ class ModernLoginScreen extends ConsumerWidget with LoginScreenMixin {
             Text(
               "Hesabınıza giriş yapın",
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 14.sp,
                 fontWeight: FontWeight.w400,
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withAlpha(200),
               ),
             ),
 
-            const Gap(30),
+            Gap(30.h),
 
             // Email field
             ModernTextField(
@@ -123,7 +124,7 @@ class ModernLoginScreen extends ConsumerWidget with LoginScreenMixin {
               nextFocusNode: passwordFocusNode,
             ),
 
-            const Gap(20),
+            Gap(20.h),
 
             // Password field
             ModernTextField(
@@ -144,7 +145,7 @@ class ModernLoginScreen extends ConsumerWidget with LoginScreenMixin {
               },
             ),
 
-            const Gap(30),
+            Gap(30.h),
 
             // Login button
             ModernAuthButton(
@@ -174,22 +175,22 @@ class ModernLoginScreen extends ConsumerWidget with LoginScreenMixin {
             child: Text(
               TrStrings.forgetPassword,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
-                fontSize: 15,
+                color: Colors.white.withAlpha(200),
+                fontSize: 14.sp,
                 fontWeight: FontWeight.w500,
               ),
             ),
           ),
 
-          const Gap(20),
+          Gap(20.h),
 
           // Sign up link
           Container(
-            padding: const EdgeInsets.all(AppDimensions.spaceM),
+            padding: EdgeInsets.all(AppDimensions.spaceM.r),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
               border: Border.all(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withAlpha(50),
                 width: 1,
               ),
             ),
@@ -199,8 +200,8 @@ class ModernLoginScreen extends ConsumerWidget with LoginScreenMixin {
                 Text(
                   TrStrings.textForGoToRegister,
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
-                    fontSize: 15,
+                    color: Colors.white.withAlpha(200),
+                    fontSize: 15.sp,
                   ),
                 ),
                 GestureDetector(
@@ -209,9 +210,9 @@ class ModernLoginScreen extends ConsumerWidget with LoginScreenMixin {
                   },
                   child: Text(
                     TrStrings.signUp,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white,
-                      fontSize: 15,
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

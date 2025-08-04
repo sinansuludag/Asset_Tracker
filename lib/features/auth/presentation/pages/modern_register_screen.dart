@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 
 import '../../../../core/constants/strings/locale/tr_strings.dart';
@@ -17,7 +18,7 @@ import '../widgets/modern_text_field.dart';
 import '../widgets/modern_auth_button.dart';
 
 class ModernRegisterScreen extends ConsumerWidget with RegisterScreenMixin {
-    ModernRegisterScreen({super.key});
+  ModernRegisterScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -31,33 +32,33 @@ class ModernRegisterScreen extends ConsumerWidget with RegisterScreenMixin {
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppDimensions.spaceL,
+            padding: EdgeInsets.symmetric(
+              horizontal: AppDimensions.spaceL.r,
             ),
             child: Form(
               key: formKey,
               child: Column(
                 children: [
-                  const Gap(60),
+                  Gap(50.h),
 
                   // Logo and title
-                  ModernAuthLogo(
+                  const ModernAuthLogo(
                     title: TrStrings.signUp,
                     subtitle: "Ücretsiz hesabınızı oluşturun",
                   ),
 
-                  const Gap(40),
+                  Gap(30.h),
 
                   // Form card
                   _buildFormCard(context, ref, usernameFocusNode,
                       emailFocusNode, passwordFocusNode),
 
-                  const Gap(30),
+                  Gap(30.h),
 
                   // Footer
                   _buildFooter(context),
 
-                  const Gap(40),
+                  Gap(40.h),
                 ],
               ),
             ),
@@ -76,17 +77,17 @@ class ModernRegisterScreen extends ConsumerWidget with RegisterScreenMixin {
     return FadeInUp(
       duration: const Duration(milliseconds: 1000),
       child: Container(
-        padding: const EdgeInsets.all(AppDimensions.spaceL),
+        padding: EdgeInsets.all(AppDimensions.spaceL.r),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppDimensions.authCardRadius),
-          color: Colors.white.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(AppDimensions.authCardRadius.r),
+          color: Colors.white.withAlpha(35),
           border: Border.all(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withAlpha(50),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withAlpha(25),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -97,24 +98,24 @@ class ModernRegisterScreen extends ConsumerWidget with RegisterScreenMixin {
             Text(
               "Başlayalım",
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 22.sp,
                 fontWeight: FontWeight.w700,
                 color: Colors.white,
               ),
             ),
 
-            const Gap(8),
+            Gap(8.h),
 
             Text(
               "Yeni hesap oluşturun",
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w400,
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withAlpha(200),
               ),
             ),
 
-            const Gap(30),
+            Gap(30.h),
 
             // Username field
             ModernTextField(
@@ -128,7 +129,7 @@ class ModernRegisterScreen extends ConsumerWidget with RegisterScreenMixin {
               nextFocusNode: emailFocusNode,
             ),
 
-            const Gap(20),
+            Gap(20.h),
 
             // Email field
             ModernTextField(
@@ -143,7 +144,7 @@ class ModernRegisterScreen extends ConsumerWidget with RegisterScreenMixin {
               nextFocusNode: passwordFocusNode,
             ),
 
-            const Gap(20),
+            Gap(20.h),
 
             // Password field
             ModernTextField(
@@ -164,7 +165,7 @@ class ModernRegisterScreen extends ConsumerWidget with RegisterScreenMixin {
               },
             ),
 
-            const Gap(30),
+            Gap(30.h),
 
             // Register button
             ModernAuthButton(
@@ -185,11 +186,11 @@ class ModernRegisterScreen extends ConsumerWidget with RegisterScreenMixin {
     return FadeInUp(
       duration: const Duration(milliseconds: 1200),
       child: Container(
-        padding: const EdgeInsets.all(AppDimensions.spaceM),
+        padding: EdgeInsets.all(AppDimensions.spaceM.r),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withAlpha(50),
             width: 1,
           ),
         ),
@@ -199,8 +200,8 @@ class ModernRegisterScreen extends ConsumerWidget with RegisterScreenMixin {
             Text(
               TrStrings.textForGoToLogin,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
-                fontSize: 15,
+                color: Colors.white.withAlpha(200),
+                fontSize: 14.sp,
               ),
             ),
             GestureDetector(
@@ -209,9 +210,9 @@ class ModernRegisterScreen extends ConsumerWidget with RegisterScreenMixin {
               },
               child: Text(
                 TrStrings.signIn,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
-                  fontSize: 15,
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.w600,
                 ),
               ),

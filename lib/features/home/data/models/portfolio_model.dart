@@ -60,16 +60,4 @@ class PortfolioModel {
 
     return grouped;
   }
-
-  /// En değerli varlık
-  UserAssetModel? get mostValuableAsset {
-    if (assets.isEmpty) return null;
-    return assets.reduce((a, b) => a.currentValue > b.currentValue ? a : b);
-  }
-
-  /// En karlı varlık
-  UserAssetModel? get mostProfitableAsset {
-    if (assets.isEmpty) return null;
-    return assets.reduce((a, b) => a.change > b.change ? a : b);
-  }
 }

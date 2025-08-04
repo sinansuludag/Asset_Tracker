@@ -199,28 +199,6 @@ class EnhancedPortfolioNotifier extends StateNotifier<PortfolioModel> {
     }
   }
 
-  /// Portföy analizi getir
-  Map<String, dynamic> getPortfolioAnalysis() {
-    if (state.assets.isEmpty) return {};
-
-    final currencies = _ref.read(currencyNotifierProvider);
-    if (currencies.isEmpty) return {};
-
-    return _enhancedService.analyzeAssetsByType(
-      assets: state.assets
-          .map((ua) => BuyingAssetModel(
-                id: ua.id,
-                assetType: ua.assetType,
-                buyingDate: DateTime.now(),
-                buyingPrice: ua.averagePrice,
-                quantity: ua.quantity,
-                userId: '',
-              ))
-          .toList(),
-      currencyData: currencies.first,
-    );
-  }
-
   /// En performanslı varlıkları getir
   Map<String, dynamic> getTopPerformers() {
     if (state.assets.isEmpty) return {};

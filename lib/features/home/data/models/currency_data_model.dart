@@ -27,7 +27,6 @@ class CurrencyData {
   factory CurrencyData.fromJson(Map<String, dynamic> json) {
     return CurrencyData(
       code: json['code'],
-      // Haremaltın'dan gelen 'alis' field'ını 'buying'e çevir
       buying: double.tryParse(json['alis']?.toString() ?? '0') ?? 0.0,
       selling: double.tryParse(json['satis']?.toString() ?? '0') ?? 0.0,
       low: double.tryParse(json['dusuk']?.toString() ?? '0') ?? 0.0,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/colors/app_colors.dart';
 
 class ModernAuthBackground extends StatelessWidget {
@@ -48,7 +49,7 @@ class ModernAuthBackground extends StatelessWidget {
           left: -20,
           child: FadeInLeft(
             delay: const Duration(seconds: 1),
-            child: _FloatingCoin(size: 80, delay: 0),
+            child: _FloatingCoin(size: 80.r, delay: 0),
           ),
         ),
         Positioned(
@@ -56,7 +57,7 @@ class ModernAuthBackground extends StatelessWidget {
           right: -30,
           child: FadeInRight(
             delay: const Duration(seconds: 2),
-            child: _FloatingCoin(size: 60, delay: 2),
+            child: _FloatingCoin(size: 60.r, delay: 2),
           ),
         ),
         Positioned(
@@ -64,7 +65,7 @@ class ModernAuthBackground extends StatelessWidget {
           left: -25,
           child: FadeInLeft(
             delay: const Duration(seconds: 3),
-            child: _FloatingCoin(size: 70, delay: 4),
+            child: _FloatingCoin(size: 70.r, delay: 4),
           ),
         ),
       ],
@@ -77,7 +78,7 @@ class PatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.05)
+      ..color = Colors.white.withAlpha(12)
       ..style = PaintingStyle.fill;
 
     // Draw dots pattern
@@ -146,16 +147,16 @@ class _FloatingCoinState extends State<_FloatingCoin>
             height: widget.size,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withAlpha(25),
               border: Border.all(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withAlpha(50),
                 width: 1,
               ),
             ),
             child: Center(
               child: Icon(
                 Icons.monetization_on,
-                color: Colors.white.withOpacity(0.3),
+                color: Colors.white.withAlpha(75),
                 size: widget.size * 0.6,
               ),
             ),
