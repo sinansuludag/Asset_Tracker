@@ -1,8 +1,9 @@
-import 'package:asset_tracker/features/home/data/models/curreny_response_model.dart';
+import 'package:asset_tracker/core/extensions/currency_code_extension.dart';
+import 'package:asset_tracker/features/home/data/models/buying_asset_model.dart';
+import 'package:asset_tracker/features/home/data/models/currency_data_model.dart';
 
-import 'buying_asset_model.dart';
-
-/// Hesaplanmış portföy varlığı - UI'da gösterilir
+/// Kullanıcının sahip olduğu varlıkları temsil eden model
+/// BuyingAsset + güncel fiyat = UserAsset (portföy görünümü için)
 class UserAssetModel {
   final String id;
   final String assetType;
@@ -15,9 +16,6 @@ class UserAssetModel {
   final double changePercentage;
   final String icon;
   final DateTime lastUpdated;
-  final bool isBracelet;
-  final String? ayarType;
-  final double? gramWeight;
 
   const UserAssetModel({
     required this.id,
@@ -31,56 +29,68 @@ class UserAssetModel {
     required this.changePercentage,
     required this.icon,
     required this.lastUpdated,
-    this.isBracelet = false,
-    this.ayarType,
-    this.gramWeight,
   });
 
-  /// ✅ TEK FACTORY METHOD - WebSocket ile hesaplama
+  /// BuyingAsset + güncel fiyat → UserAsset dönüşümü
   factory UserAssetModel.fromBuyingAsset(
     BuyingAssetModel buyingAsset,
-    CurrencyResponse currencyResponse,
+    CurrencyData currentData,
   ) {
-    double currentPrice = 0.0;
-    double currentValue = 0.0;
-    final totalInvested = buyingAsset.quantity * buyingAsset.buyingPrice;
+    double currentPrice;
+    double currentValue;
+    double totalInvested;
 
-    if (buyingAsset.isBracelet &&
-        buyingAsset.gramWeight != null &&
-        buyingAsset.ayarType != null) {
-      // BİLEZİK HESAPLAMASI
-      final ayarData =
-          currencyResponse.currencies['AYAR${buyingAsset.ayarType}'];
+    if (buyingAsset.isBracelet && buyingAsset.gramWeight != null) {
+      // ✅ BİLEZİK HESAPLAMASI (Saf altın değeri)
 
-      if (ayarData?.buying != null) {
-        // WebSocket'den ayar fiyatı var
-        currentPrice = ayarData!.buying!;
-        currentValue = buyingAsset.gramWeight! * currentPrice;
-      } else {
-        // Fallback: Saf altın hesaplama
-        final goldData = currencyResponse.currencies['ALTIN'];
-        final goldPrice = goldData?.buying ?? 0.0;
-
-        double pureGoldRatio = buyingAsset.ayarType == '14' ? 0.585 : 0.917;
-        currentPrice = goldPrice * pureGoldRatio;
-        currentValue = buyingAsset.gramWeight! * pureGoldRatio * goldPrice;
+      // Ayar oranlarını direkt burada belirle
+      double pureGoldRatio;
+      switch (buyingAsset.assetType.toUpperCase()) {
+        case 'AYAR14':
+          pureGoldRatio = 0.585; // %58.5 saf altın
+          break;
+        case 'AYAR22':
+          pureGoldRatio = 0.917; // %91.7 saf altın
+          break;
+        default:
+          pureGoldRatio = 1.0; // %100 saf altın (24K)
       }
+
+      // Saf altın ağırlığı hesapla
+      double pureGoldWeight = buyingAsset.gramWeight! * pureGoldRatio;
+
+      // Şu anki altın fiyatı (24K)
+      currentPrice = currentData.buying ?? 0.0;
+
+      // Şu anki değer = saf altın ağırlığı × güncel altın fiyatı
+      currentValue = pureGoldWeight * currentPrice;
+
+      // Yatırılan miktar = quantity × alış fiyatı
+      totalInvested = buyingAsset.quantity * buyingAsset.buyingPrice;
     } else {
-      // NORMAL VARLIK HESAPLAMASI
-      final assetData = currencyResponse.currencies[buyingAsset.assetType];
-      currentPrice = assetData?.buying ?? 0.0;
+      // ✅ NORMAL VARLIK HESAPLAMASI
+
+      // Şu anki fiyat (WebSocket'den)
+      currentPrice = currentData.buying ?? 0.0;
+
+      // Şu anki değer = quantity × güncel fiyat
       currentValue = buyingAsset.quantity * currentPrice;
+
+      // Yatırılan miktar = quantity × alış fiyatı
+      totalInvested = buyingAsset.quantity * buyingAsset.buyingPrice;
     }
 
-    // Kar/zarar
+    // Kar/zarar hesaplama
     final change = currentValue - totalInvested;
+
+    // Değişim yüzdesi
     final changePercentage =
         totalInvested > 0 ? (change / totalInvested) * 100 : 0.0;
 
     return UserAssetModel(
       id: buyingAsset.id,
       assetType: buyingAsset.assetType,
-      displayName: _getDisplayName(buyingAsset),
+      displayName: _getDisplayName(buyingAsset.assetType),
       quantity: buyingAsset.quantity,
       averagePrice: buyingAsset.buyingPrice,
       currentPrice: currentPrice,
@@ -89,40 +99,15 @@ class UserAssetModel {
       changePercentage: changePercentage,
       icon: _getAssetIcon(buyingAsset.assetType),
       lastUpdated: DateTime.now(),
-      isBracelet: buyingAsset.isBracelet,
-      ayarType: buyingAsset.ayarType,
-      gramWeight: buyingAsset.gramWeight,
     );
   }
 
-  /// Display name belirleme
-  static String _getDisplayName(BuyingAssetModel buyingAsset) {
-    if (buyingAsset.isBracelet &&
-        buyingAsset.ayarType != null &&
-        buyingAsset.gramWeight != null) {
-      return '${buyingAsset.ayarType} Ayar Bilezik (${buyingAsset.gramWeight!.toStringAsFixed(1)}g)';
-    }
-
-    // Basit isimlendirme
-    switch (buyingAsset.assetType) {
-      case 'ALTIN':
-        return 'Altın';
-      case 'USDTRY':
-        return 'Dolar';
-      case 'EURTRY':
-        return 'Euro';
-      case 'GBPTRY':
-        return 'Sterlin';
-      case 'AYAR14':
-        return '14 Ayar Altın';
-      case 'AYAR22':
-        return '22 Ayar Altın';
-      default:
-        return buyingAsset.assetType;
-    }
+  /// Varlık kodunu Türkçe isme çevirme
+  static String _getDisplayName(String assetType) {
+    return assetType.getCurrencyName();
   }
 
-  /// İkon belirleme
+  /// Varlık türüne göre ikon belirleme
   static String _getAssetIcon(String assetType) {
     switch (assetType.toUpperCase()) {
       case 'ALTIN':
@@ -146,12 +131,4 @@ class UserAssetModel {
         return '₺';
     }
   }
-
-  /// UI için formatlanmış değerler
-  bool get isProfitable => change > 0;
-  String get formattedChange =>
-      '${change > 0 ? '+' : ''}₺${change.toStringAsFixed(2)}';
-  String get formattedChangePercentage =>
-      '${changePercentage > 0 ? '+' : ''}${changePercentage.toStringAsFixed(2)}%';
-  String get formattedCurrentValue => '₺${currentValue.toStringAsFixed(2)}';
 }
