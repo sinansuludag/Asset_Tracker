@@ -257,7 +257,7 @@ class UserAssetsWidget extends StatelessWidget {
             SizedBox(width: 12.w),
 
             // Varlık bilgileri
-            Flexible(
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -267,7 +267,7 @@ class UserAssetsWidget extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.w600,
                           color: AppColors.textPrimary,
-                          fontSize: 16.sp,
+                          fontSize: 12.sp,
                         ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
@@ -300,7 +300,7 @@ class UserAssetsWidget extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
-                        fontSize: 16.sp,
+                        fontSize: 14.sp,
                       ),
                 ),
                 SizedBox(height: 2.h),

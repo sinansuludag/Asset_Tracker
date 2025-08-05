@@ -45,22 +45,4 @@ class CurrencyResponse {
       metaDate: metaDate ?? this.metaDate,
     );
   }
-
-  /// Belirli bir varlığın verilerini getirme
-  CurrencyData? getCurrencyData(String assetCode) {
-    return currencies[assetCode];
-  }
-
-  /// Issue gereksinimi: Sadece izinli varlıkları filtrele
-  CurrencyResponse filterByAllowedAssets(List<String> allowedAssetIds) {
-    final filteredCurrencies = <String, CurrencyData>{};
-
-    for (final assetId in allowedAssetIds) {
-      if (currencies.containsKey(assetId)) {
-        filteredCurrencies[assetId] = currencies[assetId]!;
-      }
-    }
-
-    return copyWith(currencies: filteredCurrencies);
-  }
 }

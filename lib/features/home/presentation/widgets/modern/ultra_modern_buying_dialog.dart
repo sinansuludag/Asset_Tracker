@@ -4,7 +4,7 @@ import 'package:asset_tracker/features/home/presentation/state_management/provid
 import 'package:asset_tracker/features/home/data/models/buying_asset_model.dart';
 import 'package:asset_tracker/features/home/data/models/asset_definition_model.dart';
 import 'package:asset_tracker/features/home/domain/entities/asset_type_enum.dart';
-import 'package:asset_tracker/features/home/presentation/state_management/provider/buying_asset_notifier.dart';
+import 'package:asset_tracker/features/home/presentation/state_management/provider/asset_notifier.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -79,6 +79,27 @@ class _UltraModernBuyingDialogState
     _slideController.forward();
   }
 
+  String _getQuantityUnit() {
+    if (isBraceletSelected)
+      return 'gram'; // bilezikte miktar alanını göstermiyoruz ama guard kalsın
+
+    switch ((selectedAssetId ?? '').toUpperCase()) {
+      case 'ALTIN':
+      case 'KULCEALTIN':
+      case 'AYAR14':
+      case 'AYAR22':
+        return 'gram';
+      case 'USDTRY':
+        return 'USD';
+      case 'EURTRY':
+        return 'EUR';
+      case 'GBPTRY':
+        return 'GBP';
+      default:
+        return 'adet';
+    }
+  }
+
   @override
   void dispose() {
     _fadeController.dispose();
@@ -93,17 +114,16 @@ class _UltraModernBuyingDialogState
   Widget build(BuildContext context) {
     final List<AssetDefinitionModel> selectableAssets =
         ref.watch(selectableAssetsProvider);
-    final BuyingAssetState buyingAssetState = ref.watch(buyingAssetProvider);
+    final buyingAssetState = ref.watch(assetNotifierProvider).status;
 
     // ✅ ref.listen'i build metodu içine taşı
-    ref.listen(buyingAssetProvider, (previous, next) {
-      if (next == BuyingAssetState.loaded) {
+    ref.listen(assetNotifierProvider, (previous, next) {
+      if (next.status == BuyingAssetState.loaded) {
         Navigator.pop(context);
         _showSuccessMessage("Varlık başarıyla eklendi!");
-        ref.read(enhancedPortfolioProvider.notifier).refreshPortfolio();
-      } else if (next == BuyingAssetState.error) {
-        final error = ref.read(buyingAssetProvider.notifier).lastError;
-        _showErrorMessage("Hata: ${error ?? 'Bilinmeyen hata'}");
+        // ref.read(enhancedPortfolioProvider.notifier).refreshPortfolio();
+      } else if (next.status == BuyingAssetState.error) {
+        _showErrorMessage("Hata: Bilinmeyen hata");
       }
     });
 
@@ -684,6 +704,9 @@ class _UltraModernBuyingDialogState
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                 hintText: "Miktar giriniz",
+                suffixText: _getQuantityUnit(),
+                suffixStyle: const TextStyle(
+                    fontWeight: FontWeight.w600, color: Colors.purple),
               ),
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
@@ -964,6 +987,10 @@ class _UltraModernBuyingDialogState
           isBraceletSelected ? 1.0 : double.parse(_quantityController.text),
       userId: user.uid,
       assetSubType: isBraceletSelected ? 'bracelet' : 'normal',
+      totalInvestment: double.parse(_buyingPriceController.text) *
+          (isBraceletSelected
+              ? double.tryParse(_gramWeightController.text) ?? 1.0
+              : double.parse(_quantityController.text)),
       ayarType: selectedAyar,
       gramWeight: isBraceletSelected
           ? double.tryParse(_gramWeightController.text)
@@ -971,7 +998,7 @@ class _UltraModernBuyingDialogState
     );
 
     // ✅ Sadece save işlemini yap, listen build metodunda
-    ref.read(buyingAssetProvider.notifier).saveBuyingAsset(asset);
+    ref.read(assetNotifierProvider.notifier).saveBuyingAsset(asset);
   }
 
   void _showSuccessMessage(String message) {

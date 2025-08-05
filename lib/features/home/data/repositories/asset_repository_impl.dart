@@ -20,12 +20,12 @@ class AssetRepositoryImpl implements IAssetRepository {
   }
 
   @override
-  Future<List<AssetEntity>> getUserAssetsRepository(String userId) async {
+  Stream<List<AssetEntity>> getUserAssetsStreamRepository(String userId) {
     try {
-      return await _assetService.getUserAssets(userId);
+      return _assetService.getUserAssetsStream(userId);
     } catch (e) {
       print('Repository error - getUserAssets: $e');
-      return [];
+      return [] as Stream<List<AssetEntity>>;
     }
   }
 

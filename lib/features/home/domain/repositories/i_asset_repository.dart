@@ -7,7 +7,7 @@ abstract class IAssetRepository {
   Future<bool> saveAssetRepository(AssetEntity asset);
 
   /// Kullanıcının varlıklarını getirme
-  Future<List<AssetEntity>> getUserAssetsRepository(String userId);
+  Stream<List<AssetEntity>> getUserAssetsStreamRepository(String userId);
 
   /// Varlık silme
   Future<bool> deleteAssetRepository(String assetId);

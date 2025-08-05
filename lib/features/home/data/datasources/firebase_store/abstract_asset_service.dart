@@ -6,7 +6,7 @@ abstract class IAssetService {
   Future<bool> saveAsset(AssetEntity asset);
 
   /// Kullanıcının varlıklarını getirme
-  Future<List<AssetEntity>> getUserAssets(String userId);
+  Stream<List<AssetEntity>> getUserAssetsStream(String userId);
 
   /// Varlık silme
   Future<bool> deleteAsset(String assetId);

@@ -2,7 +2,7 @@ import 'package:asset_tracker/core/constants/colors/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-/// Üst kısım - Kullanıcı karşılama ve portföy özeti - DÜZELTİLMİŞ VERSİYON
+/// Üst kısım - Kullanıcı karşılama ve portföy özeti
 class HeaderSectionWidget extends StatelessWidget {
   final double totalPortfolioValue; // Toplam portföy değeri
   final double totalChange; // Toplam değişim miktarı
@@ -68,9 +68,7 @@ class HeaderSectionWidget extends StatelessWidget {
                     children: [
                       _buildActionButton(
                         icon: Icons.settings_outlined,
-                        onTap: () {
-                          // Settings handler
-                        },
+                        onTap: () {},
                       ),
                     ],
                   ),
@@ -126,7 +124,7 @@ class HeaderSectionWidget extends StatelessWidget {
                             Flexible(
                               // Text widget için Flexible
                               child: Text(
-                                "${totalChange >= 0 ? '+' : ''}₺${totalChange.toStringAsFixed(2)}",
+                                "${totalChange >= 0 ? '+' : '-'}₺${totalChange.toStringAsFixed(2)}",
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyMedium

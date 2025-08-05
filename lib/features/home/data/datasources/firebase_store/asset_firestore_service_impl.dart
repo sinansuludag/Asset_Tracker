@@ -3,7 +3,6 @@ import 'package:asset_tracker/features/home/data/models/buying_asset_model.dart'
 import 'package:asset_tracker/features/home/domain/entities/asset_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 
 /// Firebase Firestore ile varlık CRUD işlemlerinin implementasyonu
 class AssetFirestoreServiceImpl implements IAssetService {
@@ -11,7 +10,7 @@ class AssetFirestoreServiceImpl implements IAssetService {
   final FirebaseAuth _auth;
 
   // Firestore collection adı
-  static const String _collectionName = 'user_assets';
+  static const String _collectionName = 'assets';
 
   AssetFirestoreServiceImpl(this._firestore, this._auth);
 
@@ -42,21 +41,15 @@ class AssetFirestoreServiceImpl implements IAssetService {
   }
 
   @override
-  Future<List<AssetEntity>> getUserAssets(String userId) async {
-    try {
-      final querySnapshot = await _firestore
-          .collection(_collectionName)
-          .where('userId', isEqualTo: userId)
-          .orderBy('timestamp', descending: true) // En yeni önce
-          .get();
-
-      final assets = querySnapshot.docs
-          .map((doc) => BuyingAssetModel.fromJson(doc.data()))
-          .toList();
-      return assets;
-    } catch (e) {
-      return [];
-    }
+  Stream<List<AssetEntity>> getUserAssetsStream(String userId) {
+    return _firestore
+        .collection(_collectionName)
+        .where('userId', isEqualTo: userId)
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => BuyingAssetModel.fromJson(doc.data()))
+            .toList());
   }
 
   @override
@@ -102,17 +95,5 @@ class AssetFirestoreServiceImpl implements IAssetService {
     } catch (e) {
       return false;
     }
-  }
-
-  /// Real-time stream for user assets
-  Stream<List<AssetEntity>> getUserAssetsStream(String userId) {
-    return _firestore
-        .collection(_collectionName)
-        .where('userId', isEqualTo: userId)
-        .orderBy('timestamp', descending: true)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => BuyingAssetModel.fromJson(doc.data()))
-            .toList());
   }
 }

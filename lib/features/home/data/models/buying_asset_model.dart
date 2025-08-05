@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/extensions/currency_code_extension.dart';
 import 'package:asset_tracker/features/home/domain/entities/asset_model.dart';
 
 /// Kullanıcının satın aldığı varlıkları temsil eden model
@@ -16,6 +17,7 @@ class BuyingAssetModel extends AssetEntity {
     required super.buyingPrice,
     required super.quantity,
     required super.userId,
+    required super.totalInvestment,
     this.ayarType,
     this.gramWeight,
     this.assetSubType,
@@ -29,6 +31,7 @@ class BuyingAssetModel extends AssetEntity {
     double? buyingPrice,
     double? quantity,
     String? userId,
+    double? totalInvestment,
     String? ayarType,
     double? gramWeight,
     String? assetSubType,
@@ -40,6 +43,7 @@ class BuyingAssetModel extends AssetEntity {
       buyingPrice: buyingPrice ?? this.buyingPrice,
       quantity: quantity ?? this.quantity,
       userId: userId ?? this.userId,
+      totalInvestment: totalInvestment ?? this.totalInvestment,
       ayarType: ayarType ?? this.ayarType,
       gramWeight: gramWeight ?? this.gramWeight,
       assetSubType: assetSubType ?? this.assetSubType,
@@ -57,6 +61,8 @@ class BuyingAssetModel extends AssetEntity {
       buyingPrice: (json['buyingPrice'] as num?)?.toDouble() ?? 0.0,
       quantity: (json['quantity'] as num?)?.toDouble() ?? 0.0,
       userId: json['userId'] ?? '',
+      totalInvestment: (json['totalInvestment'] as num?)?.toDouble() ?? 0.0,
+      // Bilezik özel alanları
       ayarType: json['ayarType'],
       gramWeight: json['gramWeight']?.toDouble() ?? 0.0,
       assetSubType: json['assetSubType'] ?? 'normal',
@@ -73,6 +79,7 @@ class BuyingAssetModel extends AssetEntity {
       'buyingPrice': buyingPrice,
       'quantity': quantity,
       'userId': userId,
+      'totalInvestment': totalInvestment,
       'ayarType': ayarType,
       'gramWeight': gramWeight,
       'assetSubType': assetSubType,
@@ -102,7 +109,9 @@ class BuyingAssetModel extends AssetEntity {
 
     // Ayar türüne göre fiyat belirleme
     final ayarPrice = ayarType == '14' ? ayar14Price : ayar22Price;
-    return gramWeight! * ayarPrice;
+    final calGramWeight =
+        ayarType == '14' ? gramWeight! * 0.585 : gramWeight! * 0.917;
+    return calGramWeight * ayarPrice;
   }
 
   /// Bilezik için görünen isim
@@ -110,30 +119,30 @@ class BuyingAssetModel extends AssetEntity {
     if (isBracelet && ayarType != null && gramWeight != null) {
       return '$ayarType Ayar Bilezik (${gramWeight!.toStringAsFixed(1)}g)';
     }
-    return assetType; // Normal varlık adı
+    return assetType.getCurrencyName(); // Normal varlık adı
   }
 
   /// Bilezik için miktar birimi
-  String get quantityUnit {
-    if (isBracelet) {
-      return 'gram';
-    }
+  // String get quantityUnit {
+  //   if (isBracelet) {
+  //     return 'gram';
+  //   }
 
-    // Normal varlıklar için birim belirleme
-    switch (assetType.toLowerCase()) {
-      case 'altin':
-      case 'ayar14':
-      case 'ayar22':
-      case 'kulcealtin':
-        return 'gram';
-      case 'usdtry':
-        return 'USD';
-      case 'eurtry':
-        return 'EUR';
-      case 'gbptry':
-        return 'GBP';
-      default:
-        return 'adet';
-    }
-  }
+  //   // Normal varlıklar için birim belirleme
+  //   switch (assetType.toLowerCase()) {
+  //     case 'altin':
+  //     case 'ayar14':
+  //     case 'ayar22':
+  //     case 'kulcealtin':
+  //       return 'gram';
+  //     case 'usdtry':
+  //       return 'USD';
+  //     case 'eurtry':
+  //       return 'EUR';
+  //     case 'gbptry':
+  //       return 'GBP';
+  //     default:
+  //       return 'adet';
+  //   }
+  // }
 }

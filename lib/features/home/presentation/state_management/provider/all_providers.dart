@@ -5,9 +5,10 @@ import 'package:asset_tracker/features/home/data/repositories/asset_repository_i
 import 'package:asset_tracker/features/home/data/datasources/web_socket/i_currency_websocket_service.dart';
 import 'package:asset_tracker/features/home/data/models/curreny_response_model.dart';
 import 'package:asset_tracker/features/home/data/models/portfolio_model.dart';
+import 'package:asset_tracker/features/home/domain/entities/asset_model.dart';
 import 'package:asset_tracker/features/home/domain/repositories/i_asset_repository.dart';
 import 'package:asset_tracker/features/home/domain/repositories/i_currency_repository.dart';
-import 'package:asset_tracker/features/home/presentation/state_management/provider/buying_asset_notifier.dart';
+import 'package:asset_tracker/features/home/presentation/state_management/provider/asset_notifier.dart';
 import 'package:asset_tracker/features/home/presentation/state_management/provider/currency_notifier.dart';
 import 'package:asset_tracker/features/home/presentation/state_management/provider/enhanced_portfolio_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -56,28 +57,41 @@ final assetRepositoryProvider = Provider<IAssetRepository>((ref) {
 });
 
 // ===== Buying Asset Notifier Provider =====
-final buyingAssetProvider =
-    StateNotifierProvider<BuyingAssetNotifier, BuyingAssetState>((ref) {
-  final assetRepository = ref.watch(assetRepositoryProvider);
-  return BuyingAssetNotifier(assetRepository);
+// Firebase Auth Provider
+final _firebaseAuthProvider = Provider<FirebaseAuth>((ref) {
+  return FirebaseAuth.instance;
 });
 
-// ===== Current User Provider =====
-final currentUserProvider = Provider<User?>((ref) {
-  return FirebaseAuth.instance.currentUser;
+// ✅ Asset Notifier Provider - Portfolio hesaplamaları dahil
+final assetNotifierProvider =
+    StateNotifierProvider<AssetNotifier, AssetUiState>((ref) {
+  final repo = ref.watch(assetRepositoryProvider);
+  final auth = ref.watch(_firebaseAuthProvider);
+  return AssetNotifier(repo, auth);
 });
 
-/// Enhanced Portfolio Provider (Eskisinin yerini alır)
-final enhancedPortfolioProvider =
-    StateNotifierProvider<EnhancedPortfolioNotifier, PortfolioModel>((ref) {
-  return EnhancedPortfolioNotifier(ref);
-});
+final userAssetsStreamProvider =
+    StreamProvider.autoDispose<List<AssetEntity>>((ref) {
+  final auth = ref.watch(_firebaseAuthProvider);
+  final repo = ref.watch(assetRepositoryProvider);
 
-/// Enhanced Portfolio Service Provider
-final enhancedPortfolioServiceProvider =
-    Provider<EnhancedPortfolioService>((ref) {
-  return EnhancedPortfolioService(
-    FirebaseFirestore.instance,
-    FirebaseAuth.instance,
-  );
+  final user = auth.currentUser;
+  if (user == null) {
+    return const Stream.empty();
+  }
+  return repo.getUserAssetsStreamRepository(user.uid);
 });
+// /// Enhanced Portfolio Provider (Eskisinin yerini alır)
+// final enhancedPortfolioProvider =
+//     StateNotifierProvider<EnhancedPortfolioNotifier, PortfolioModel>((ref) {
+//   return EnhancedPortfolioNotifier(ref);
+// });
+
+// /// Enhanced Portfolio Service Provider
+// final enhancedPortfolioServiceProvider =
+//     Provider<EnhancedPortfolioService>((ref) {
+//   return EnhancedPortfolioService(
+//     FirebaseFirestore.instance,
+//     FirebaseAuth.instance,
+//   );
+// });
