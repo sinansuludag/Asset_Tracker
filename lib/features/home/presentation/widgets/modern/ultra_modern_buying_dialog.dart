@@ -7,6 +7,7 @@ import 'package:asset_tracker/features/home/domain/entities/asset_type_enum.dart
 import 'package:asset_tracker/features/home/presentation/state_management/provider/asset_notifier.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -45,6 +46,7 @@ class _UltraModernBuyingDialogState
   DateTime? _selectedDate;
   String? selectedAssetId;
   bool isBraceletSelected = false;
+  bool isGoldAsset = false; // ➕ Yeni: 14 veya 22 ayar altın mı?
   String? selectedAyar;
 
   // Animasyon controller'ları
@@ -80,8 +82,9 @@ class _UltraModernBuyingDialogState
   }
 
   String _getQuantityUnit() {
-    if (isBraceletSelected)
-      return 'gram'; // bilezikte miktar alanını göstermiyoruz ama guard kalsın
+    if (isBraceletSelected) {
+      return 'adet'; // Bilezik için adet
+    }
 
     switch ((selectedAssetId ?? '').toUpperCase()) {
       case 'ALTIN':
@@ -116,14 +119,14 @@ class _UltraModernBuyingDialogState
         ref.watch(selectableAssetsProvider);
     final buyingAssetState = ref.watch(assetNotifierProvider).status;
 
-    // ✅ ref.listen'i build metodu içine taşı
     ref.listen(assetNotifierProvider, (previous, next) {
       if (next.status == BuyingAssetState.loaded) {
-        Navigator.pop(context);
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          Navigator.pop(context);
+        });
         _showSuccessMessage("Varlık başarıyla eklendi!");
-        // ref.read(enhancedPortfolioProvider.notifier).refreshPortfolio();
       } else if (next.status == BuyingAssetState.error) {
-        _showErrorMessage("Hata: Bilinmeyen hata");
+        _showErrorMessage("Hata: ${next.lastError ?? 'Bilinmeyen hata'}");
       }
     });
 
@@ -150,10 +153,14 @@ class _UltraModernBuyingDialogState
                         _buildAssetSelector(selectableAssets),
                         SizedBox(height: 24.h),
 
+                        // ✅ 14 veya 22 ayar seçildiyse kullanım türü sor
+                        if (isGoldAsset) ...[
+                          _buildUsageTypeSelector(),
+                          SizedBox(height: 24.h),
+                        ],
+
                         // Bilezik özel alanları
                         if (isBraceletSelected) ...[
-                          _buildAyarSelector(),
-                          SizedBox(height: 24.h),
                           _buildGramWeightField(),
                           SizedBox(height: 24.h),
                         ],
@@ -203,7 +210,6 @@ class _UltraModernBuyingDialogState
       ),
       child: Column(
         children: [
-          // Drag indicator
           Container(
             margin: EdgeInsets.only(top: 12.h),
             width: 50.w,
@@ -213,13 +219,10 @@ class _UltraModernBuyingDialogState
               borderRadius: BorderRadius.circular(3.r),
             ),
           ),
-
-          // Header content
           Padding(
             padding: EdgeInsets.fromLTRB(24.w, 20.h, 24.w, 28.h),
             child: Row(
               children: [
-                // Icon container with glow effect
                 Container(
                   padding: EdgeInsets.all(14.r),
                   decoration: BoxDecoration(
@@ -240,8 +243,6 @@ class _UltraModernBuyingDialogState
                   ),
                 ),
                 SizedBox(width: 18.w),
-
-                // Title and subtitle
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -267,8 +268,6 @@ class _UltraModernBuyingDialogState
                     ],
                   ),
                 ),
-
-                // Close button
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.white.withAlpha(80),
@@ -359,14 +358,15 @@ class _UltraModernBuyingDialogState
                           style: TextStyle(fontSize: 14.sp),
                         ),
                       ),
-                      Text(
-                        asset.symbol,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF1DD1A1),
-                          fontSize: 12.sp,
+                      if (asset.symbol.isNotEmpty)
+                        Text(
+                          asset.symbol,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF1DD1A1),
+                            fontSize: 12.sp,
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 );
@@ -374,9 +374,17 @@ class _UltraModernBuyingDialogState
               onChanged: (String? value) {
                 setState(() {
                   selectedAssetId = value;
-                  isBraceletSelected = value == 'AYAR14' || value == 'AYAR22';
-                  if (isBraceletSelected) {
+
+                  // 14 veya 22 ayar altın mı kontrol et
+                  isGoldAsset = value == 'AYAR14' || value == 'AYAR22';
+
+                  if (isGoldAsset) {
                     selectedAyar = value == 'AYAR14' ? '14' : '22';
+                    isBraceletSelected = false; // Başlangıçta gram altın seçili
+                  } else {
+                    selectedAyar = null;
+                    isBraceletSelected = false;
+                    isGoldAsset = false;
                   }
                 });
                 HapticFeedback.lightImpact();
@@ -392,19 +400,18 @@ class _UltraModernBuyingDialogState
     );
   }
 
-  Widget _buildAyarSelector() {
-    final List<String> ayarOptions = ref.watch(braceletAyarOptionsProvider);
-
+  // ✅ YENİ: Kullanım türü seçici (Gram mı Bilezik mi?)
+  Widget _buildUsageTypeSelector() {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.indigo.withAlpha(40),
-            Colors.purple.withAlpha(20),
+            Colors.amber.withAlpha(40),
+            Colors.orange.withAlpha(20),
           ],
         ),
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: Colors.indigo.withAlpha(100)),
+        border: Border.all(color: Colors.amber.withAlpha(100)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -416,19 +423,31 @@ class _UltraModernBuyingDialogState
                 Container(
                   padding: EdgeInsets.all(8.r),
                   decoration: BoxDecoration(
-                    color: Colors.indigo,
+                    color: Colors.amber,
                     borderRadius: BorderRadius.circular(8.r),
                   ),
-                  child: Icon(Icons.star, color: Colors.white, size: 18.r),
+                  child: Icon(Icons.category, color: Colors.white, size: 18.r),
                 ),
                 SizedBox(width: 12.w),
-                Text(
-                  "Bilezik Ayarı",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                    fontSize: 16.sp,
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Kullanım Şekli",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                        fontSize: 16.sp,
+                      ),
+                    ),
+                    Text(
+                      "$selectedAyar Ayar Altın için",
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 12.sp,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -436,46 +455,67 @@ class _UltraModernBuyingDialogState
           Padding(
             padding: EdgeInsets.all(16.r),
             child: Row(
-              children: ayarOptions.map<Widget>((String ayar) {
-                final isSelected = selectedAyar == ayar;
-                return Expanded(
+              children: [
+                // Gram Altın Seçeneği
+                Expanded(
                   child: GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedAyar = ayar;
+                        isBraceletSelected = false;
                       });
                       HapticFeedback.lightImpact();
                     },
                     child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 6.w),
                       padding: EdgeInsets.all(14.r),
                       decoration: BoxDecoration(
                         color:
-                            isSelected ? const Color(0xFF1DD1A1) : Colors.white,
+                            !isBraceletSelected ? Colors.amber : Colors.white,
                         borderRadius: BorderRadius.circular(12.r),
                         border: Border.all(
-                          color: isSelected
-                              ? const Color(0xFF1DD1A1)
+                          color: !isBraceletSelected
+                              ? Colors.amber
                               : Colors.grey[300]!,
                           width: 2.w,
                         ),
+                        boxShadow: !isBraceletSelected
+                            ? [
+                                BoxShadow(
+                                  color: Colors.amber.withAlpha(100),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                )
+                              ]
+                            : [],
                       ),
                       child: Column(
                         children: [
+                          Icon(
+                            Icons.scatter_plot,
+                            color: !isBraceletSelected
+                                ? Colors.white
+                                : Colors.grey[600],
+                            size: 24.r,
+                          ),
+                          SizedBox(height: 8.h),
                           Text(
-                            "$ayar Ayar",
+                            "Gram Altın",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: isSelected ? Colors.white : Colors.black,
+                              fontSize: 14.sp,
+                              color: !isBraceletSelected
+                                  ? Colors.white
+                                  : Colors.black,
                             ),
                           ),
                           SizedBox(height: 4.h),
                           Text(
-                            ayar == '14' ? 'Takı için' : 'Bilezik için',
+                            selectedAyar == '14'
+                                ? '%58 Saf Altın'
+                                : '%92 Saf Altın',
                             style: TextStyle(
                               fontSize: 11.sp,
-                              color: isSelected
-                                  ? Colors.white.withAlpha(200)
+                              color: !isBraceletSelected
+                                  ? Colors.white.withAlpha(220)
                                   : Colors.grey[600],
                             ),
                           ),
@@ -483,8 +523,76 @@ class _UltraModernBuyingDialogState
                       ),
                     ),
                   ),
-                );
-              }).toList(),
+                ),
+
+                SizedBox(width: 12.w),
+
+                // İşçiliksiz Bilezik Seçeneği
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        isBraceletSelected = true;
+                      });
+                      HapticFeedback.lightImpact();
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(14.r),
+                      decoration: BoxDecoration(
+                        color: isBraceletSelected ? Colors.amber : Colors.white,
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(
+                          color: isBraceletSelected
+                              ? Colors.amber
+                              : Colors.grey[300]!,
+                          width: 2.w,
+                        ),
+                        boxShadow: isBraceletSelected
+                            ? [
+                                BoxShadow(
+                                  color: Colors.amber.withAlpha(100),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                )
+                              ]
+                            : [],
+                      ),
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.circle_outlined,
+                            color: isBraceletSelected
+                                ? Colors.white
+                                : Colors.grey[600],
+                            size: 24.r,
+                          ),
+                          SizedBox(height: 8.h),
+                          Text(
+                            "İşçiliksiz Bilezik",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14.sp,
+                              color: isBraceletSelected
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                          ),
+                          SizedBox(height: 4.h),
+                          Text(
+                            "Sadece altın değeri",
+                            style: TextStyle(
+                              fontSize: 11.sp,
+                              color: isBraceletSelected
+                                  ? Colors.white.withAlpha(220)
+                                  : Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -521,7 +629,7 @@ class _UltraModernBuyingDialogState
                 ),
                 SizedBox(width: 12.w),
                 Text(
-                  "Gram Ağırlığı",
+                  "Bilezik Ağırlığı",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
@@ -544,7 +652,8 @@ class _UltraModernBuyingDialogState
                 fillColor: Colors.white,
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                hintText: "Bilezik ağırlığı (gram)",
+                hintText: "Bileziğin gram ağırlığı",
+                helperText: "Örneğin: 30 gram",
                 suffixText: "gram",
                 suffixStyle: const TextStyle(
                   fontWeight: FontWeight.bold,
@@ -573,6 +682,19 @@ class _UltraModernBuyingDialogState
   }
 
   Widget _buildPriceField() {
+    String label = "Alış Fiyatı";
+    String hint = "Alış fiyatını giriniz";
+    String suffix = "₺";
+
+    if (isBraceletSelected) {
+      label = "Alış Fiyatı (Gram Başına)";
+      hint = "Gramı kaç TL'den aldınız?";
+      suffix = "₺/gram";
+    } else if (isGoldAsset) {
+      label = "Alış Fiyatı (Gram Başına)";
+      suffix = "₺/gram";
+    }
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -602,7 +724,7 @@ class _UltraModernBuyingDialogState
                 ),
                 SizedBox(width: 12.w),
                 Text(
-                  "Alış Fiyatı",
+                  label,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
@@ -625,8 +747,8 @@ class _UltraModernBuyingDialogState
                 fillColor: Colors.white,
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                hintText: "Alış fiyatını giriniz",
-                suffixText: "₺",
+                hintText: hint,
+                suffixText: suffix,
                 suffixStyle: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.orange,
@@ -955,7 +1077,7 @@ class _UltraModernBuyingDialogState
     );
   }
 
-  // ✅ _handleAssetSave metodunu basitleştir - ref.listen artık build metodunda
+  // ✅ GÜNCELLENEN SAVE METODu
   void _handleAssetSave() {
     HapticFeedback.heavyImpact();
 
@@ -966,9 +1088,9 @@ class _UltraModernBuyingDialogState
       return;
     }
 
-    if (isBraceletSelected &&
-        (selectedAyar == null || _gramWeightController.text.isEmpty)) {
-      _showErrorMessage("Bilezik için ayar ve gram ağırlığı gerekli");
+    // Bilezik seçildiyse gram kontrolü
+    if (isBraceletSelected && _gramWeightController.text.isEmpty) {
+      _showErrorMessage("Bilezik için gram ağırlığı gerekli");
       return;
     }
 
@@ -978,30 +1100,43 @@ class _UltraModernBuyingDialogState
       return;
     }
 
+    // Miktar hesaplama
+    double quantity;
+    double totalInvestment;
+
+    if (isBraceletSelected) {
+      // Bilezik için miktar 1, gram ağırlığı ayrı tutulur
+      quantity = 1.0;
+      final gramWeight = double.parse(_gramWeightController.text);
+      final pricePerGram = double.parse(_buyingPriceController.text);
+      totalInvestment = gramWeight * pricePerGram;
+    } else {
+      // Normal varlıklar için
+      quantity = double.parse(_quantityController.text);
+      final unitPrice = double.parse(_buyingPriceController.text);
+      totalInvestment = quantity * unitPrice;
+    }
+
     final asset = BuyingAssetModel(
       id: '',
       assetType: selectedAssetId!,
       buyingDate: _selectedDate!,
       buyingPrice: double.parse(_buyingPriceController.text),
-      quantity:
-          isBraceletSelected ? 1.0 : double.parse(_quantityController.text),
+      quantity: quantity,
       userId: user.uid,
       assetSubType: isBraceletSelected ? 'bracelet' : 'normal',
-      totalInvestment: double.parse(_buyingPriceController.text) *
-          (isBraceletSelected
-              ? double.tryParse(_gramWeightController.text) ?? 1.0
-              : double.parse(_quantityController.text)),
-      ayarType: selectedAyar,
-      gramWeight: isBraceletSelected
-          ? double.tryParse(_gramWeightController.text)
-          : null,
+      totalInvestment: totalInvestment,
+      ayarType: selectedAyar, // 14 veya 22
+      gramWeight:
+          isBraceletSelected ? double.parse(_gramWeightController.text) : null,
     );
 
-    // ✅ Sadece save işlemini yap, listen build metodunda
+    // Save işlemini yap
     ref.read(assetNotifierProvider.notifier).saveBuyingAsset(asset);
   }
 
   void _showSuccessMessage(String message) {
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
@@ -1020,6 +1155,7 @@ class _UltraModernBuyingDialogState
   }
 
   void _showErrorMessage(String message) {
+    if (!mounted) return;
     HapticFeedback.lightImpact();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -1027,7 +1163,7 @@ class _UltraModernBuyingDialogState
           children: [
             const Icon(Icons.warning, color: Colors.white),
             SizedBox(width: 12.w),
-            Text(message),
+            Expanded(child: Text(message)),
           ],
         ),
         backgroundColor: Colors.orange,

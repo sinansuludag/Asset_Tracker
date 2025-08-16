@@ -46,7 +46,7 @@ class MarketOverviewWidget extends ConsumerWidget {
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
-                      fontSize: 20.sp, // ✅ DEĞİŞİKLİK 3: .r → .sp (metin için)
+                      fontSize: 20.sp,
                     ),
               ),
               TextButton(
@@ -58,15 +58,14 @@ class MarketOverviewWidget extends ConsumerWidget {
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: AppColors.primaryGreen,
                         fontWeight: FontWeight.w600,
-                        fontSize:
-                            14.sp, // ✅ DEĞİŞİKLİK 4: .r → .sp (metin için)
+                        fontSize: 14.sp,
                       ),
                 ),
               ),
             ],
           ),
           SizedBox(height: 14.h),
-          // ✅ DEĞİŞİKLİK 5: Yeni ListView mantığı
+
           SizedBox(
             height: 130.h,
             child: ListView.builder(
@@ -175,7 +174,6 @@ class MarketOverviewWidget extends ConsumerWidget {
   /// Tekil piyasa kartı
   Widget _buildMarketCard(BuildContext context, AssetDefinitionModel asset,
       CurrencyData currencyData) {
-    // ✅ DEĞİŞİKLİK 7: Gelişmiş hesaplama kullan
     final metrics = _calculateAdvancedPriceMetrics(currencyData);
     final change = metrics['change'] as double;
     final changePercent = metrics['changePercent'] as double;
@@ -200,7 +198,6 @@ class MarketOverviewWidget extends ConsumerWidget {
           borderRadius: BorderRadius.circular(16.r),
           border: Border(
             left: BorderSide(
-                // ✅ DEĞİŞİKLİK 8: Güvenilirlik göstergesi
                 color: confidence == 'high'
                     ? AppColors.primaryGreen
                     : confidence == 'medium'
@@ -211,7 +208,7 @@ class MarketOverviewWidget extends ConsumerWidget {
           boxShadow: [
             BoxShadow(
               color: Colors.black.withAlpha(20),
-              offset: Offset(0, 4.h), // ✅ DEĞİŞİKLİK 9: Offset için .h
+              offset: Offset(0, 4.h),
               blurRadius: 12.r,
             ),
           ],
@@ -295,7 +292,7 @@ class MarketOverviewWidget extends ConsumerWidget {
     );
   }
 
-  /// ✅ DEĞİŞİKLİK 10: YENİ FONKSİYON - Gelişmiş fiyat hesaplama
+  /// Gelişmiş fiyat hesaplama
   Map<String, dynamic> _calculateAdvancedPriceMetrics(
       CurrencyData currencyData) {
     final currentPrice = currencyData.buying ?? 0.0;

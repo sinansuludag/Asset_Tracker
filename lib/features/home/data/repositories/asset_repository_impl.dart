@@ -1,5 +1,5 @@
 import 'package:asset_tracker/features/home/data/datasources/firebase_store/abstract_asset_service.dart';
-import 'package:asset_tracker/features/home/domain/entities/asset_model.dart';
+import 'package:asset_tracker/features/home/domain/entities/asset_entity.dart';
 import 'package:asset_tracker/features/home/domain/repositories/i_asset_repository.dart';
 
 /// Asset repository'nin concrete implementasyonu

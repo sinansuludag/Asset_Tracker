@@ -1,4 +1,3 @@
-import 'package:asset_tracker/core/extensions/currency_code_extension.dart';
 import 'package:asset_tracker/features/home/data/models/buying_asset_model.dart';
 import 'package:asset_tracker/features/home/data/models/currency_data_model.dart';
 
@@ -7,6 +6,7 @@ class UserAssetModel {
   final String id;
   final String assetType;
   final String displayName;
+  final bool? isBracelet;
   final double quantity;
   final double averagePrice;
   final double totalInvestment;
@@ -21,6 +21,7 @@ class UserAssetModel {
     required this.id,
     required this.assetType,
     required this.displayName,
+    this.isBracelet,
     required this.quantity,
     required this.averagePrice,
     required this.totalInvestment,
@@ -32,8 +33,6 @@ class UserAssetModel {
     required this.lastUpdated,
   });
 
-  /// NOT: Burada `currentData` ekran tarafında `b.assetType`'a göre gönderiliyor.
-  /// AYAR14/AYAR22 için bu `currentData.buying` zaten 14K/22K **gram fiyatı**dır.
   factory UserAssetModel.fromBuyingAsset(
     BuyingAssetModel assetModel,
     CurrencyData currentData,
@@ -44,7 +43,6 @@ class UserAssetModel {
     // Güncel değer
     double currentValue;
     if (assetModel.isBracelet) {
-      // Bilezik: AYAR14/AYAR22 gram fiyatı zaten ayarlı => saf’lık uygulama!
       final gram = assetModel.gramWeight ?? 0.0;
       currentValue = gram * currentPrice;
     } else {
@@ -63,6 +61,7 @@ class UserAssetModel {
       id: assetModel.id,
       assetType: assetModel.assetType,
       displayName: assetModel.displayName,
+      isBracelet: assetModel.assetSubType == 'bracelet' ? true : false,
       quantity: assetModel.quantity,
       averagePrice: assetModel.buyingPrice,
       totalInvestment: invested,

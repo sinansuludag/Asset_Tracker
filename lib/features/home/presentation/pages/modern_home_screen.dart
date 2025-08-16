@@ -48,6 +48,7 @@ class ModernHomeScreen extends ConsumerWidget {
           return RefreshIndicator(
             onRefresh: () async {
               ref.read(currencyNotifierProvider.notifier).manualRefresh();
+              ref.read(assetNotifierProvider.notifier).refreshAssets();
             },
             child: CustomScrollView(
               physics: const AlwaysScrollableScrollPhysics(),

@@ -1,5 +1,5 @@
 import 'package:asset_tracker/core/extensions/currency_code_extension.dart';
-import 'package:asset_tracker/features/home/domain/entities/asset_model.dart';
+import 'package:asset_tracker/features/home/domain/entities/asset_entity.dart';
 
 /// Kullanıcının satın aldığı varlıkları temsil eden model
 /// Firebase Firestore'da saklanacak gerçek veri yapısı
@@ -91,13 +91,7 @@ class BuyingAssetModel extends AssetEntity {
   /// Varlığın bilezik olup olmadığını kontrol etme
   bool get isBracelet {
     return assetSubType == 'bracelet' ||
-        (ayarType != null && gramWeight != null && gramWeight! > 0) ||
-        _isAyarBasedAsset();
-  }
-
-  /// Ayar bazlı varlık kontrolü (AYAR14, AYAR22)
-  bool _isAyarBasedAsset() {
-    return assetType == 'AYAR14' || assetType == 'AYAR22';
+        (ayarType != null && gramWeight != null && gramWeight! > 0);
   }
 
   ///Bilezik değeri hesaplama
@@ -109,9 +103,7 @@ class BuyingAssetModel extends AssetEntity {
 
     // Ayar türüne göre fiyat belirleme
     final ayarPrice = ayarType == '14' ? ayar14Price : ayar22Price;
-    final calGramWeight =
-        ayarType == '14' ? gramWeight! * 0.585 : gramWeight! * 0.917;
-    return calGramWeight * ayarPrice;
+    return gramWeight! * ayarPrice;
   }
 
   /// Bilezik için görünen isim

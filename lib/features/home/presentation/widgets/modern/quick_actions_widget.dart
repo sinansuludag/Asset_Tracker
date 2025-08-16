@@ -1,4 +1,5 @@
 import 'package:asset_tracker/core/constants/colors/app_colors.dart';
+import 'package:asset_tracker/features/home/presentation/pages/calculator_screen.dart'; // Yeni import
 import 'package:asset_tracker/features/home/presentation/widgets/modern/ultra_modern_buying_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,10 +12,8 @@ class QuickActionsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.fromLTRB(20.w, 0.h, 20.w, 20.h),
-      transform:
-          Matrix4.translationValues(0, -15, 0), // Header'ın üzerine çıkar
+      transform: Matrix4.translationValues(0, -15, 0),
       decoration: BoxDecoration(
-        // Glassmorphism efekti
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -53,7 +52,7 @@ class QuickActionsWidget extends StatelessWidget {
                   colors: [Color(0xFF1DD1A1), Color(0xFF26D0CE)]),
               onTap: () => showUltraModernBuyingDialog(context),
             ),
-            // Hesaplayıcı Butonu
+            // Hesaplayıcı Butonu - Güncellenmiş
             _buildHolographicActionItem(
               context,
               icon: Icons.calculate,
@@ -61,10 +60,10 @@ class QuickActionsWidget extends StatelessWidget {
               gradient: const LinearGradient(
                   colors: [Colors.orange, Colors.deepOrange]),
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("🧮 Hesaplayıcı özelliği yakında..."),
-                    backgroundColor: Colors.orange,
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CalculatorScreen(),
                   ),
                 );
               },
@@ -86,28 +85,27 @@ class QuickActionsWidget extends StatelessWidget {
               },
             ),
             // Grafikler Butonu
-            _buildHolographicActionItem(
-              context,
-              icon: Icons.trending_up,
-              label: "Grafikler",
-              gradient:
-                  const LinearGradient(colors: [Colors.cyan, Colors.blue]),
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("📊 Grafik özelliği yakında..."),
-                    backgroundColor: Colors.cyan,
-                  ),
-                );
-              },
-            ),
+            // _buildHolographicActionItem(
+            //   context,
+            //   icon: Icons.trending_up,
+            //   label: "Grafikler",
+            //   gradient:
+            //       const LinearGradient(colors: [Colors.cyan, Colors.blue]),
+            //   onTap: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => const ChartsScreen(),
+            //       ),
+            //     );
+            //   },
+            // ),
           ],
         ),
       ),
     );
   }
 
-  // Hızlı işlem butonu oluşturucu
   Widget _buildHolographicActionItem(
     BuildContext context, {
     required IconData icon,
@@ -118,48 +116,43 @@ class QuickActionsWidget extends StatelessWidget {
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
-        child: SizedBox(
-          width: 70.w, // Sabit genişlik ver
-          child: Column(
-            mainAxisSize: MainAxisSize.min, // İçeriğe göre boyutlandır
-            children: [
-              // İkon container'ı
-              Container(
-                width: 52.w,
-                height: 52.h,
-                decoration: BoxDecoration(
-                  gradient: gradient,
-                  borderRadius: BorderRadius.circular(16.r),
-                  boxShadow: [
-                    BoxShadow(
-                      color: gradient.colors.first.withAlpha(95),
-                      offset: const Offset(0, 8),
-                      blurRadius: 20.r,
-                    ),
-                    BoxShadow(
-                      color: gradient.colors.last.withAlpha(95),
-                      offset: const Offset(0, 4),
-                      blurRadius: 12.r,
-                    ),
-                  ],
-                ),
-                child: Icon(icon, color: Colors.white, size: 24.r),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 52.w,
+              height: 52.h,
+              decoration: BoxDecoration(
+                gradient: gradient,
+                borderRadius: BorderRadius.circular(16.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: gradient.colors.first.withAlpha(95),
+                    offset: const Offset(0, 8),
+                    blurRadius: 20.r,
+                  ),
+                  BoxShadow(
+                    color: gradient.colors.last.withAlpha(95),
+                    offset: const Offset(0, 4),
+                    blurRadius: 12.r,
+                  ),
+                ],
               ),
-              SizedBox(height: 8.h),
-              // Label metni
-              Text(
-                label,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                      fontSize: 11.sp,
-                    ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
+              child: Icon(icon, color: Colors.white, size: 24.r),
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              label,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                    fontSize: 11.sp,
+                  ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
         ),
       ),
     );

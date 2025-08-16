@@ -1,6 +1,5 @@
 import 'dart:async';
-
-import 'package:asset_tracker/features/home/domain/entities/asset_model.dart';
+import 'package:asset_tracker/features/home/domain/entities/asset_entity.dart';
 import 'package:asset_tracker/features/home/domain/repositories/i_asset_repository.dart';
 import 'package:asset_tracker/features/home/data/models/buying_asset_model.dart';
 import 'package:asset_tracker/features/home/data/models/curreny_response_model.dart';
@@ -94,10 +93,22 @@ class AssetNotifier extends StateNotifier<AssetUiState> {
       return;
     }
 
+    // Artık özet tablosundan gelen veriler BuyingAssetModel olarak geliyor
+    // asset_firestore_service_impl.dart'ta AssetSummaryModel → BuyingAssetModel dönüşümü yapılıyor
     final userAssets = state.rawAssets
         .whereType<BuyingAssetModel>()
-        .cast<BuyingAssetModel>()
-        .map(_createUserAssetFromBuyingAsset)
+        .map((buyingAsset) {
+          final currencyData =
+              _currentCurrencyData?.currencies[buyingAsset.assetType];
+          if (currencyData == null) return null;
+
+          // ✅ YENİ: transactionCount bilgisini ekle
+          if (buyingAsset.isBracelet) {
+            return _createUserAssetForBracelet(buyingAsset, currencyData);
+          } else {
+            return UserAssetModel.fromBuyingAsset(buyingAsset, currencyData);
+          }
+        })
         .whereType<UserAssetModel>()
         .toList();
 
@@ -147,7 +158,7 @@ class AssetNotifier extends StateNotifier<AssetUiState> {
       currentPrice = buyingAsset.buyingPrice;
     }
 
-    final totalInvested = buyingAsset.quantity * buyingAsset.buyingPrice;
+    final totalInvested = buyingAsset.totalInvestment;
     final change = currentValue - totalInvested;
     final changePercentage =
         totalInvested > 0 ? (change / totalInvested) * 100 : 0.0;
@@ -259,6 +270,9 @@ class AssetNotifier extends StateNotifier<AssetUiState> {
 
   /// Varlık silme
   Future<void> deleteAsset(String assetId) async {
+    // NOT: Artık özet tablosundan silme yerine,
+    // belirli bir transaction'ı silme mantığı eklenebilir
+    // Şimdilik aynen bırakıyoruz
     state = state.copyWith(status: BuyingAssetState.loading, lastError: null);
     try {
       final ok = await _assetRepository.deleteAssetRepository(assetId);

@@ -1,13 +1,20 @@
+// lib/features/home/presentation/widgets/modern/user_assets_widget.dart
+
 import 'package:asset_tracker/core/constants/colors/app_colors.dart';
+import 'package:asset_tracker/core/routing/route_names.dart';
 import 'package:asset_tracker/features/currencyAssets/presentation/pages/modern_portfolio_screen.dart';
 import 'package:asset_tracker/features/home/data/models/user_asset_model.dart';
+import 'package:asset_tracker/features/home/presentation/pages/asset_detail_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
-/// Kullanıcı varlıkları listesi widget'ı - SKELETON LOADING İLE
-class UserAssetsWidget extends StatelessWidget {
-  final List<UserAssetModel> userAssets; // Kullanıcının varlıkları
-  final bool isLoading; // Yükleniyor durumu
+class UserAssetsWidget extends ConsumerWidget {
+  final List<UserAssetModel> userAssets;
+  final bool isLoading;
 
   const UserAssetsWidget({
     super.key,
@@ -16,40 +23,77 @@ class UserAssetsWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    // Minimum 3 kart göster (skeleton ile doldur)
-
+  Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: 20.w,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: Column(
         children: [
-          // Başlık satırı
+          // Başlık
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                "Varlıklarım",
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                      fontSize: 20.sp,
+              Row(
+                children: [
+                  Container(
+                    width: 40.w,
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          AppColors.primaryGreen.withOpacity(0.8),
+                          AppColors.primaryGreen,
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(12.r),
                     ),
+                    child: Icon(
+                      Icons.account_balance_wallet,
+                      color: Colors.white,
+                      size: 20.r,
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Varlıklarım",
+                        style:
+                            Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textPrimary,
+                                  fontSize: 20.sp,
+                                ),
+                      ),
+                      Text(
+                        isLoading
+                            ? "Güncelleniyor..."
+                            : "${userAssets.length} farklı varlık",
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 12.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              // Portföy sayfasına git
-              TextButton(
+              TextButton.icon(
                 onPressed: isLoading
                     ? null
                     : () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const ModernPortfolioScreen(),
-                          ),
-                        );
+                        Navigator.pushNamed(
+                            context, RouteNames.modernPortfolio);
                       },
-                child: Text(
-                  "Tümünü Gör",
+                icon: Icon(
+                  Icons.arrow_forward_ios,
+                  size: 14.r,
+                  color: isLoading ? Colors.grey[400] : AppColors.primaryGreen,
+                ),
+                label: Text(
+                  "Tümü",
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: isLoading
                             ? Colors.grey[400]
@@ -61,22 +105,19 @@ class UserAssetsWidget extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 14.h),
+          SizedBox(height: 16.h),
 
           if (isLoading)
-            // Loading: 3 skeleton kart göster
             Column(
               children: List.generate(3, (index) => _buildSkeletonCard()),
             )
           else if (userAssets.isEmpty)
-            // Empty: Boş durum göster
             _buildEmptyState(context)
           else
-            // Data: Gerçek varlık kartlarını göster (maksimum 3 adet)
             Column(
               children: userAssets
                   .take(3)
-                  .map((asset) => _buildAssetCard(context, asset))
+                  .map((asset) => _buildModernAssetCard(context, asset, ref))
                   .toList(),
             ),
         ],
@@ -84,84 +125,337 @@ class UserAssetsWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildSkeletonCard() {
-    return Container(
-      margin: EdgeInsets.only(bottom: 12.h),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: Colors.grey[200]!, width: 1.w),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(16.r),
-        child: Row(
+  Widget _buildModernAssetCard(
+      BuildContext context, UserAssetModel asset, WidgetRef ref) {
+    final isPositive = asset.change >= 0;
+    final nf = NumberFormat('#,##0.00');
+    final percentFormat = NumberFormat('#,##0.0');
+
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => AssetDetailScreen(
+              assetType: asset.assetType,
+              assetSubType: asset.isBracelet == true ? 'bracelet' : 'normal',
+              displayName: asset.displayName,
+            ),
+          ),
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.only(bottom: 14.h),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.white,
+              isPositive
+                  ? Colors.green.withOpacity(0.02)
+                  : Colors.red.withOpacity(0.02),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(20.r),
+          border: Border.all(
+            color: isPositive
+                ? Colors.green.withOpacity(0.1)
+                : Colors.red.withOpacity(0.1),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: (isPositive ? Colors.green : Colors.red).withOpacity(0.08),
+              offset: Offset(0, 8.h),
+              blurRadius: 20.r,
+              spreadRadius: 2,
+            ),
+          ],
+        ),
+        child: Stack(
           children: [
-            // Skeleton Icon
-            Container(
-              width: 48.w,
-              height: 48.h,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(14.r),
+            // Arka plan deseni
+            Positioned(
+              right: -20.w,
+              top: -20.h,
+              child: Container(
+                width: 100.w,
+                height: 100.h,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: (isPositive ? Colors.green : Colors.red)
+                      .withOpacity(0.03),
+                ),
               ),
             ),
-            SizedBox(width: 12.w),
 
-            // Skeleton Varlık bilgileri
-            Flexible(
+            // İçerik
+            Padding(
+              padding: EdgeInsets.all(16.r),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Skeleton varlık adı
-                  Container(
-                    width: 120.w,
-                    height: 16.h,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
+                  // Üst kısım
+                  Row(
+                    children: [
+                      // Sol - Icon ve isim
+                      Container(
+                        width: 50.w,
+                        height: 50.h,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              AppColors.primaryGreen.withOpacity(0.9),
+                              AppColors.primaryGreen,
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(15.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primaryGreen.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Text(
+                            asset.icon,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16.sp,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 14.w),
+
+                      // Orta - Varlık bilgileri
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    asset.displayName,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.textPrimary,
+                                      fontSize: 15.sp,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                SizedBox(width: 8.w),
+                                // İşlem sayısı badge
+                                StreamBuilder<QuerySnapshot>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('asset_summary')
+                                      .where('userId',
+                                          isEqualTo: FirebaseAuth
+                                              .instance.currentUser?.uid)
+                                      .where('assetType',
+                                          isEqualTo: asset.assetType)
+                                      .where('assetSubType',
+                                          isEqualTo: asset.isBracelet == true
+                                              ? 'bracelet'
+                                              : 'normal')
+                                      .limit(1)
+                                      .snapshots(),
+                                  builder: (context, snapshot) {
+                                    if (!snapshot.hasData ||
+                                        snapshot.data!.docs.isEmpty) {
+                                      return const SizedBox.shrink();
+                                    }
+
+                                    final data = snapshot.data!.docs.first
+                                        .data() as Map<String, dynamic>;
+                                    final transactionCount =
+                                        data['transactionCount'] ?? 1;
+
+                                    return Container(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 8.w, vertical: 3.h),
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            AppColors.primaryGreen
+                                                .withOpacity(0.1),
+                                            AppColors.primaryGreen
+                                                .withOpacity(0.15),
+                                          ],
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(12.r),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.receipt_long,
+                                            size: 11.r,
+                                            color: AppColors.primaryGreen,
+                                          ),
+                                          SizedBox(width: 4.w),
+                                          Text(
+                                            '$transactionCount',
+                                            style: TextStyle(
+                                              fontSize: 11.sp,
+                                              color: AppColors.primaryGreen,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 6.h),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.inventory_2_outlined,
+                                  size: 12.r,
+                                  color: Colors.grey[600],
+                                ),
+                                SizedBox(width: 4.w),
+                                Text(
+                                  "${asset.quantity.toStringAsFixed(asset.isBracelet == true ? 0 : 2)} ${_getQuantityUnit(asset.assetType, asset.isBracelet ?? false)}",
+                                  style: TextStyle(
+                                    color: Colors.grey[700],
+                                    fontSize: 13.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                Text(
+                                  " • ",
+                                  style: TextStyle(
+                                    color: Colors.grey[400],
+                                    fontSize: 13.sp,
+                                  ),
+                                ),
+                                Text(
+                                  "₺${nf.format(asset.averagePrice)}",
+                                  style: TextStyle(
+                                    color: Colors.grey[700],
+                                    fontSize: 13.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Sağ - Değişim göstergesi
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 10.w, vertical: 8.h),
+                        decoration: BoxDecoration(
+                          color: isPositive
+                              ? Colors.green.withOpacity(0.1)
+                              : Colors.red.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(
+                            color: isPositive
+                                ? Colors.green.withOpacity(0.2)
+                                : Colors.red.withOpacity(0.2),
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  isPositive
+                                      ? Icons.trending_up_rounded
+                                      : Icons.trending_down_rounded,
+                                  color: isPositive ? Colors.green : Colors.red,
+                                  size: 16.r,
+                                ),
+                                SizedBox(width: 4.w),
+                                Text(
+                                  "%${percentFormat.format(asset.changePercentage.abs())}",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color:
+                                        isPositive ? Colors.green : Colors.red,
+                                    fontSize: 14.sp,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Text(
+                              "${isPositive ? '+' : ''}₺${nf.format(asset.change)}",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: isPositive
+                                    ? Colors.green[700]
+                                    : Colors.red[700],
+                                fontSize: 11.sp,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 6.h),
-                  // Skeleton miktar
+
+                  SizedBox(height: 14.h),
+
+                  // Alt kısım - Detaylı bilgiler
                   Container(
-                    width: 80.w,
-                    height: 12.h,
+                    padding: EdgeInsets.all(12.r),
                     decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(6.r),
+                      color: Colors.grey[50],
+                      borderRadius: BorderRadius.circular(12.r),
+                      border: Border.all(
+                        color: Colors.grey[200]!,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildInfoColumn(
+                          context,
+                          "Yatırım",
+                          "₺${nf.format(asset.totalInvestment)}",
+                          Icons.account_balance_wallet_outlined,
+                        ),
+                        Container(
+                          width: 1,
+                          height: 35.h,
+                          color: Colors.grey[300],
+                        ),
+                        _buildInfoColumn(
+                          context,
+                          "Güncel Değer",
+                          "₺${nf.format(asset.currentValue)}",
+                          Icons.price_check,
+                        ),
+                        Container(
+                          width: 1,
+                          height: 35.h,
+                          color: Colors.grey[300],
+                        ),
+                        _buildInfoColumn(
+                          context,
+                          "Güncel Fiyat",
+                          "₺${nf.format(asset.currentPrice)}",
+                          Icons.trending_up,
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-            ),
-
-            SizedBox(width: 8.w),
-
-            // Skeleton Değer ve değişim
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Skeleton güncel değer
-                Container(
-                  width: 70.w,
-                  height: 16.h,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                ),
-                SizedBox(height: 6.h),
-                // Skeleton değişim
-                Container(
-                  width: 50.w,
-                  height: 12.h,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(6.r),
-                  ),
-                ),
-              ],
             ),
           ],
         ),
@@ -169,167 +463,209 @@ class UserAssetsWidget extends StatelessWidget {
     );
   }
 
-  // Boş durum widget'ı (varlık yoksa)
+  Widget _buildInfoColumn(
+      BuildContext context, String label, String value, IconData icon) {
+    return Expanded(
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 12.r, color: Colors.grey[600]),
+              SizedBox(width: 4.w),
+              Text(
+                label,
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 10.sp,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 4.h),
+          Text(
+            value,
+            style: TextStyle(
+              color: AppColors.textPrimary,
+              fontSize: 12.sp,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSkeletonCard() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 14.h),
+      padding: EdgeInsets.all(16.r),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(color: Colors.grey[200]!, width: 1.5),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 50.w,
+                height: 50.h,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(15.r),
+                ),
+              ),
+              SizedBox(width: 14.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 140.w,
+                      height: 16.h,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                    ),
+                    SizedBox(height: 8.h),
+                    Container(
+                      width: 100.w,
+                      height: 12.h,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(6.r),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: 70.w,
+                height: 45.h,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 14.h),
+          Container(
+            height: 60.h,
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildEmptyState(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(40.r),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        gradient: LinearGradient(
+          colors: [
+            Colors.white,
+            AppColors.primaryGreen.withOpacity(0.02),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(
+          color: AppColors.primaryGreen.withOpacity(0.1),
+          width: 2,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(40),
-            offset: Offset(0, 4.h),
-            blurRadius: 12.r,
+            color: AppColors.primaryGreen.withOpacity(0.08),
+            offset: Offset(0, 8.h),
+            blurRadius: 20.r,
           ),
         ],
       ),
       child: Column(
         children: [
-          Icon(
-            Icons.account_balance_wallet_outlined,
-            size: 48.r,
-            color: Colors.grey.withAlpha(125),
+          Container(
+            width: 80.w,
+            height: 80.h,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.primaryGreen.withOpacity(0.1),
+                  AppColors.primaryGreen.withOpacity(0.2),
+                ],
+              ),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.add_card,
+              size: 40.r,
+              color: AppColors.primaryGreen,
+            ),
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: 20.h),
           Text(
-            "Henüz varlığınız yok",
+            "Portföyünüz Boş",
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
-                  fontSize: 16.sp,
+                  fontSize: 18.sp,
                 ),
           ),
           SizedBox(height: 8.h),
           Text(
-            "İlk varlığınızı eklemek için portföy sayfasına gidin",
+            "İlk varlığınızı ekleyerek yatırımlarınızı\ntakip etmeye başlayın",
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.textSecondary,
+                  color: Colors.grey[600],
                   fontSize: 14.sp,
+                  height: 1.5,
                 ),
             textAlign: TextAlign.center,
           ),
-        ],
-      ),
-    );
-  }
-
-  // Varlık kartı
-  Widget _buildAssetCard(BuildContext context, UserAssetModel asset) {
-    final isPositive = asset.change >= 0;
-
-    return Container(
-      margin: EdgeInsets.only(bottom: 12.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(40),
-            offset: Offset(0, 4.h),
-            blurRadius: 12.r,
+          SizedBox(height: 20.h),
+          ElevatedButton.icon(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const ModernPortfolioScreen(),
+                ),
+              );
+            },
+            icon: Icon(Icons.add, size: 18.r),
+            label: const Text("Varlık Ekle"),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryGreen,
+              foregroundColor: Colors.white,
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+            ),
           ),
         ],
       ),
-      child: Padding(
-        padding: EdgeInsets.all(16.r),
-        child: Row(
-          children: [
-            // Asset Icon
-            Container(
-              width: 48.w,
-              height: 48.h,
-              decoration: BoxDecoration(
-                gradient: AppColors.primaryGradient,
-                borderRadius: BorderRadius.all(Radius.circular(14.r)),
-              ),
-              child: Center(
-                child: Text(
-                  asset.icon,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14.sp,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(width: 12.w),
-
-            // Varlık bilgileri
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Varlık adı
-                  Text(
-                    asset.displayName,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                          fontSize: 12.sp,
-                        ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                  SizedBox(height: 2.h),
-                  // Miktar
-                  Text(
-                    "${asset.quantity} ${_getQuantityUnit(asset.assetType)}",
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.textSecondary,
-                          fontSize: 12.sp,
-                        ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                ],
-              ),
-            ),
-
-            SizedBox(width: 8.w),
-
-            // Değer ve değişim - Sağa hizalı
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Güncel değer
-                Text(
-                  "₺${asset.currentValue.toStringAsFixed(2)}",
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                        fontSize: 14.sp,
-                      ),
-                ),
-                SizedBox(height: 2.h),
-                // Değişim
-                Text(
-                  "${isPositive ? '+' : ''}₺${asset.change.toStringAsFixed(2)}",
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: isPositive ? Colors.green : Colors.red,
-                        fontSize: 12.sp,
-                      ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
     );
   }
 
-  // Varlık türüne göre birim belirleme
-  String _getQuantityUnit(String assetType) {
+  String _getQuantityUnit(String assetType, bool isBracelet) {
     switch (assetType.toLowerCase()) {
       case 'altin':
-      case 'ayar14':
-      case 'ayar22':
       case 'kulcealtin':
       case 'gumustry':
         return 'gram';
+      case 'ayar14':
+      case 'ayar22':
+        return isBracelet ? 'adet' : 'gram';
       case 'usdtry':
         return 'USD';
       case 'eurtry':

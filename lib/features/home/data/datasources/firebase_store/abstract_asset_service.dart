@@ -1,4 +1,4 @@
-import 'package:asset_tracker/features/home/domain/entities/asset_model.dart';
+import 'package:asset_tracker/features/home/domain/entities/asset_entity.dart';
 
 /// Asset servisi için abstract sınıf - dependency injection için
 abstract class IAssetService {
