@@ -16,31 +16,4 @@ class AssetDefinitionModel {
     required this.type,
     required this.symbol,
   });
-
-  /// Firebase'den gelen JSON'u model'e çevir
-  factory AssetDefinitionModel.fromJson(Map<String, dynamic> json) {
-    return AssetDefinitionModel(
-      id: json['id'] ?? '',
-      displayName: json['displayName'] ?? '',
-      isSelectable: json['isSelectable'] ?? false,
-      isVisible: json['isVisible'] ?? false,
-      type: AssetType.values.firstWhere(
-        (e) => e.toString().split('.').last == json['type'],
-        orElse: () => AssetType.gold,
-      ),
-      symbol: json['symbol'] ?? '',
-    );
-  }
-
-  /// Model'i JSON'a çevir (Firebase'e kaydetmek için)
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'displayName': displayName,
-      'isSelectable': isSelectable,
-      'isVisible': isVisible,
-      'type': type.toString().split('.').last,
-      'symbol': symbol,
-    };
-  }
 }

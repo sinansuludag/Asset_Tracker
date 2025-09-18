@@ -1,6 +1,7 @@
 import 'package:asset_tracker/core/constants/colors/app_colors.dart';
 import 'package:asset_tracker/core/extensions/currency_code_extension.dart';
 import 'package:asset_tracker/core/riverpod/all_riverpod.dart';
+import 'package:asset_tracker/core/utils/get_asset_icon.dart';
 import 'package:asset_tracker/features/home/presentation/state_management/provider/all_providers.dart';
 import 'package:asset_tracker/features/home/presentation/state_management/provider/allowed_assets_provider.dart';
 import 'package:flutter/material.dart';
@@ -189,7 +190,7 @@ class _MarketDetailScreenState extends ConsumerState<MarketDetailScreen>
                                     borderRadius: BorderRadius.circular(16.r),
                                   ),
                                   child: Text(
-                                    assetDefinition.symbol,
+                                    getAssetIcon(assetDefinition.id, 'normal'),
                                     style: TextStyle(
                                       fontSize: 18.sp,
                                       fontWeight: FontWeight.bold,
@@ -372,7 +373,7 @@ class _MarketDetailScreenState extends ConsumerState<MarketDetailScreen>
                     Expanded(
                       child: _buildPriceCard(
                         'Alış',
-                        '₺${buying.toStringAsFixed(4)}',
+                        '₺${buying.toStringAsFixed(2)}',
                         Colors.green,
                         Icons.arrow_downward,
                       ),
@@ -381,7 +382,7 @@ class _MarketDetailScreenState extends ConsumerState<MarketDetailScreen>
                     Expanded(
                       child: _buildPriceCard(
                         'Satış',
-                        '₺${selling.toStringAsFixed(4)}',
+                        '₺${selling.toStringAsFixed(2)}',
                         Colors.red,
                         Icons.arrow_upward,
                       ),
@@ -448,7 +449,7 @@ class _MarketDetailScreenState extends ConsumerState<MarketDetailScreen>
                                 ),
                               ),
                               Text(
-                                '₺${(selling - buying).toStringAsFixed(4)}',
+                                '₺${(selling - buying).toStringAsFixed(2)}',
                                 style: TextStyle(
                                   fontSize: 18.sp,
                                   fontWeight: FontWeight.bold,
@@ -459,7 +460,7 @@ class _MarketDetailScreenState extends ConsumerState<MarketDetailScreen>
                           ),
                         ),
                         Text(
-                          '%${((selling - buying) / buying * 100).toStringAsFixed(3)}',
+                          '%${((selling - buying) / buying * 100).toStringAsFixed(2)}',
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.bold,

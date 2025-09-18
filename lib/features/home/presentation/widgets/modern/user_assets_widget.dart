@@ -2,6 +2,8 @@
 
 import 'package:asset_tracker/core/constants/colors/app_colors.dart';
 import 'package:asset_tracker/core/routing/route_names.dart';
+import 'package:asset_tracker/core/utils/get_asset_icon.dart';
+import 'package:asset_tracker/core/utils/get_quantity_unit.dart';
 import 'package:asset_tracker/features/currencyAssets/presentation/pages/modern_portfolio_screen.dart';
 import 'package:asset_tracker/features/home/data/models/user_asset_model.dart';
 import 'package:asset_tracker/features/home/presentation/pages/asset_detail_screen.dart';
@@ -40,7 +42,7 @@ class UserAssetsWidget extends ConsumerWidget {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          AppColors.primaryGreen.withOpacity(0.8),
+                          AppColors.primaryGreen.withAlpha(200),
                           AppColors.primaryGreen,
                         ],
                         begin: Alignment.topLeft,
@@ -150,9 +152,7 @@ class UserAssetsWidget extends ConsumerWidget {
           gradient: LinearGradient(
             colors: [
               Colors.white,
-              isPositive
-                  ? Colors.green.withOpacity(0.02)
-                  : Colors.red.withOpacity(0.02),
+              isPositive ? Colors.green.withAlpha(5) : Colors.red.withAlpha(5),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -160,13 +160,13 @@ class UserAssetsWidget extends ConsumerWidget {
           borderRadius: BorderRadius.circular(20.r),
           border: Border.all(
             color: isPositive
-                ? Colors.green.withOpacity(0.1)
-                : Colors.red.withOpacity(0.1),
+                ? Colors.green.withAlpha(25)
+                : Colors.red.withAlpha(25),
             width: 1.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: (isPositive ? Colors.green : Colors.red).withOpacity(0.08),
+              color: (isPositive ? Colors.green : Colors.red).withAlpha(20),
               offset: Offset(0, 8.h),
               blurRadius: 20.r,
               spreadRadius: 2,
@@ -184,8 +184,7 @@ class UserAssetsWidget extends ConsumerWidget {
                 height: 100.h,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: (isPositive ? Colors.green : Colors.red)
-                      .withOpacity(0.03),
+                  color: (isPositive ? Colors.green : Colors.red).withAlpha(8),
                 ),
               ),
             ),
@@ -200,19 +199,19 @@ class UserAssetsWidget extends ConsumerWidget {
                     children: [
                       // Sol - Icon ve isim
                       Container(
-                        width: 50.w,
-                        height: 50.h,
+                        width: 45.w,
+                        height: 45.h,
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              AppColors.primaryGreen.withOpacity(0.9),
+                              AppColors.primaryGreen.withAlpha(225),
                               AppColors.primaryGreen,
                             ],
                           ),
                           borderRadius: BorderRadius.circular(15.r),
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.primaryGreen.withOpacity(0.3),
+                              color: AppColors.primaryGreen.withAlpha(75),
                               blurRadius: 8,
                               offset: const Offset(0, 4),
                             ),
@@ -220,7 +219,11 @@ class UserAssetsWidget extends ConsumerWidget {
                         ),
                         child: Center(
                           child: Text(
-                            asset.icon,
+                            getAssetIcon(
+                                asset.assetType,
+                                (asset.isBracelet != false)
+                                    ? 'bracelet'
+                                    : 'normal'),
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -229,7 +232,7 @@ class UserAssetsWidget extends ConsumerWidget {
                           ),
                         ),
                       ),
-                      SizedBox(width: 14.w),
+                      SizedBox(width: 8.w),
 
                       // Orta - Varlık bilgileri
                       Expanded(
@@ -249,7 +252,7 @@ class UserAssetsWidget extends ConsumerWidget {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-                                SizedBox(width: 8.w),
+                                SizedBox(width: 4.w),
                                 // İşlem sayısı badge
                                 StreamBuilder<QuerySnapshot>(
                                   stream: FirebaseFirestore.instance
@@ -283,9 +286,9 @@ class UserAssetsWidget extends ConsumerWidget {
                                         gradient: LinearGradient(
                                           colors: [
                                             AppColors.primaryGreen
-                                                .withOpacity(0.1),
+                                                .withAlpha(25),
                                             AppColors.primaryGreen
-                                                .withOpacity(0.15),
+                                                .withAlpha(37),
                                           ],
                                         ),
                                         borderRadius:
@@ -325,7 +328,7 @@ class UserAssetsWidget extends ConsumerWidget {
                                 ),
                                 SizedBox(width: 4.w),
                                 Text(
-                                  "${asset.quantity.toStringAsFixed(asset.isBracelet == true ? 0 : 2)} ${_getQuantityUnit(asset.assetType, asset.isBracelet ?? false)}",
+                                  "${asset.quantity.toStringAsFixed(0)} ${getQuantityUnit(asset.assetType, asset.isBracelet ?? false)}",
                                   style: TextStyle(
                                     color: Colors.grey[700],
                                     fontSize: 13.sp,
@@ -356,16 +359,16 @@ class UserAssetsWidget extends ConsumerWidget {
                       // Sağ - Değişim göstergesi
                       Container(
                         padding: EdgeInsets.symmetric(
-                            horizontal: 10.w, vertical: 8.h),
+                            horizontal: 8.w, vertical: 8.h),
                         decoration: BoxDecoration(
                           color: isPositive
-                              ? Colors.green.withOpacity(0.1)
-                              : Colors.red.withOpacity(0.1),
+                              ? Colors.green.withAlpha(25)
+                              : Colors.red.withAlpha(25),
                           borderRadius: BorderRadius.circular(12.r),
                           border: Border.all(
                             color: isPositive
-                                ? Colors.green.withOpacity(0.2)
-                                : Colors.red.withOpacity(0.2),
+                                ? Colors.green.withAlpha(50)
+                                : Colors.red.withAlpha(50),
                           ),
                         ),
                         child: Column(
@@ -575,19 +578,19 @@ class UserAssetsWidget extends ConsumerWidget {
         gradient: LinearGradient(
           colors: [
             Colors.white,
-            AppColors.primaryGreen.withOpacity(0.02),
+            AppColors.primaryGreen.withAlpha(5),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(
-          color: AppColors.primaryGreen.withOpacity(0.1),
+          color: AppColors.primaryGreen.withAlpha(25),
           width: 2,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryGreen.withOpacity(0.08),
+            color: AppColors.primaryGreen.withAlpha(20),
             offset: Offset(0, 8.h),
             blurRadius: 20.r,
           ),
@@ -601,8 +604,8 @@ class UserAssetsWidget extends ConsumerWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  AppColors.primaryGreen.withOpacity(0.1),
-                  AppColors.primaryGreen.withOpacity(0.2),
+                  AppColors.primaryGreen.withAlpha(25),
+                  AppColors.primaryGreen.withAlpha(50),
                 ],
               ),
               shape: BoxShape.circle,
@@ -655,25 +658,5 @@ class UserAssetsWidget extends ConsumerWidget {
         ],
       ),
     );
-  }
-
-  String _getQuantityUnit(String assetType, bool isBracelet) {
-    switch (assetType.toLowerCase()) {
-      case 'altin':
-      case 'kulcealtin':
-      case 'gumustry':
-        return 'gram';
-      case 'ayar14':
-      case 'ayar22':
-        return isBracelet ? 'adet' : 'gram';
-      case 'usdtry':
-        return 'USD';
-      case 'eurtry':
-        return 'EUR';
-      case 'gbptry':
-        return 'GBP';
-      default:
-        return 'adet';
-    }
   }
 }

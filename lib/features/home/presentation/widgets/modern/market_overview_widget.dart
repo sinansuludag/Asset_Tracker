@@ -1,5 +1,6 @@
 import 'package:asset_tracker/core/routing/route_names.dart';
 import 'package:asset_tracker/core/constants/colors/app_colors.dart';
+import 'package:asset_tracker/core/utils/get_asset_icon.dart';
 import 'package:asset_tracker/features/home/data/models/curreny_response_model.dart';
 import 'package:asset_tracker/features/home/data/models/asset_definition_model.dart';
 import 'package:asset_tracker/features/home/data/models/currency_data_model.dart';
@@ -232,7 +233,7 @@ class MarketOverviewWidget extends ConsumerWidget {
                     ),
                     child: Center(
                       child: Text(
-                        asset.symbol,
+                        getAssetIcon(asset.id, 'normal'),
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,

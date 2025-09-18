@@ -118,7 +118,6 @@ class AssetFirestoreServiceImpl implements IAssetService {
 
       return true;
     } catch (e) {
-      print('Error saving asset: $e');
       return false;
     }
   }

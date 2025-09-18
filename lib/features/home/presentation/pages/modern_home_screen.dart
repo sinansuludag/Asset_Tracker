@@ -71,7 +71,7 @@ class ModernHomeScreen extends ConsumerWidget {
                 SliverToBoxAdapter(
                   child: UserAssetsWidget(
                     userAssets: userAssets,
-                    isLoading: false,
+                    isLoading: userAssets.isEmpty,
                   ),
                 ),
                 SliverToBoxAdapter(child: SizedBox(height: 75.h)),

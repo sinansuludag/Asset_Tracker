@@ -1,4 +1,5 @@
 import 'package:asset_tracker/core/constants/colors/app_colors.dart';
+import 'package:asset_tracker/core/utils/get_quantity_unit.dart';
 import 'package:asset_tracker/features/home/presentation/state_management/provider/allowed_assets_provider.dart';
 import 'package:asset_tracker/features/home/presentation/state_management/provider/all_providers.dart';
 import 'package:asset_tracker/features/home/data/models/buying_asset_model.dart';
@@ -46,8 +47,11 @@ class _UltraModernBuyingDialogState
   DateTime? _selectedDate;
   String? selectedAssetId;
   bool isBraceletSelected = false;
-  bool isGoldAsset = false; // ➕ Yeni: 14 veya 22 ayar altın mı?
+  bool isGoldAsset = false;
   String? selectedAyar;
+
+  // ✅ Yeni flag eklendi
+  bool _isSaving = false;
 
   // Animasyon controller'ları
   late AnimationController _fadeController;
@@ -81,28 +85,6 @@ class _UltraModernBuyingDialogState
     _slideController.forward();
   }
 
-  String _getQuantityUnit() {
-    if (isBraceletSelected) {
-      return 'adet'; // Bilezik için adet
-    }
-
-    switch ((selectedAssetId ?? '').toUpperCase()) {
-      case 'ALTIN':
-      case 'KULCEALTIN':
-      case 'AYAR14':
-      case 'AYAR22':
-        return 'gram';
-      case 'USDTRY':
-        return 'USD';
-      case 'EURTRY':
-        return 'EUR';
-      case 'GBPTRY':
-        return 'GBP';
-      default:
-        return 'adet';
-    }
-  }
-
   @override
   void dispose() {
     _fadeController.dispose();
@@ -119,14 +101,22 @@ class _UltraModernBuyingDialogState
         ref.watch(selectableAssetsProvider);
     final buyingAssetState = ref.watch(assetNotifierProvider).status;
 
+    // ✅ ref.listen'ı build metodu içinde kullanıyoruz
     ref.listen(assetNotifierProvider, (previous, next) {
-      if (next.status == BuyingAssetState.loaded) {
-        SchedulerBinding.instance.addPostFrameCallback((_) {
-          Navigator.pop(context);
-        });
-        _showSuccessMessage("Varlık başarıyla eklendi!");
-      } else if (next.status == BuyingAssetState.error) {
-        _showErrorMessage("Hata: ${next.lastError ?? 'Bilinmeyen hata'}");
+      // ✅ Sadece kaydetme işlemi başladıysa dinle
+      if (_isSaving) {
+        if (next.status == BuyingAssetState.loaded) {
+          _isSaving = false; // Reset flag
+          _showSuccessMessage("Varlık başarıyla eklendi!");
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              Navigator.pop(context);
+            }
+          });
+        } else if (next.status == BuyingAssetState.error) {
+          _isSaving = false; // Reset flag
+          _showErrorMessage("Hata: ${next.lastError ?? 'Bilinmeyen hata'}");
+        }
       }
     });
 
@@ -168,8 +158,7 @@ class _UltraModernBuyingDialogState
                         _buildPriceField(),
                         SizedBox(height: 24.h),
 
-                        // Normal varlıklar için miktar
-                        if (!isBraceletSelected) _buildQuantityField(),
+                        _buildQuantityField(),
                         SizedBox(height: 24.h),
 
                         _buildDatePicker(),
@@ -400,7 +389,6 @@ class _UltraModernBuyingDialogState
     );
   }
 
-  // ✅ YENİ: Kullanım türü seçici (Gram mı Bilezik mi?)
   Widget _buildUsageTypeSelector() {
     return Container(
       decoration: BoxDecoration(
@@ -826,7 +814,8 @@ class _UltraModernBuyingDialogState
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                 hintText: "Miktar giriniz",
-                suffixText: _getQuantityUnit(),
+                suffixText:
+                    getQuantityUnit(selectedAssetId ?? '', isBraceletSelected),
                 suffixStyle: const TextStyle(
                     fontWeight: FontWeight.w600, color: Colors.purple),
               ),
@@ -1077,7 +1066,7 @@ class _UltraModernBuyingDialogState
     );
   }
 
-  // ✅ GÜNCELLENEN SAVE METODu
+  // ✅ Basitleştirilmiş save metodu
   void _handleAssetSave() {
     HapticFeedback.heavyImpact();
 
@@ -1105,13 +1094,11 @@ class _UltraModernBuyingDialogState
     double totalInvestment;
 
     if (isBraceletSelected) {
-      // Bilezik için miktar 1, gram ağırlığı ayrı tutulur
-      quantity = 1.0;
+      quantity = double.parse(_quantityController.text);
       final gramWeight = double.parse(_gramWeightController.text);
       final pricePerGram = double.parse(_buyingPriceController.text);
       totalInvestment = gramWeight * pricePerGram;
     } else {
-      // Normal varlıklar için
       quantity = double.parse(_quantityController.text);
       final unitPrice = double.parse(_buyingPriceController.text);
       totalInvestment = quantity * unitPrice;
@@ -1126,12 +1113,13 @@ class _UltraModernBuyingDialogState
       userId: user.uid,
       assetSubType: isBraceletSelected ? 'bracelet' : 'normal',
       totalInvestment: totalInvestment,
-      ayarType: selectedAyar, // 14 veya 22
+      ayarType: selectedAyar,
       gramWeight:
           isBraceletSelected ? double.parse(_gramWeightController.text) : null,
     );
 
-    // Save işlemini yap
+    // ✅ Flag'i set edin ve save edin
+    _isSaving = true;
     ref.read(assetNotifierProvider.notifier).saveBuyingAsset(asset);
   }
 

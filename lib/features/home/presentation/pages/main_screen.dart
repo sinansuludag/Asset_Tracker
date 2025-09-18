@@ -7,13 +7,12 @@ import 'package:asset_tracker/features/markets/presentation/pages/markets_screen
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// ✅ DÜZELTME 1: ConsumerWidget kullan (StatefulWidget değil)
 class MainScreen extends ConsumerWidget {
   const MainScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // ✅ DÜZELTME 2: Provider'dan index'i oku
+    // Provider'dan index'i oku
     final currentIndex = ref.watch(currentIndexProvider);
 
     // Sayfa listesi

@@ -44,11 +44,10 @@ class CurrencyNotifier extends StateNotifier<List<CurrencyResponse>> {
         }
       },
       onError: (error) {
-        print('❌ WebSocket Error: $error');
         isConnected = false;
+        _usePreviousData();
       },
       onDone: () {
-        print('⚠️ WebSocket Stream closed');
         isConnected = false;
         if (!isConnected) _usePreviousData();
       },

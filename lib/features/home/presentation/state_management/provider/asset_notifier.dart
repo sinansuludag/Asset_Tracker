@@ -115,22 +115,6 @@ class AssetNotifier extends StateNotifier<AssetUiState> {
     state = state.copyWith(userAssets: userAssets);
   }
 
-  UserAssetModel? _createUserAssetFromBuyingAsset(
-      BuyingAssetModel buyingAsset) {
-    final currencyData =
-        _currentCurrencyData?.currencies[buyingAsset.assetType];
-    if (currencyData == null) {
-      // İlgili kur verisi yoksa bu varlığı atla
-      return null;
-    }
-
-    if (buyingAsset.isBracelet) {
-      return _createUserAssetForBracelet(buyingAsset, currencyData);
-    } else {
-      return UserAssetModel.fromBuyingAsset(buyingAsset, currencyData);
-    }
-  }
-
   /// Bilezik için özel hesaplama
   UserAssetModel _createUserAssetForBracelet(
       BuyingAssetModel buyingAsset, dynamic currencyData) {

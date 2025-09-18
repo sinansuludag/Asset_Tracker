@@ -113,28 +113,4 @@ class BuyingAssetModel extends AssetEntity {
     }
     return assetType.getCurrencyName(); // Normal varlık adı
   }
-
-  /// Bilezik için miktar birimi
-  // String get quantityUnit {
-  //   if (isBracelet) {
-  //     return 'gram';
-  //   }
-
-  //   // Normal varlıklar için birim belirleme
-  //   switch (assetType.toLowerCase()) {
-  //     case 'altin':
-  //     case 'ayar14':
-  //     case 'ayar22':
-  //     case 'kulcealtin':
-  //       return 'gram';
-  //     case 'usdtry':
-  //       return 'USD';
-  //     case 'eurtry':
-  //       return 'EUR';
-  //     case 'gbptry':
-  //       return 'GBP';
-  //     default:
-  //       return 'adet';
-  //   }
-  // }
 }

@@ -1,4 +1,5 @@
 import 'package:asset_tracker/core/constants/colors/app_colors.dart';
+import 'package:asset_tracker/core/routing/route_names.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -68,7 +69,9 @@ class HeaderSectionWidget extends StatelessWidget {
                     children: [
                       _buildActionButton(
                         icon: Icons.settings_outlined,
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pushNamed(context, RouteNames.profile);
+                        },
                       ),
                     ],
                   ),
@@ -114,8 +117,8 @@ class HeaderSectionWidget extends StatelessWidget {
                             horizontal: 8.w, vertical: 4.h),
                         decoration: BoxDecoration(
                           color: totalChange >= 0
-                              ? Colors.green.withAlpha(75)
-                              : Colors.red.withAlpha(75),
+                              ? Colors.green.withAlpha(225)
+                              : Colors.red.withAlpha(225),
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                         child: Row(
@@ -124,7 +127,7 @@ class HeaderSectionWidget extends StatelessWidget {
                             Flexible(
                               // Text widget için Flexible
                               child: Text(
-                                "${totalChange >= 0 ? '+' : '-'}₺${totalChange.toStringAsFixed(2)}",
+                                "₺${totalChange.toStringAsFixed(2)}",
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyMedium

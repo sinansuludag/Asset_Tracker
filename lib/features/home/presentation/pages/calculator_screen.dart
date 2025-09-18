@@ -4,8 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:asset_tracker/core/constants/colors/app_colors.dart';
 import 'package:asset_tracker/core/extensions/currency_code_extension.dart';
-import 'package:asset_tracker/core/riverpod/all_riverpod.dart';
-import 'dart:math' as math;
 
 class CalculatorScreen extends ConsumerStatefulWidget {
   const CalculatorScreen({super.key});
@@ -71,9 +69,9 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen>
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              const Color(0xFF1DD1A1).withOpacity(0.1),
+              const Color(0xFF1DD1A1).withAlpha(25),
               Colors.white,
-              const Color(0xFF26D0CE).withOpacity(0.05),
+              const Color(0xFF26D0CE).withAlpha(12),
             ],
           ),
         ),
@@ -115,7 +113,7 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen>
                 borderRadius: BorderRadius.circular(12.r),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withAlpha(25),
                     blurRadius: 10.r,
                     offset: const Offset(0, 2),
                   ),
@@ -237,7 +235,7 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen>
               borderRadius: BorderRadius.circular(20.r),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withAlpha(12),
                   blurRadius: 20.r,
                   offset: const Offset(0, 5),
                 ),
@@ -302,8 +300,8 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen>
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      const Color(0xFF1DD1A1).withOpacity(0.1),
-                      const Color(0xFF26D0CE).withOpacity(0.1),
+                      const Color(0xFF1DD1A1).withAlpha(25),
+                      const Color(0xFF26D0CE).withAlpha(25),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(12.r),
@@ -389,7 +387,7 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen>
                           borderRadius: BorderRadius.circular(12.r),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFF1DD1A1).withOpacity(0.3),
+                              color: const Color(0xFF1DD1A1).withAlpha(75),
                               blurRadius: 8.r,
                               offset: const Offset(0, 2),
                             ),
@@ -584,8 +582,8 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen>
                 boxShadow: [
                   BoxShadow(
                     color: isOperator
-                        ? const Color(0xFF1DD1A1).withOpacity(0.3)
-                        : Colors.black.withOpacity(0.05),
+                        ? const Color(0xFF1DD1A1).withAlpha(75)
+                        : Colors.black.withAlpha(12),
                     blurRadius: 10.r,
                     offset: const Offset(0, 2),
                   ),
@@ -624,7 +622,7 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen>
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withAlpha(12),
             blurRadius: 8.r,
             offset: const Offset(0, 2),
           ),
@@ -738,7 +736,7 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen>
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withAlpha(12),
             blurRadius: 8.r,
             offset: const Offset(0, 2),
           ),
@@ -789,7 +787,7 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen>
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withAlpha(12),
             blurRadius: 10.r,
             offset: const Offset(0, 2),
           ),
@@ -842,7 +840,7 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen>
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF1DD1A1).withOpacity(0.3),
+            color: const Color(0xFF1DD1A1).withAlpha(75),
             blurRadius: 15.r,
             offset: const Offset(0, 5),
           ),
@@ -891,23 +889,23 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen>
           end: Alignment.bottomRight,
           colors: [
             Colors.white,
-            const Color(0xFF1DD1A1).withOpacity(0.05),
-            const Color(0xFF26D0CE).withOpacity(0.08),
+            const Color(0xFF1DD1A1).withAlpha(12),
+            const Color(0xFF26D0CE).withAlpha(20),
           ],
         ),
         borderRadius: BorderRadius.circular(24.r),
         border: Border.all(
-          color: const Color(0xFF1DD1A1).withOpacity(0.2),
+          color: const Color(0xFF1DD1A1).withAlpha(50),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF1DD1A1).withOpacity(0.1),
+            color: const Color(0xFF1DD1A1).withAlpha(25),
             blurRadius: 25.r,
             offset: const Offset(0, 12),
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withAlpha(12),
             blurRadius: 10.r,
             offset: const Offset(0, 4),
           ),
@@ -938,7 +936,7 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen>
                 Container(
                   padding: EdgeInsets.all(8.w),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withAlpha(50),
                     borderRadius: BorderRadius.circular(12.r),
                   ),
                   child: Icon(
@@ -1016,8 +1014,8 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen>
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              const Color(0xFF1DD1A1).withOpacity(0.2),
-                              const Color(0xFF26D0CE).withOpacity(0.2),
+                              const Color(0xFF1DD1A1).withAlpha(50),
+                              const Color(0xFF26D0CE).withAlpha(50),
                             ],
                           ),
                           shape: BoxShape.circle,
@@ -1051,13 +1049,13 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen>
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        const Color(0xFF1DD1A1).withOpacity(0.1),
-                        const Color(0xFF26D0CE).withOpacity(0.15),
+                        const Color(0xFF1DD1A1).withAlpha(25),
+                        const Color(0xFF26D0CE).withAlpha(37),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(16.r),
                     border: Border.all(
-                      color: const Color(0xFF1DD1A1).withOpacity(0.3),
+                      color: const Color(0xFF1DD1A1).withAlpha(75),
                       width: 2,
                     ),
                   ),
@@ -1206,12 +1204,14 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xFF1DD1A1).withOpacity(0.1),
-            const Color(0xFF26D0CE).withOpacity(0.1),
+            const Color(0xFF1DD1A1).withAlpha(25),
+            const Color(0xFF26D0CE).withAlpha(25),
           ],
         ),
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: const Color(0xFF1DD1A1).withOpacity(0.3)),
+        border: Border.all(
+          color: const Color(0xFF1DD1A1).withAlpha(75),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

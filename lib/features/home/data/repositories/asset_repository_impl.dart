@@ -14,7 +14,6 @@ class AssetRepositoryImpl implements IAssetRepository {
     try {
       return await _assetService.saveAsset(asset);
     } catch (e) {
-      print('Repository error - saveAsset: $e');
       return false;
     }
   }
@@ -24,7 +23,6 @@ class AssetRepositoryImpl implements IAssetRepository {
     try {
       return _assetService.getUserAssetsStream(userId);
     } catch (e) {
-      print('Repository error - getUserAssets: $e');
       return [] as Stream<List<AssetEntity>>;
     }
   }
@@ -34,7 +32,6 @@ class AssetRepositoryImpl implements IAssetRepository {
     try {
       return await _assetService.deleteAsset(assetId);
     } catch (e) {
-      print('Repository error - deleteAsset: $e');
       return false;
     }
   }
@@ -44,7 +41,6 @@ class AssetRepositoryImpl implements IAssetRepository {
     try {
       return await _assetService.updateAsset(asset);
     } catch (e) {
-      print('Repository error - updateAsset: $e');
       return false;
     }
   }
