@@ -153,133 +153,50 @@ class _AssetDetailScreenState extends ConsumerState<AssetDetailScreen>
 
     return CustomScrollView(
       slivers: [
-        // Modern Header
         SliverToBoxAdapter(
           child: _buildModernHeader(transactions.length),
         ),
-
-        // Animated Summary Cards
         SliverToBoxAdapter(
           child: FadeTransition(
             opacity: _fadeAnimation,
             child: SlideTransition(
               position: _slideAnimation,
-              child: _buildSummaryCards(
+              child: _buildModernSummary(
                 totalQuantity: totalQuantity,
                 totalInvestment: totalInvestment,
                 totalGramWeight: totalGramWeight,
                 averagePrice: averagePrice,
+                transactionCount: transactions.length,
               ),
             ),
           ),
         ),
-
-        // Section Header
         SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 12.h),
-            child: Row(
-              children: [
-                Container(
-                  width: 4.w,
-                  height: 24.h,
-                  decoration: BoxDecoration(
-                    gradient: AppColors.primaryGradient,
-                    borderRadius: BorderRadius.circular(2.r),
-                  ),
-                ),
-                SizedBox(width: 12.w),
-                Text(
-                  'İşlem Geçmişi',
-                  style: TextStyle(
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF1A1A2E),
-                  ),
-                ),
-                const Spacer(),
-                Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        AppColors.primaryGreen.withAlpha(25),
-                        AppColors.primaryGreen.withAlpha(12),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(20.r),
-                    border: Border.all(
-                      color: AppColors.primaryGreen.withAlpha(50),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.receipt_long,
-                        size: 14.r,
-                        color: AppColors.primaryGreen,
-                      ),
-                      SizedBox(width: 6.w),
-                      Text(
-                        '${transactions.length} İşlem',
-                        style: TextStyle(
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.primaryGreen,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+            padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 16.h),
+            child: Text(
+              'Tüm İşlemler',
+              style: TextStyle(
+                fontSize: 20.sp,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF1A1A2E),
+                letterSpacing: -0.5,
+              ),
             ),
           ),
         ),
-
-        // Transaction List
         SliverPadding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           sliver: SliverList.builder(
             itemCount: transactions.length,
             itemBuilder: (context, index) {
-              // Animasyon için delay hesaplama
-              final delay = index * 100;
-              const maxDelay = 1000; // Maximum 1 saniye delay
-              final actualDelay = delay > maxDelay ? maxDelay : delay;
-
-              return TweenAnimationBuilder<double>(
-                key: ValueKey('transaction_$index'),
-                tween: Tween(begin: 0.0, end: 1.0),
-                duration: const Duration(milliseconds: 500),
-                curve: Curves.easeOutCubic,
-                builder: (context, value, child) {
-                  // Value değerini 0-1 aralığında tut
-                  final clampedValue = value.clamp(0.0, 1.0);
-
-                  return AnimatedContainer(
-                    duration: Duration(milliseconds: actualDelay),
-                    curve: Curves.easeOut,
-                    transform: Matrix4.translationValues(
-                      0,
-                      (1 - clampedValue) * 20,
-                      0,
-                    ),
-                    child: Opacity(
-                      opacity: clampedValue,
-                      child: _buildModernTransactionCard(
-                        transaction: transactions[index],
-                        index: index,
-                      ),
-                    ),
-                  );
-                },
+              return _buildModernTransactionCard(
+                transaction: transactions[index],
+                index: index,
               );
             },
           ),
         ),
-
-        // Bottom Padding
         SliverToBoxAdapter(
           child: SizedBox(height: 100.h),
         ),
@@ -289,347 +206,147 @@ class _AssetDetailScreenState extends ConsumerState<AssetDetailScreen>
 
   Widget _buildModernHeader(int transactionCount) {
     return Container(
-      height: 280.h,
+      height: 250.h,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
             AppColors.primaryGreen,
-            AppColors.primaryGreen.withAlpha(225),
+            AppColors.primaryGreen.withBlue(20),
           ],
         ),
       ),
       child: Stack(
         children: [
-          // Background Pattern
+          Positioned(
+            right: -80.w,
+            top: -20.h,
+            child: Container(
+              width: 240.w,
+              height: 240.h,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.white.withAlpha(50),
+                  width: 2.5,
+                ),
+              ),
+            ),
+          ),
           Positioned(
             right: -50.w,
-            top: -50.h,
+            top: 10.h,
             child: Container(
-              width: 200.w,
-              height: 200.h,
+              width: 180.w,
+              height: 180.h,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withAlpha(25),
+                border: Border.all(
+                  color: Colors.white.withAlpha(35),
+                  width: 2,
+                ),
               ),
             ),
           ),
-          Positioned(
-            left: -30.w,
-            bottom: -30.h,
-            child: Container(
-              width: 150.w,
-              height: 150.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withAlpha(12),
-              ),
-            ),
-          ),
-
-          // Content
           SafeArea(
             child: Padding(
-              padding: EdgeInsets.all(20.w),
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Back Button
                   GestureDetector(
-                    onTap: () => Navigator.pop(context),
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      Navigator.pop(context);
+                    },
                     child: Container(
-                      width: 40.w,
-                      height: 40.h,
+                      width: 44.w,
+                      height: 44.h,
                       decoration: BoxDecoration(
-                        color: Colors.white.withAlpha(50),
-                        borderRadius: BorderRadius.circular(12.r),
-                        border: Border.all(
-                          color: Colors.white.withAlpha(75),
-                        ),
+                        color: Colors.white.withAlpha(90),
+                        borderRadius: BorderRadius.circular(14.r),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withAlpha(15),
+                            blurRadius: 10,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
                       ),
                       child: Icon(
                         Icons.arrow_back_ios_new,
-                        color: Colors.white,
+                        color: AppColors.primaryGreen,
                         size: 18.r,
                       ),
                     ),
                   ),
-
-                  SizedBox(height: 20.h),
-
-                  // Title
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.displayName,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 28.sp,
-                                fontWeight: FontWeight.bold,
+                  const Spacer(),
+                  Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 80.w,
+                          height: 80.h,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withAlpha(120),
+                            borderRadius: BorderRadius.circular(20.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withAlpha(20),
+                                blurRadius: 15,
+                                offset: const Offset(0, 5),
                               ),
-                            ),
-                            SizedBox(height: 8.h),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 12.w,
-                                vertical: 6.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withAlpha(50),
-                                borderRadius: BorderRadius.circular(20.r),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.category_outlined,
-                                    color: Colors.white,
-                                    size: 14.r,
-                                  ),
-                                  SizedBox(width: 6.w),
-                                  Text(
-                                    widget.assetSubType == 'bracelet'
-                                        ? 'Bilezik'
-                                        : 'Normal',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // Asset Icon
-                      Container(
-                        width: 80.w,
-                        height: 80.h,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.white.withAlpha(75),
-                              Colors.white.withAlpha(25),
                             ],
                           ),
-                          borderRadius: BorderRadius.circular(20.r),
-                          border: Border.all(
-                            color: Colors.white.withAlpha(75),
-                            width: 2,
-                          ),
-                        ),
-                        child: Center(
-                          child: Text(
-                            getAssetIcon(widget.assetType, widget.assetSubType),
-                            style: TextStyle(fontSize: 32.sp),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSummaryCards({
-    required double totalQuantity,
-    required double totalInvestment,
-    required double totalGramWeight,
-    required double averagePrice,
-  }) {
-    final nf = NumberFormat('#,##0.00');
-
-    return Container(
-      margin: const EdgeInsets.only(top: 0),
-      transform: Matrix4.translationValues(0, -40.h, 0),
-      child: Column(
-        children: [
-          // Main Summary Card
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 20.w),
-            padding: EdgeInsets.all(20.r),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(24.r),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(15),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                // Top Stats
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildStatItem(
-                        icon: Icons.inventory_2,
-                        label: 'Toplam Miktar',
-                        value: widget.assetSubType == 'bracelet'
-                            ? '${totalQuantity.toStringAsFixed(0)} adet'
-                            : '${totalQuantity.toStringAsFixed(2)} ${getQuantityUnit(widget.assetType, (widget.assetSubType == 'bracelet' ? true : false))}',
-                        color: Colors.blue,
-                      ),
-                    ),
-                    Container(
-                      width: 1,
-                      height: 50.h,
-                      color: Colors.grey[200],
-                    ),
-                    Expanded(
-                      child: _buildStatItem(
-                        icon: Icons.account_balance_wallet,
-                        label: 'Toplam Yatırım',
-                        value: '₺${nf.format(totalInvestment)}',
-                        color: Colors.green,
-                      ),
-                    ),
-                  ],
-                ),
-
-                if (widget.assetSubType == 'bracelet' &&
-                    totalGramWeight > 0) ...[
-                  SizedBox(height: 16.h),
-                  Container(
-                    padding: EdgeInsets.all(12.r),
-                    decoration: BoxDecoration(
-                      color: Colors.amber.withAlpha(25),
-                      borderRadius: BorderRadius.circular(12.r),
-                      border: Border.all(
-                        color: Colors.amber.withAlpha(75),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.scale,
-                          color: Colors.amber[700],
-                          size: 20.r,
-                        ),
-                        SizedBox(width: 8.w),
-                        Text(
-                          'Toplam Ağırlık: ',
-                          style: TextStyle(
-                            color: Colors.amber[700],
-                            fontSize: 14.sp,
-                          ),
-                        ),
-                        Text(
-                          '${totalGramWeight.toStringAsFixed(1)} gram',
-                          style: TextStyle(
-                            color: Colors.amber[700],
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-
-          // Average Price Card
-          Container(
-            margin: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 0),
-            padding: EdgeInsets.all(16.r),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.primaryGreen.withAlpha(12),
-                  AppColors.primaryGreen.withAlpha(5),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(16.r),
-              border: Border.all(
-                color: AppColors.primaryGreen.withAlpha(50),
-              ),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 48.w,
-                  height: 48.h,
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryGreen.withAlpha(25),
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                  child: Icon(
-                    Icons.analytics,
-                    color: AppColors.primaryGreen,
-                    size: 24.r,
-                  ),
-                ),
-                SizedBox(width: 16.w),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Ortalama Alış Fiyatı',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 13.sp,
-                        ),
-                      ),
-                      SizedBox(height: 4.h),
-                      Row(
-                        children: [
-                          Text(
-                            '₺${nf.format(averagePrice)}',
-                            style: TextStyle(
-                              color: AppColors.primaryGreen,
-                              fontSize: 20.sp,
-                              fontWeight: FontWeight.bold,
+                          child: Center(
+                            child: Text(
+                              getAssetIcon(
+                                  widget.assetType, widget.assetSubType),
+                              style: TextStyle(fontSize: 40.sp),
                             ),
                           ),
-                          SizedBox(width: 8.w),
+                        ),
+                        SizedBox(height: 12.h),
+                        Text(
+                          widget.displayName,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24.sp,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: -0.5,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        if (widget.assetSubType == 'bracelet') ...[
+                          SizedBox(height: 8.h),
                           Container(
                             padding: EdgeInsets.symmetric(
-                              horizontal: 8.w,
-                              vertical: 4.h,
+                              horizontal: 12.w,
+                              vertical: 5.h,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.primaryGreen.withAlpha(25),
-                              borderRadius: BorderRadius.circular(8.r),
+                              color: Colors.white.withAlpha(90),
+                              borderRadius: BorderRadius.circular(10.r),
                             ),
                             child: Text(
-                              getQuantityUnit(
-                                  widget.assetType,
-                                  (widget.assetSubType == 'bracelet'
-                                      ? true
-                                      : false)),
+                              'Bilezik',
                               style: TextStyle(
                                 color: AppColors.primaryGreen,
-                                fontSize: 11.sp,
-                                fontWeight: FontWeight.w600,
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
                         ],
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                  const Spacer(),
+                ],
+              ),
             ),
           ),
         ],
@@ -637,41 +354,161 @@ class _AssetDetailScreenState extends ConsumerState<AssetDetailScreen>
     );
   }
 
-  Widget _buildStatItem({
+  Widget _buildModernSummary({
+    required double totalQuantity,
+    required double totalInvestment,
+    required double totalGramWeight,
+    required double averagePrice,
+    required int transactionCount,
+  }) {
+    final nf = NumberFormat('#,##0.00');
+
+    return Container(
+      margin: EdgeInsets.fromLTRB(20.w, 0, 20.w, 0),
+      transform: Matrix4.translationValues(0, -40.h, 0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final cardWidth = (constraints.maxWidth - 12.w) / 2;
+              final cardHeight = cardWidth * 0.85;
+
+              return Wrap(
+                spacing: 12.w,
+                runSpacing: 12.h,
+                children: [
+                  SizedBox(
+                    width: cardWidth,
+                    height: cardHeight,
+                    child: _buildInfoCard(
+                      icon: Icons.account_balance_wallet,
+                      label: 'Toplam Yatırım',
+                      value: '₺${nf.format(totalInvestment)}',
+                      color: AppColors.primaryGreen,
+                      isLarge: true,
+                    ),
+                  ),
+                  SizedBox(
+                    width: cardWidth,
+                    height: cardHeight,
+                    child: _buildInfoCard(
+                      icon: Icons.inventory_2_outlined,
+                      label: 'Toplam Miktar',
+                      value: widget.assetSubType == 'bracelet'
+                          ? '${totalQuantity.toStringAsFixed(0)} adet'
+                          : '${totalQuantity.toStringAsFixed(2)} ${getQuantityUnit(widget.assetType, false)}',
+                      color: Colors.blue,
+                    ),
+                  ),
+                  SizedBox(
+                    width: cardWidth,
+                    height: cardHeight,
+                    child: _buildInfoCard(
+                      icon: Icons.trending_up,
+                      label: 'Ortalama Fiyat',
+                      value: '₺${nf.format(averagePrice)}',
+                      color: Colors.purple,
+                    ),
+                  ),
+                  SizedBox(
+                    width: cardWidth,
+                    height: cardHeight,
+                    child:
+                        widget.assetSubType == 'bracelet' && totalGramWeight > 0
+                            ? _buildInfoCard(
+                                icon: Icons.scale_outlined,
+                                label: 'Toplam Ağırlık',
+                                value: '${totalGramWeight.toStringAsFixed(1)}g',
+                                color: Colors.amber,
+                              )
+                            : _buildInfoCard(
+                                icon: Icons.receipt,
+                                label: 'İşlem Sayısı',
+                                value: '$transactionCount',
+                                color: Colors.teal,
+                              ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoCard({
     required IconData icon,
     required String label,
     required String value,
     required Color color,
+    bool isLarge = false,
   }) {
-    return Column(
-      children: [
-        Container(
-          width: 40.w,
-          height: 40.h,
-          decoration: BoxDecoration(
-            color: color.withAlpha(25),
-            borderRadius: BorderRadius.circular(10.r),
+    return Container(
+      padding: EdgeInsets.all(10.r),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(8),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
-          child: Icon(icon, color: color, size: 20.r),
-        ),
-        SizedBox(height: 8.h),
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.grey[600],
-            fontSize: 11.sp,
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: isLarge ? 44.w : 36.w,
+            height: isLarge ? 44.h : 36.h,
+            decoration: BoxDecoration(
+              color: color.withAlpha(25),
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            child: Icon(
+              icon,
+              color: color,
+              size: isLarge ? 22.r : 18.r,
+            ),
           ),
-        ),
-        SizedBox(height: 4.h),
-        Text(
-          value,
-          style: TextStyle(
-            color: const Color(0xFF1A1A2E),
-            fontSize: 14.sp,
-            fontWeight: FontWeight.bold,
+          SizedBox(height: 6.h),
+          Flexible(
+            child: Text(
+              label,
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 9.sp,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-        ),
-      ],
+          SizedBox(height: 2.h),
+          Flexible(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4.w),
+                child: Text(
+                  value,
+                  style: TextStyle(
+                    color: const Color(0xFF1A1A2E),
+                    fontSize: isLarge ? 13.sp : 11.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -680,162 +517,140 @@ class _AssetDetailScreenState extends ConsumerState<AssetDetailScreen>
     required int index,
   }) {
     final nf = NumberFormat('#,##0.00');
-    final dateFormat = DateFormat('dd MMMM yyyy');
+    final dateFormat = DateFormat('dd/MM/yyyy');
 
     return Container(
-      margin: EdgeInsets.only(bottom: 12.h),
+      margin: EdgeInsets.only(bottom: 10.h),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: Colors.grey[200]!,
-        ),
+        borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(5),
-            blurRadius: 10,
+            color: Colors.black.withAlpha(8),
+            blurRadius: 15,
             offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Material(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(20.r),
         child: InkWell(
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(20.r),
           onTap: () {
             HapticFeedback.lightImpact();
             _showTransactionDetail(transaction);
           },
           child: Padding(
-            padding: EdgeInsets.all(16.r),
+            padding: EdgeInsets.all(14.r),
             child: Row(
               children: [
-                // Transaction Number Badge
                 Container(
-                  width: 52.w,
-                  height: 52.h,
+                  width: 50.w,
+                  height: 50.h,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                       colors: [
                         AppColors.primaryGreen.withAlpha(200),
                         AppColors.primaryGreen,
                       ],
                     ),
-                    borderRadius: BorderRadius.circular(14.r),
+                    borderRadius: BorderRadius.circular(16.r),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.primaryGreen.withAlpha(75),
-                        blurRadius: 8,
+                        color: AppColors.primaryGreen.withAlpha(60),
+                        blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
                     ],
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '#${transaction.transactionNumber}',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14.sp,
-                        ),
-                      ),
-                      Text(
-                        'İşlem',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 10.sp,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                SizedBox(width: 14.w),
-
-                // Transaction Details
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.calendar_today,
-                            size: 14.r,
-                            color: Colors.grey[600],
+                  child: Center(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Padding(
+                        padding: EdgeInsets.all(4.r),
+                        child: Text(
+                          '#${transaction.transactionNumber}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14.sp,
                           ),
-                          SizedBox(width: 6.w),
-                          Text(
-                            dateFormat.format(transaction.buyingDate),
-                            style: TextStyle(
-                              fontSize: 13.sp,
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFF1A1A2E),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 8.h),
-                      Wrap(
-                        spacing: 6.w,
-                        runSpacing: 4.h,
-                        children: [
-                          _buildInfoChip(
-                            Icons.inventory_2_outlined,
-                            transaction.assetSubType == 'bracelet'
-                                ? '${transaction.quantity.toStringAsFixed(0)} adet'
-                                : '${transaction.quantity.toStringAsFixed(2)} ${getQuantityUnit(widget.assetType, (widget.assetSubType == 'bracelet' ? true : false))}',
-                            Colors.blue,
-                          ),
-                          if (transaction.assetSubType == 'bracelet' &&
-                              transaction.gramWeight != null)
-                            _buildInfoChip(
-                              Icons.scale,
-                              '${transaction.gramWeight!.toStringAsFixed(1)} gr',
-                              Colors.amber,
-                            ),
-                          _buildInfoChip(
-                            Icons.local_offer,
-                            '₺${nf.format(transaction.buyingPrice)}',
-                            Colors.purple,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Total Amount
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10.w,
-                        vertical: 6.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.green.withAlpha(25),
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                      child: Text(
-                        '₺${nf.format(transaction.totalInvestment)}',
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green[700],
                         ),
                       ),
                     ),
-                    SizedBox(height: 4.h),
-                    Text(
-                      'Toplam',
-                      style: TextStyle(
-                        fontSize: 10.sp,
-                        color: Colors.grey[500],
+                  ),
+                ),
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        dateFormat.format(transaction.buyingDate),
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF1A1A2E),
+                        ),
+                      ),
+                      SizedBox(height: 4.h),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            _buildCompactChip(
+                              '${transaction.quantity.toStringAsFixed(transaction.assetSubType == 'bracelet' ? 0 : 2)} ${getQuantityUnit(widget.assetType, transaction.assetSubType == 'bracelet')}',
+                              Icons.inventory_2_outlined,
+                              Colors.blue.shade600,
+                            ),
+                            SizedBox(width: 6.w),
+                            _buildCompactChip(
+                              '₺${nf.format(transaction.buyingPrice)}',
+                              Icons.attach_money,
+                              Colors.purple.shade600,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: 8.w),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        '₺${nf.format(transaction.totalInvestment)}',
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primaryGreen,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 2.h),
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryGreen.withAlpha(25),
+                        borderRadius: BorderRadius.circular(6.r),
+                      ),
+                      child: Text(
+                        'TOPLAM',
+                        style: TextStyle(
+                          fontSize: 7.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primaryGreen,
+                          letterSpacing: 0.5,
+                        ),
                       ),
                     ),
                   ],
@@ -848,25 +663,22 @@ class _AssetDetailScreenState extends ConsumerState<AssetDetailScreen>
     );
   }
 
-  Widget _buildInfoChip(IconData icon, String text, Color color) {
+  Widget _buildCompactChip(String text, IconData icon, Color color) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 3.h),
       decoration: BoxDecoration(
         color: color.withAlpha(25),
         borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(
-          color: color.withAlpha(50),
-        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 12.r, color: color),
-          SizedBox(width: 4.w),
+          Icon(icon, size: 10.r, color: color),
+          SizedBox(width: 3.w),
           Text(
             text,
             style: TextStyle(
-              fontSize: 11.sp,
+              fontSize: 9.sp,
               color: color,
               fontWeight: FontWeight.w600,
             ),
@@ -876,9 +688,7 @@ class _AssetDetailScreenState extends ConsumerState<AssetDetailScreen>
     );
   }
 
-  void _showTransactionDetail(
-    AssetTransactionModel transaction,
-  ) {
+  void _showTransactionDetail(AssetTransactionModel transaction) {
     final nf = NumberFormat('#,##0.00');
     final dateFormat = DateFormat('dd MMMM yyyy, HH:mm:ss');
 
@@ -907,7 +717,6 @@ class _AssetDetailScreenState extends ConsumerState<AssetDetailScreen>
           ),
           child: Column(
             children: [
-              // Handle Bar
               Container(
                 margin: EdgeInsets.only(top: 12.h),
                 width: 50.w,
@@ -917,13 +726,10 @@ class _AssetDetailScreenState extends ConsumerState<AssetDetailScreen>
                   borderRadius: BorderRadius.circular(2.5.r),
                 ),
               ),
-
-              // Header Section
               Container(
                 margin: EdgeInsets.fromLTRB(24.w, 20.h, 24.w, 0),
                 child: Row(
                   children: [
-                    // Transaction Badge
                     Container(
                       width: 60.w,
                       height: 60.h,
@@ -964,10 +770,7 @@ class _AssetDetailScreenState extends ConsumerState<AssetDetailScreen>
                         ],
                       ),
                     ),
-
                     SizedBox(width: 16.w),
-
-                    // Title and Close Button
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1013,8 +816,6 @@ class _AssetDetailScreenState extends ConsumerState<AssetDetailScreen>
                         ],
                       ),
                     ),
-
-                    // Close Button
                     GestureDetector(
                       onTap: () {
                         HapticFeedback.lightImpact();
@@ -1037,32 +838,28 @@ class _AssetDetailScreenState extends ConsumerState<AssetDetailScreen>
                   ],
                 ),
               ),
-
               SizedBox(height: 24.h),
-
-              // Content Section
               Expanded(
                 child: SingleChildScrollView(
                   controller: scrollController,
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
                   child: Column(
                     children: [
-                      // Main Info Cards
                       Row(
                         children: [
                           Expanded(
-                            child: _buildInfoCard(
+                            child: _buildInfoCardDialog(
                               icon: Icons.inventory_2,
                               title: 'Miktar',
                               value: transaction.assetSubType == 'bracelet'
                                   ? '${transaction.quantity.toStringAsFixed(0)} adet'
-                                  : '${transaction.quantity.toStringAsFixed(2)} ${getQuantityUnit(widget.assetType, (widget.assetSubType == 'bracelet' ? true : false))}',
+                                  : '${transaction.quantity.toStringAsFixed(2)} ${getQuantityUnit(widget.assetType, transaction.assetSubType == 'bracelet')}',
                               color: Colors.blue,
                             ),
                           ),
                           SizedBox(width: 12.w),
                           Expanded(
-                            child: _buildInfoCard(
+                            child: _buildInfoCardDialog(
                               icon: Icons.local_offer,
                               title: 'Birim Fiyat',
                               value: '₺${nf.format(transaction.buyingPrice)}',
@@ -1071,14 +868,11 @@ class _AssetDetailScreenState extends ConsumerState<AssetDetailScreen>
                           ),
                         ],
                       ),
-
                       SizedBox(height: 12.h),
-
-                      // Weight Card (if applicable)
                       if (transaction.gramWeight != null)
                         Container(
                           margin: EdgeInsets.only(bottom: 12.h),
-                          child: _buildInfoCard(
+                          child: _buildInfoCardDialog(
                             icon: Icons.scale,
                             title: 'Toplam Ağırlık',
                             value:
@@ -1087,8 +881,6 @@ class _AssetDetailScreenState extends ConsumerState<AssetDetailScreen>
                             isFullWidth: true,
                           ),
                         ),
-
-                      // Total Investment Card
                       Container(
                         width: double.infinity,
                         padding: EdgeInsets.all(20.r),
@@ -1150,10 +942,7 @@ class _AssetDetailScreenState extends ConsumerState<AssetDetailScreen>
                           ],
                         ),
                       ),
-
                       SizedBox(height: 20.h),
-
-                      // Additional Details
                       Container(
                         width: double.infinity,
                         padding: EdgeInsets.all(20.r),
@@ -1200,7 +989,7 @@ class _AssetDetailScreenState extends ConsumerState<AssetDetailScreen>
                             ),
                             _buildDetailItem(
                               'İşlem Tarihi',
-                              DateFormat('EEEE, dd MMMM yyyy')
+                              DateFormat('dd MMMM yyyy')
                                   .format(transaction.buyingDate),
                               Icons.calendar_today,
                             ),
@@ -1213,7 +1002,6 @@ class _AssetDetailScreenState extends ConsumerState<AssetDetailScreen>
                           ],
                         ),
                       ),
-
                       SizedBox(height: 32.h),
                     ],
                   ),
@@ -1226,7 +1014,7 @@ class _AssetDetailScreenState extends ConsumerState<AssetDetailScreen>
     );
   }
 
-  Widget _buildInfoCard({
+  Widget _buildInfoCardDialog({
     required IconData icon,
     required String title,
     required String value,
@@ -1316,10 +1104,9 @@ class _AssetDetailScreenState extends ConsumerState<AssetDetailScreen>
       backgroundColor: const Color(0xFFF8FAFB),
       body: CustomScrollView(
         slivers: [
-          // Loading Header
           SliverToBoxAdapter(
             child: Container(
-              height: 280.h,
+              height: 250.h,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
@@ -1339,146 +1126,29 @@ class _AssetDetailScreenState extends ConsumerState<AssetDetailScreen>
                       GestureDetector(
                         onTap: () => Navigator.pop(context),
                         child: Container(
-                          width: 40.w,
-                          height: 40.h,
+                          width: 44.w,
+                          height: 44.h,
                           decoration: BoxDecoration(
-                            color: Colors.white.withAlpha(50),
-                            borderRadius: BorderRadius.circular(12.r),
-                            border: Border.all(
-                              color: Colors.white.withAlpha(75),
-                            ),
+                            color: Colors.white.withAlpha(90),
+                            borderRadius: BorderRadius.circular(14.r),
                           ),
                           child: Icon(
                             Icons.arrow_back_ios_new,
-                            color: Colors.white,
+                            color: AppColors.primaryGreen,
                             size: 18.r,
                           ),
                         ),
                       ),
                       const Spacer(),
-                      // Skeleton loaders for title
-                      Container(
-                        width: 200.w,
-                        height: 24.h,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withAlpha(50),
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                      ),
-                      SizedBox(height: 12.h),
-                      Container(
-                        width: 120.w,
-                        height: 20.h,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withAlpha(37),
-                          borderRadius: BorderRadius.circular(10.r),
+                      Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 3,
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
-            ),
-          ),
-
-          // Loading Cards
-          SliverToBoxAdapter(
-            child: Container(
-              transform: Matrix4.translationValues(0, -40.h, 0),
-              child: Column(
-                children: [
-                  // Main loading card
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20.w),
-                    height: 140.h,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(24.r),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withAlpha(20),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
-                    ),
-                    child: const Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.primaryGreen,
-                        strokeWidth: 3,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20.h),
-                  // Skeleton transaction cards
-                  ...List.generate(
-                      3,
-                      (index) => Container(
-                            margin: EdgeInsets.symmetric(
-                                horizontal: 20.w, vertical: 6.h),
-                            height: 80.h,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[100],
-                              borderRadius: BorderRadius.circular(16.r),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.all(16.r),
-                              child: Row(
-                                children: [
-                                  // Skeleton badge
-                                  Container(
-                                    width: 52.w,
-                                    height: 52.h,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[200],
-                                      borderRadius: BorderRadius.circular(14.r),
-                                    ),
-                                  ),
-                                  SizedBox(width: 14.w),
-                                  // Skeleton content
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          width: 120.w,
-                                          height: 14.h,
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey[200],
-                                            borderRadius:
-                                                BorderRadius.circular(7.r),
-                                          ),
-                                        ),
-                                        SizedBox(height: 8.h),
-                                        Container(
-                                          width: 180.w,
-                                          height: 12.h,
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey[200],
-                                            borderRadius:
-                                                BorderRadius.circular(6.r),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  // Skeleton amount
-                                  Container(
-                                    width: 70.w,
-                                    height: 30.h,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[200],
-                                      borderRadius: BorderRadius.circular(8.r),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )),
-                ],
               ),
             ),
           ),
@@ -1492,12 +1162,9 @@ class _AssetDetailScreenState extends ConsumerState<AssetDetailScreen>
       backgroundColor: const Color(0xFFF8FAFB),
       body: CustomScrollView(
         slivers: [
-          // Header
           SliverToBoxAdapter(
             child: _buildModernHeader(0),
           ),
-
-          // Empty State Content
           SliverFillRemaining(
             hasScrollBody: false,
             child: Container(
@@ -1505,7 +1172,6 @@ class _AssetDetailScreenState extends ConsumerState<AssetDetailScreen>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Empty icon
                   Container(
                     width: 120.w,
                     height: 120.w,
@@ -1521,7 +1187,7 @@ class _AssetDetailScreenState extends ConsumerState<AssetDetailScreen>
                     child: Icon(
                       Icons.receipt_long_outlined,
                       size: 60.r,
-                      color: AppColors.primaryGreen.withAlpha(12),
+                      color: AppColors.primaryGreen.withAlpha(150),
                     ),
                   ),
                   SizedBox(height: 24.h),
@@ -1565,64 +1231,4 @@ class _AssetDetailScreenState extends ConsumerState<AssetDetailScreen>
       ),
     );
   }
-
-  // String _getUnit() {
-  //   switch (widget.assetType.toUpperCase()) {
-  //     case 'ALTIN':
-  //     case 'KULCEALTIN':
-  //     case 'AYAR14':
-  //     case 'AYAR22':
-  //       return 'gram';
-  //     case 'USDTRY':
-  //       return 'USD';
-  //     case 'EURTRY':
-  //       return 'EUR';
-  //     case 'GBPTRY':
-  //       return 'GBP';
-  //     default:
-  //       return 'adet';
-  //   }
-  // }
-
-  // String _getAssetIcon() {
-  //   // Bilezik kontrolü
-  //   if (widget.assetSubType == 'bracelet') {
-  //     switch (widget.assetType.toUpperCase()) {
-  //       case 'AYAR14':
-  //         return '🔗'; // 14K bilezik (zincir)
-  //       case 'AYAR22':
-  //         return '📿'; // 22K bilezik (daha değerli, tespih görünümü)
-  //       case 'ALTIN':
-  //       case 'KULCEALTIN':
-  //         return '📿'; // Altın bilezik
-  //       case 'GUMUSTRY':
-  //         return '⚪'; // Gümüş bilezik (beyaz/gümüş renk)
-  //       default:
-  //         return '🔗'; // Genel bilezik
-  //     }
-  //   }
-
-  //   // Normal ürünler (külçe/gram)
-  //   switch (widget.assetType.toUpperCase()) {
-  //     case 'AYAR14':
-  //       return '🪙'; // 14K altın külçe/sikke
-  //     case 'AYAR22':
-  //       return '🥇'; // 22K altın külçe (daha değerli)
-  //     case 'ALTIN':
-  //     case 'KULCEALTIN':
-  //       return '🧈'; // Külçe altın (gerçek külçe görünümü)
-  //     case 'USDTRY':
-  //       return '💵'; // Dolar banknotu
-  //     case 'EURTRY':
-  //       return '💶'; // Euro banknotu
-  //     case 'GBPTRY':
-  //       return '💷'; // Sterlin banknotu
-  //     case 'GUMUSTRY':
-  //       return '🥈'; // Gümüş külçe/madalya
-  //     case 'PLATIN':
-  //       return '💎'; // Platin (değerli taş görünümü)
-  //     default:
-  //       return '💰'; // Genel para torbası
-  //   }
-  // }
 }

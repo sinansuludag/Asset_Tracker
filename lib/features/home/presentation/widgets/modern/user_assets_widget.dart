@@ -72,7 +72,7 @@ class UserAssetsWidget extends ConsumerWidget {
                       Text(
                         isLoading
                             ? "Güncelleniyor..."
-                            : "${userAssets.length} farklı varlık",
+                            : "En fazla 3 varlık gösteriliyor.",
                         style: TextStyle(
                           color: Colors.grey[600],
                           fontSize: 12.sp,

@@ -5,9 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// Üst kısım - Kullanıcı karşılama ve portföy özeti
 class HeaderSectionWidget extends StatelessWidget {
-  final double totalPortfolioValue; // Toplam portföy değeri
-  final double totalChange; // Toplam değişim miktarı
-  final double changePercentage; // Değişim yüzdesi
+  final double totalPortfolioValue;
+  final double totalChange;
+  final double changePercentage;
   final String userName;
 
   const HeaderSectionWidget({
@@ -22,130 +22,145 @@ class HeaderSectionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        gradient: AppColors.primaryGradient,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF1DD1A1),
+            Color(0xFF26D0CE),
+            Color(0xFF00E5FF),
+          ],
+        ),
       ),
       child: SafeArea(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 40.h),
+          padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 32.h),
           child: Column(
             children: [
-              // Header Top
+              // Üst satır - Selamlama ve ayarlar
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Üst kısım - Selamlama ve butonlar
                   Flexible(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           "Merhaba,",
-                          style:
-                              Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                    color: Colors.white.withAlpha(240),
-                                    fontSize: 14.sp,
-                                  ),
+                          style: TextStyle(
+                            color: Colors.white.withAlpha(220),
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                        SizedBox(height: 1.h),
+                        SizedBox(height: 2.h),
                         Text(
                           userName,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall
-                              ?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20.sp,
-                              ),
-                          overflow: TextOverflow.ellipsis, // Taşma kontrolü
-                          maxLines: 1, // Tek satırda sınırla
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 22.sp,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
                         ),
                       ],
                     ),
                   ),
-                  // Sağ taraf - Aksiyon butonları
-                  Row(
-                    mainAxisSize: MainAxisSize.min, // İçeriğe göre boyutlandır
-                    children: [
-                      _buildActionButton(
-                        icon: Icons.settings_outlined,
+                  Container(
+                    width: 42.w,
+                    height: 42.h,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withAlpha(80),
+                      borderRadius: BorderRadius.circular(12.r),
+                      border: Border.all(
+                        color: Colors.white.withAlpha(100),
+                        width: 1.w,
+                      ),
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
                         onTap: () {
                           Navigator.pushNamed(context, RouteNames.profile);
                         },
+                        borderRadius: BorderRadius.circular(12.r),
+                        child: Icon(
+                          Icons.settings_rounded,
+                          color: Colors.white,
+                          size: 20.r,
+                        ),
                       ),
-                    ],
+                    ),
                   ),
                 ],
               ),
-              SizedBox(height: 25.h),
+              SizedBox(height: 28.h),
 
-              // Portföy özeti
+              // Portföy değeri bölümü
               Column(
                 children: [
-                  // Ana portföy değeri
                   Text(
                     "₺${totalPortfolioValue.toStringAsFixed(2)}",
-                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 36.sp,
-                        ),
-                    textAlign: TextAlign.center, // Merkeze hizala
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 38.sp,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 8.h),
-                  // Portföy açıklaması ve değişim
+                  SizedBox(height: 10.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Flexible(
-                        // Expanded yerine Flexible
-                        child: Text(
-                          "Toplam Portföy Değeri",
-                          style:
-                              Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                    color: Colors.white.withAlpha(240),
-                                    fontSize: 14.sp,
-                                  ),
-                          textAlign: TextAlign.center,
-                          overflow: TextOverflow.ellipsis, // Taşma kontrolü
+                      Text(
+                        "Toplam Portföy Değeri",
+                        style: TextStyle(
+                          color: Colors.white.withAlpha(220),
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                      SizedBox(width: 8.w),
-                      // Değişim badge'i
+                      SizedBox(width: 10.w),
                       Container(
                         padding: EdgeInsets.symmetric(
-                            horizontal: 8.w, vertical: 4.h),
+                          horizontal: 10.w,
+                          vertical: 5.h,
+                        ),
                         decoration: BoxDecoration(
                           color: totalChange >= 0
-                              ? Colors.green.withAlpha(225)
-                              : Colors.red.withAlpha(225),
+                              ? Colors.green.shade400
+                              : Colors.red.shade400,
                           borderRadius: BorderRadius.circular(8.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: (totalChange >= 0
+                                      ? Colors.green.shade400
+                                      : Colors.red.shade400)
+                                  .withAlpha(150),
+                              offset: const Offset(0, 4),
+                              blurRadius: 12.r,
+                            ),
+                          ],
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Flexible(
-                              // Text widget için Flexible
-                              child: Text(
-                                "₺${totalChange.toStringAsFixed(2)}",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 12.sp,
-                                    ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            SizedBox(width: 4.w),
                             Icon(
                               totalChange >= 0
                                   ? Icons.trending_up
                                   : Icons.trending_down,
                               color: Colors.white,
-                              size: 16.r,
+                              size: 14.r,
+                            ),
+                            SizedBox(width: 4.w),
+                            Text(
+                              "${totalChange >= 0 ? '+' : ''}₺${totalChange.toStringAsFixed(2)} (${changePercentage.toStringAsFixed(2)}%)",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12.sp,
+                              ),
                             ),
                           ],
                         ),
@@ -158,63 +173,6 @@ class HeaderSectionWidget extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  // Aksiyon butonu oluşturma helper'ı
-  Widget _buildActionButton({
-    required IconData icon,
-    String? badge,
-    required VoidCallback onTap,
-  }) {
-    return Stack(
-      clipBehavior: Clip.none, // Taşma kontrolü
-      children: [
-        // Ana buton container'ı
-        Container(
-          width: 40.w,
-          height: 40.h,
-          decoration: BoxDecoration(
-            color: Colors.white.withAlpha(65),
-            borderRadius: BorderRadius.circular(12.r),
-            border: Border.all(
-              color: Colors.white.withAlpha(65),
-              width: 1.w,
-            ),
-          ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: onTap,
-              borderRadius: BorderRadius.circular(12.r),
-              child: Icon(icon, color: Colors.white, size: 20.r),
-            ),
-          ),
-        ),
-        // Badge (varsa)
-        if (badge != null)
-          Positioned(
-            right: -2,
-            top: -2,
-            child: Container(
-              padding: EdgeInsets.all(4.r),
-              decoration: const BoxDecoration(
-                color: Colors.red,
-                shape: BoxShape.circle,
-              ),
-              constraints: BoxConstraints(minWidth: 18.w, minHeight: 18.h),
-              child: Text(
-                badge,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 10.r,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-      ],
     );
   }
 }

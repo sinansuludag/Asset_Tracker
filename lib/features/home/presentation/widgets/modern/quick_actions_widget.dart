@@ -1,158 +1,109 @@
 import 'package:asset_tracker/core/constants/colors/app_colors.dart';
-import 'package:asset_tracker/features/home/presentation/pages/calculator_screen.dart'; // Yeni import
 import 'package:asset_tracker/features/home/presentation/widgets/modern/ultra_modern_buying_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-/// Hızlı işlem butonları widget'ı
+/// Modern ve uyumlu Varlık Ekle kartı
 class QuickActionsWidget extends StatelessWidget {
   const QuickActionsWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.fromLTRB(20.w, 0.h, 20.w, 20.h),
-      transform: Matrix4.translationValues(0, -15, 0),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white,
-            Colors.white.withAlpha(230),
-            Colors.white,
-          ],
-        ),
-        borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(color: Colors.white.withAlpha(100)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(25),
-            offset: const Offset(0, 10),
-            blurRadius: 30.r,
-          ),
-          BoxShadow(
-            color: const Color(0xFF1DD1A1).withAlpha(25),
-            offset: const Offset(0, -5),
-            blurRadius: 20.r,
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(20.r),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            // Varlık Ekle Butonu
-            _buildHolographicActionItem(
-              context,
-              icon: Icons.rocket_launch,
-              label: "Varlık Ekle",
-              gradient: const LinearGradient(
-                  colors: [Color(0xFF1DD1A1), Color(0xFF26D0CE)]),
-              onTap: () => showUltraModernBuyingDialog(context),
-            ),
-            // Hesaplayıcı Butonu - Güncellenmiş
-            _buildHolographicActionItem(
-              context,
-              icon: Icons.calculate,
-              label: "Hesaplayıcı",
-              gradient: const LinearGradient(
-                  colors: [Colors.orange, Colors.deepOrange]),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const CalculatorScreen(),
-                  ),
-                );
-              },
-            ),
-            // Alarmlar Butonu
-            _buildHolographicActionItem(
-              context,
-              icon: Icons.notifications_active,
-              label: "Alarmlar",
-              gradient:
-                  const LinearGradient(colors: [Colors.purple, Colors.indigo]),
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("🔔 Alarm özelliği yakında..."),
-                    backgroundColor: Colors.purple,
-                  ),
-                );
-              },
-            ),
-            // Grafikler Butonu
-            // _buildHolographicActionItem(
-            //   context,
-            //   icon: Icons.trending_up,
-            //   label: "Grafikler",
-            //   gradient:
-            //       const LinearGradient(colors: [Colors.cyan, Colors.blue]),
-            //   onTap: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //         builder: (context) => const ChartsScreen(),
-            //       ),
-            //     );
-            //   },
-            // ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHolographicActionItem(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-    required Gradient gradient,
-    required VoidCallback onTap,
-  }) {
-    return Expanded(
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
       child: GestureDetector(
-        onTap: onTap,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 52.w,
-              height: 52.h,
-              decoration: BoxDecoration(
-                gradient: gradient,
-                borderRadius: BorderRadius.circular(16.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: gradient.colors.first.withAlpha(95),
-                    offset: const Offset(0, 8),
-                    blurRadius: 20.r,
-                  ),
-                  BoxShadow(
-                    color: gradient.colors.last.withAlpha(95),
-                    offset: const Offset(0, 4),
-                    blurRadius: 12.r,
-                  ),
-                ],
+        onTap: () => showUltraModernBuyingDialog(context),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.teal.shade50,
+                Colors.teal.shade100.withAlpha(60),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(
+              color: Colors.teal.shade200,
+              width: 1.5.w,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.teal.withAlpha(40),
+                offset: const Offset(0, 4),
+                blurRadius: 16.r,
               ),
-              child: Icon(icon, color: Colors.white, size: 24.r),
-            ),
-            SizedBox(height: 8.h),
-            Text(
-              label,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                    fontSize: 11.sp,
+            ],
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
+            child: Row(
+              children: [
+                Container(
+                  width: 56.w,
+                  height: 56.h,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.teal.shade500,
+                        Colors.teal.shade600,
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(14.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.teal.shade400.withAlpha(150),
+                        offset: const Offset(0, 4),
+                        blurRadius: 12.r,
+                      ),
+                    ],
                   ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+                  child: Icon(
+                    Icons.add_circle_outline,
+                    color: Colors.white,
+                    size: 28.r,
+                  ),
+                ),
+                SizedBox(width: 16.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Varlık Ekle',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.teal.shade900,
+                        ),
+                      ),
+                      SizedBox(height: 4.h),
+                      Text(
+                        'Portföyünüze yeni varlık ekleyin',
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          color: Colors.teal.shade700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.all(8.r),
+                  decoration: BoxDecoration(
+                    color: Colors.teal.shade100,
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                  child: Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    color: Colors.teal.shade600,
+                    size: 16.r,
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

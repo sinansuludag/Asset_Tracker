@@ -19,6 +19,22 @@ class ModernHomeScreen extends ConsumerWidget {
     final currentUser = ref.watch(commonUserProvider);
     final assetsAsync = ref.watch(userAssetsStreamProvider);
 
+    // ===== DEBUG KODU BURAYA =====
+    final assetState = ref.watch(assetNotifierProvider);
+
+    print('═════ DEBUG =════');
+    print('UserAssets Count: ${assetState.userAssets.length}');
+    print('Raw Assets Count: ${assetState.rawAssets.length}');
+    print('Status: ${assetState.status}');
+
+    assetState.userAssets.forEach((asset) {
+      print(
+          '✅ ${asset.displayName}: ₺${asset.currentValue.toStringAsFixed(2)}');
+    });
+
+    print('═════════════════');
+    // ===== DEBUG KODU SONU =====
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8FFFE),
       body: assetsAsync.when(
